@@ -1,0 +1,105 @@
+---
+import Site from '../layouts/Site.astro';
+import { url } from '../utils/url';
+
+const pains = [
+  'COMPLIANCE BOTTLENECKS SLOWING YOU DOWN',
+  'MANDATED MODELS YOU CAN’T OVERRIDE',
+  'PAYOUTS CAPPED WELL BELOW MARKET',
+  'BEING TREATED LIKE A DISTRIBUTION CHANNEL',
+  'MARKETING BUILT FOR THE FIRM, NOT FOR YOU',
+];
+
+const outcomes = [
+  { num: '01', title: 'YOU KEEP MORE OF WHAT YOU EARN.', body: '1099 structure. Higher net payout. Tax benefits of being a business owner.' },
+  { num: '02', title: 'YOU STOP FIGHTING COMPLIANCE.', body: 'Filings, ADV, marketing review — handled by people who know the rules.' },
+  { num: '03', title: 'YOU PICK YOUR STACK.', body: 'Schwab or Fidelity. Orion or Tamarac. Your call.' },
+  { num: '04', title: 'YOU OWN YOUR BOOK.', body: 'Your clients are yours. Always. No restrictive contracts.' },
+  { num: '05', title: 'YOU BUILD EQUITY.', body: 'Enterprise value accrues to you, not the firm above you.' },
+  { num: '06', title: 'YOU’RE NOT ALONE.', body: 'A network of advisors who’ve made the same move.' },
+];
+---
+
+<Site title="For IARs & RRs — Break away without starting over.">
+
+  <section class="hero hero-iar">
+    <div class="container grid">
+      <div>
+        <p class="eyebrow">For IARs &amp; RRs</p>
+        <h1>BREAK AWAY.<br/>WITHOUT STARTING&nbsp;OVER.</h1>
+        <div class="actions">
+          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href={url('/how-it-works')}>How it works</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <p class="lede">A turnkey platform — compliance, ops, tech, peers — so you can go independent without rebuilding from scratch.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="pains">
+        <div>
+          <p class="eyebrow">If any of this sounds familiar</p>
+          <h2>THEN YOU&rsquo;VE OUTGROWN WHERE YOU ARE.</h2>
+        </div>
+        <ul class="pain-list">
+          {pains.map(p => <li>{p}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-elev">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">What changes</p>
+        <h2>OUTCOMES, NOT FEATURES.</h2>
+      </div>
+      <div class="outcomes">
+        {outcomes.map(o => (
+          <div class="outcome">
+            <div class="num">{o.num}</div>
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Two ways in</p>
+        <h2>TUCK IN. OR BUILD YOUR OWN.</h2>
+      </div>
+      <div class="paths">
+        <div class="path">
+          <span class="tag">Path 1</span>
+          <h3>TUCK IN TO A MEMBER FIRM.</h3>
+          <p>Join an existing firm in the alliance. Fast transition. Shared brand. Built-in team.</p>
+        </div>
+        <div class="path">
+          <span class="tag">Path 2</span>
+          <h3>LAUNCH YOUR OWN DBA.</h3>
+          <p>Your name. Your brand. The alliance behind you for compliance, ops, and tech.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-strip">
+    <div class="container">
+      <div class="cta-row">
+        <h2>READY TO TAKE A CLOSER LOOK?</h2>
+        <div class="actions">
+          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Site>

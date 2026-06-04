@@ -1,0 +1,47 @@
+/* ============ Fiduciary Alliance brand tokens ============
+   Single source of truth for color, type, spacing, and elevation.
+   Update values here to retheme the entire site.
+*/
+:root {
+  /* brand palette */
+  --brand-green: #355F3D;
+  --brand-green-bright: #4F8458;
+  --brand-teal: #115671;
+  --brand-teal-bright: #2E89B5;
+  --brand-teal-light: #88C2C7;
+  --neutral-gray: #717271;
+  --light-gray: #D9D9D9;
+  --white: #FFFFFF;
+
+  /* surfaces (derived from brand teal) */
+  --bg: #0A1A24;
+  --bg-elev: #112C3F;
+  --bg-deep: #061520;
+  --surface: #1A3C53;
+  --surface-2: #234B68;
+
+  /* text */
+  --ink: #FFFFFF;
+  --ink-soft: #DBE3EC;
+  --ink-mute: #8B9DB0;
+
+  /* lines */
+  --line: rgba(255, 255, 255, 0.10);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 16px 60px rgba(0, 0, 0, 0.4);
+
+  /* layout */
+  --max: 1240px;
+  --pad: clamp(1.25rem, 4vw, 3rem);
+  --section: clamp(5rem, 10vw, 8rem);
+
+  /* type families — Barlow Condensed stands in for Trade Gothic; Mulish for Museo Sans */
+  --display: "Barlow Condensed", "Trade Gothic", Impact, sans-serif;
+  --body: "Mulish", "Museo Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* hero images */
+  --hero-home: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=80&auto=format');
+  --hero-why:  url('https://images.unsplash.com/photo-1542640244-7e672d6cef4e?w=2400&q=80&auto=format');
+  --hero-iar:  url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=2400&q=80&auto=format');
+  --hero-ria:  url('https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=2400&q=80&auto=format');
+}

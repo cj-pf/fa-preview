@@ -1,0 +1,125 @@
+---
+import Site from '../layouts/Site.astro';
+import { url } from '../utils/url';
+
+const comparison = [
+  { label: 'Your brand', them: 'Replaced or co-branded', us: 'YOURS, UNCHANGED' },
+  { label: 'Your clients', them: 'Theirs at exit', us: 'ALWAYS YOURS' },
+  { label: 'Your equity', them: 'Sold for cash + earnout', us: 'YOU STAY THE OWNER' },
+  { label: 'Exit pressure', them: 'Built to flip in 5–7 yrs', us: 'LONG-TERM HOLD' },
+  { label: 'Investment freedom', them: 'Mandated models', us: 'YOU CHOOSE' },
+  { label: 'Ownership', them: 'PE-backed', us: 'ADVISOR-OWNED' },
+];
+
+const outcomes = [
+  { num: '01', title: 'COMPLIANCE INFRASTRUCTURE.', body: 'SEC filings, ADV updates, marketing reviews — at scale, at fraction-of-the-cost.' },
+  { num: '02', title: 'SHARED SERVICES.', body: 'Ops, onboarding, money movement, reporting. Built once. Used by all.' },
+  { num: '03', title: 'BEST-IN-CLASS TECH.', body: 'Negotiated rates with the platforms that matter. None of which are mandatory.' },
+  { num: '04', title: 'PEER LEVERAGE.', body: 'Other firm owners on the line when you need a second look at something.' },
+  { num: '05', title: 'SUCCESSION OPTIONALITY.', body: 'Internal next-gen. Internal acquisition. External sale. Your call, your timing.' },
+  { num: '06', title: 'A GROWTH TAILWIND.', body: 'Marketing support, referral flow, and a national footprint behind your local brand.' },
+];
+---
+
+<Site title="For RIA Owners — Keep your firm. Gain leverage.">
+
+  <section class="hero hero-ria">
+    <div class="container grid">
+      <div>
+        <p class="eyebrow">For RIA Owners</p>
+        <h1>KEEP YOUR FIRM.<br/>KEEP YOUR CLIENTS.<br/>KEEP YOUR NAME<br/>ON THE DOOR.</h1>
+        <div class="actions">
+          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href={url('/how-it-works')}>How a partnership works</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <p class="lede">A true partnership for independent RIAs. Not a tuck-in. Not an acquisition. Gain leverage — give up nothing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div style="max-width:780px;">
+        <p class="lead-num">01 — The third option</p>
+        <h2 style="margin-bottom:1.25rem;">STAY SOLO AND HIT A CEILING. OR SELL TO PE AND LOSE CONTROL.</h2>
+        <p style="font-size:1.125rem;">Every independent RIA owner faces the same fork in the road. Fiduciary Alliance is a third option that didn&rsquo;t exist a decade ago.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-elev">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">The difference</p>
+        <h2>AN ALLIANCE — NOT AN AGGREGATOR.</h2>
+      </div>
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Typical aggregator</th>
+            <th class="col-us-head">Fiduciary Alliance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {comparison.map(row => (
+            <tr>
+              <td class="row-label">{row.label}</td>
+              <td class="col-them">{row.them}</td>
+              <td class="col-us">{row.us}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">What you actually get</p>
+        <h2>LEVERAGE — WITHOUT SURRENDER.</h2>
+      </div>
+      <div class="outcomes">
+        {outcomes.map(o => (
+          <div class="outcome">
+            <div class="num">{o.num}</div>
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-elev">
+    <div class="container">
+      <div class="quote">
+        <div class="mark">&ldquo;</div>
+        <div class="text">We kept the firm we built and gained a back-office we couldn&rsquo;t have built alone. That&rsquo;s the deal.</div>
+        <div class="attrib">
+          <div class="avatar"></div>
+          <div class="who">
+            <div class="name">Member firm principal</div>
+            <div class="firm">Quote placeholder · TBD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-strip">
+    <div class="container">
+      <div class="cta-row">
+        <h2>LET&rsquo;S HAVE A CONFIDENTIAL CONVERSATION.</h2>
+        <div class="actions">
+          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="mailto:partnership@fiduciaryalliance.org">Email Brian directly</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Site>

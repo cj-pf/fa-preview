@@ -1,0 +1,296 @@
+---
+import Site from '../layouts/Site.astro';
+import { url } from '../utils/url';
+
+const stats = [
+  { num: '17', lbl: 'Member firms' },
+  { num: '10', lbl: 'States' },
+  { num: '25+', lbl: 'Office locations' },
+  { num: '$—B', lbl: 'Client assets (tbd)' },
+];
+
+const stateList = [
+  { name: 'South Carolina', offices: 7 },
+  { name: 'North Carolina', offices: 4 },
+  { name: 'Texas', offices: 3 },
+  { name: 'Georgia', offices: 2 },
+  { name: 'Florida', offices: 2 },
+  { name: 'Washington', offices: 2 },
+  { name: 'Massachusetts', offices: 1 },
+  { name: 'Michigan', offices: 1 },
+  { name: 'Minnesota', offices: 1 },
+  { name: 'Indiana', offices: 1 },
+];
+
+const firms = ['PARALLEL FINANCIAL', 'ECHELON', 'STEWARDSHIP', 'KINGDOM WEALTH', 'ELM WEALTH', 'MERRIMACK'];
+
+const steps = [
+  { num: '01', title: 'TALK', body: 'A short conversation to see if there’s a fit. Both directions.' },
+  { num: '02', title: 'DILIGENCE', body: 'We learn your practice. You learn the alliance.' },
+  { num: '03', title: 'PLAN', body: 'Custodian, compliance, comms, tech. Mapped out.' },
+  { num: '04', title: 'LAUNCH', body: 'You go live with the alliance behind you.' },
+];
+---
+
+<Site title="Fiduciary Alliance — Turnkey independence. True partnership.">
+
+  <section class="hero hero-home">
+    <div class="container grid">
+      <div>
+        <p class="eyebrow">Advisor-owned · PE-free</p>
+        <h1>TURNKEY<br/>INDEPENDENCE.<br/>TRUE PARTNERSHIP.</h1>
+        <div class="actions">
+          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href={url('/how-it-works')}>How it works</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <p class="lede">A network of independent RIAs built to grow — not to be sold.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container">
+      <div class="row">
+        {stats.map(s => (
+          <div class="stat">
+            <div class="num">{s.num}</div>
+            <div class="lbl">{s.lbl}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Choose your path</p>
+        <h2>TWO WAYS IN.<br/>ONE ALLIANCE BEHIND YOU.</h2>
+      </div>
+      <div class="grid-2">
+        <a class="persona-card" href={url('/for-iars')}>
+          <span class="tag">For IARs &amp; RRs</span>
+          <h3>BREAK AWAY.<br/>WITHOUT STARTING OVER.</h3>
+          <p>A turnkey platform — compliance, ops, tech, peers — so you can go independent without rebuilding from scratch.</p>
+          <span class="more">For advisors <span class="arrow">→</span></span>
+        </a>
+        <a class="persona-card" href={url('/for-ria-owners')}>
+          <span class="tag">For RIA owners</span>
+          <h3>KEEP YOUR FIRM.<br/>GAIN LEVERAGE.</h3>
+          <p>A true partnership for independent RIAs. Not a tuck-in. Not an acquisition. Keep what you built.</p>
+          <span class="more">For RIA owners <span class="arrow">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-elev">
+    <div class="container">
+      <div class="section-head" style="max-width:840px;">
+        <p class="eyebrow">What we are. What we&rsquo;re not.</p>
+        <h2>AN ALLIANCE — NOT A ROLLUP.</h2>
+      </div>
+      <div class="contrast">
+        <div class="we-are">
+          <h4>We are</h4>
+          <ul>
+            <li>ADVISOR-OWNED</li>
+            <li>FIDUCIARY-FIRST</li>
+            <li>LONG-TERM ORIENTED</li>
+            <li>GROWTH-FOCUSED</li>
+          </ul>
+        </div>
+        <div class="we-arent">
+          <h4>We&rsquo;re not</h4>
+          <ul>
+            <li>PE-BACKED</li>
+            <li>A BUILD-TO-FLIP PLAY</li>
+            <li>MANDATING MODELS</li>
+            <li>REPLACING YOUR BRAND</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">A national network</p>
+        <h2>17 FIRMS. 10 STATES.<br/>ONE ALLIANCE.</h2>
+      </div>
+      <div class="network-block">
+        <div class="network-map">
+          <svg class="us-map" viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg" aria-label="Map of Fiduciary Alliance member firms across the United States">
+            <g class="us-states">
+              <path class="us-state" d="M522.3,275.2L557.6,272.0L572.7,316.7L573.6,338.1L536.5,341.9L538.7,353.9L525.9,353.4Z" data-state="Alabama"/>
+              <path class="us-state" d="M154.0,292.3L167.1,268.2L162.8,254.6L177.0,222.8L242.7,233.6L229.5,328.8L200.8,324.5Z" data-state="Arizona"/>
+              <path class="us-state" d="M252.0,166.3L314.5,173.3L339.6,175.1L338.6,192.0L335.4,243.1L322.7,242.1L242.7,233.6Z" data-state="Colorado"/>
+              <path class="us-state us-state-fa" d="M573.6,338.1L625.1,336.1L654.7,394.1L657.4,415.9L644.9,427.8L611.6,386.4L611.6,368.8L586,351.9L538.7,353.9L536.5,341.9Z" data-state="Florida"/>
+              <path class="us-state us-state-fa" d="M557.6,272.0L575.1,269.9L591.5,267.5L589.1,273.3L629.5,312.7L625.1,336.1L573.6,338.1L572.7,316.7Z" data-state="Georgia"/>
+              <path class="us-state us-state-fa" d="M521.4,160.8L530.0,159.2L555.1,157.5L560.1,201.3L547.9,221.1L520.7,227.5L526.3,211.0Z" data-state="Indiana"/>
+              <path class="us-state" d="M338.6,192.0L424.7,194.5L433.8,209.4L434.2,245.4L335.4,243.1Z" data-state="Kansas"/>
+              <path class="us-state" d="M721.5,101.7L707.2,66.3L718.4,25.7L736.0,27.3L742.7,49.6L756.3,60.7L723.5,92.8Z" data-state="Maine"/>
+              <path class="us-state us-state-fa" d="M692.5,114.7L702.2,112.7L721.0,105.2L723.5,128.6L721.8,126.0L721.3,125.5L713.1,122.4L692.6,126.8Z" data-state="Massachusetts"/>
+              <path class="us-state us-state-fa" d="M402.1,42.8L488.7,57.2L462.0,80.2L453.9,113.2L473.9,133.7L410.3,135.2L409.2,94.1Z" data-state="Minnesota"/>
+              <path class="us-state" d="M676.3,172.7L676.7,171.6L677.5,169.5L680.6,141.7L691.1,150.9L690.9,151.4L689.2,154.6L686.5,178.7L676.4,173.1Z" data-state="New Jersey"/>
+              <path class="us-state us-state-fa" d="M606.8,238.1L683.5,224.7L688.1,240.6L656.7,276.8L619.1,260.9L591.5,267.5L575.1,269.9Z" data-state="North Carolina"/>
+              <path class="us-state" d="M326.0,39.1L402.1,42.8L409.2,94.1L321.7,90Z" data-state="North Dakota"/>
+              <path class="us-state" d="M322.7,242.1L335.4,243.1L434.2,245.4L434.3,253.9L436.9,302.4L399.7,300.9L360.9,285.8L362.2,252.9L322.1,250.5Z" data-state="Oklahoma"/>
+              <path class="us-state" d="M607.3,145.4L615.7,138.9L616.5,143.4L670.1,132.9L680.6,141.7L677.5,169.5L673.1,171.8L626.7,180.9L610.9,167.8Z" data-state="Pennsylvania"/>
+              <path class="us-state" d="M320.2,105.9L321.7,90L409.2,94.1L410.3,135.2L410.3,152.3L385.2,143.3L317.4,139.5Z" data-state="South Dakota"/>
+              <path class="us-state us-state-fa" d="M322.1,250.5L362.2,252.9L360.9,285.8L399.7,300.9L436.9,302.4L443.1,303.8L443.3,312.8L451.2,343.6L447.4,368.9L409.3,391.9L394.6,408.9L394.8,433.7L368.6,423.1L363.6,405.3L336.0,365.5L311.1,377.2L291.6,364.6L286.0,346.4L266.2,325.7L315.6,326.6Z" data-state="Texas"/>
+              <path class="us-state" d="M320.2,105.9L317.4,139.5L314.5,173.3L252.0,166.3L227.1,162.6L229.8,145.8L236.3,104.5L237.7,95.7Z" data-state="Wyoming"/>
+              <path class="us-state" d="M692.6,126.8L713.1,122.4L715.3,133.9L694.7,144.9Z" data-state="Connecticut"/>
+              <path class="us-state" d="M418.8,184.6L474.0,186.7L492.2,211.7L489.7,222.7L507.2,242.5L504.0,251.0L503.0,251.1L502.3,251.1L500.3,259.7L494.2,251.6L434.3,253.9L434.2,245.4L433.8,209.4L424.7,194.5Z" data-state="Missouri"/>
+              <path class="us-state" d="M590.3,209.0L609.6,183.9L610.9,167.8L626.7,180.9L650.1,183.5L627.7,203.0L622.5,219.8L600.6,222.7Z" data-state="West Virginia"/>
+              <path class="us-state" d="M474.0,186.7L486.5,165.4L481.8,150.1L516.8,147.9L521.4,160.8L526.3,211.0L520.7,227.5L507.2,242.5L489.7,222.7L492.2,211.7Z" data-state="Illinois"/>
+              <path class="us-state" d="M242.7,233.6L322.7,242.1L322.1,250.5L315.6,326.6L266.2,325.7L229.5,328.8Z" data-state="New Mexico"/>
+              <path class="us-state" d="M434.3,253.9L494.2,251.6L500.3,259.7L493.6,277.2L483.6,311.6L443.3,312.8L443.1,303.8L436.9,302.4Z" data-state="Arkansas"/>
+              <path class="us-state" d="M70.6,109.0L120.9,123.3L108.2,172.5L162.8,254.6L167.1,268.2L154.0,292.3L120.2,288.3L106.8,259.0L82.6,245.7L61.4,160.2L60.1,136.6Z" data-state="California"/>
+              <path class="us-state" d="M410.3,135.2L473.9,133.7L481.8,150.1L486.5,165.4L474.0,186.7L418.8,184.6L410.3,152.3Z" data-state="Iowa"/>
+              <path class="us-state" d="M507.2,242.5L520.7,227.5L547.9,221.1L560.1,201.3L590.3,209.0L600.6,222.7L580.3,241.6L504.0,251.0Z" data-state="Kentucky"/>
+              <path class="us-state" d="M626.7,180.9L673.1,171.8L687.0,190.8L686.2,198.4L681.0,200.9L659.9,193.4L660.5,190.6L659.0,188.4L650.1,183.5Z" data-state="Maryland"/>
+              <path class="us-state us-state-fa" d="M530.0,159.2L535.8,146.9L532.0,109.1L547.4,88.8L563.2,94.2L581.4,131.7L571.8,154.8L555.1,157.5ZM480.6,81.7L505.3,64.9L515.7,79.7L543.4,72.7L561.2,85.0L521.1,90.8L515.5,103.9L512.1,100.0L508.3,90.5L481.4,82.1Z" data-state="Michigan"/>
+              <path class="us-state" d="M483.6,311.6L493.6,277.2L522.3,275.2L525.9,353.4L509.8,357.8L505.6,344.2L478.6,345.8Z" data-state="Mississippi"/>
+              <path class="us-state" d="M193.4,19.3L326.0,39.1L321.7,90L320.2,105.9L237.7,95.7L236.3,104.5L213.2,101.0L204.6,62.4L191.5,45.8Z" data-state="Montana"/>
+              <path class="us-state" d="M703.7,72.3L707.2,66.3L721.5,101.7L721.0,105.2L702.2,112.7Z" data-state="New Hampshire"/>
+              <path class="us-state" d="M615.7,138.9L621.2,120.9L646.5,115.9L665.3,81.7L682.5,77.8L692.5,114.7L692.6,126.8L694.7,144.9L691.1,150.9L680.6,141.7L670.1,132.9L616.5,143.4Z" data-state="New York"/>
+              <path class="us-state" d="M555.1,157.5L571.8,154.8L584.6,159.1L607.3,145.4L610.9,167.8L609.6,183.9L590.3,209.0L560.1,201.3Z" data-state="Ohio"/>
+              <path class="us-state" d="M99.0,42.5L110.1,58.2L172.9,66.3L163.1,93.6L156.8,131.8L120.9,123.3L70.6,109.0L94.6,42.7Z" data-state="Oregon"/>
+              <path class="us-state" d="M500.3,259.7L502.3,251.1L503.0,251.1L504.0,251.0L580.3,241.6L606.8,238.1L575.1,269.9L557.6,272.0L522.3,275.2L493.6,277.2Z" data-state="Tennessee"/>
+              <path class="us-state" d="M193.1,139.5L229.8,145.8L227.1,162.6L252.0,166.3L242.7,233.6L177.0,222.8Z" data-state="Utah"/>
+              <path class="us-state" d="M600.6,222.7L622.5,219.8L627.7,203.0L650.1,183.5L659.0,188.4L660.5,190.6L659.9,193.4L683.5,224.7L606.8,238.1L580.3,241.6Z" data-state="Virginia"/>
+              <path class="us-state us-state-fa" d="M182.6,17.0L172.9,66.3L110.1,58.2L99.0,42.5L93.2,40.6L97.3,4.7L121.9,18.2L120.6,1.0Z" data-state="Washington"/>
+              <path class="us-state" d="M462.0,80.2L480.6,81.7L481.4,82.1L508.3,90.5L512.1,100.0L515.5,103.9L516.8,147.9L481.8,150.1L473.9,133.7L453.9,113.2Z" data-state="Wisconsin"/>
+              <path class="us-state" d="M317.4,139.5L385.2,143.3L410.3,152.3L418.8,184.6L424.7,194.5L338.6,192.0L339.6,175.1L314.5,173.3Z" data-state="Nebraska"/>
+              <path class="us-state us-state-fa" d="M591.5,267.5L619.1,260.9L656.7,276.8L629.5,312.7L589.1,273.3Z" data-state="South Carolina"/>
+              <path class="us-state" d="M172.9,66.3L182.6,17.0L193.4,19.3L191.5,45.8L204.6,62.4L213.2,101.0L236.3,104.5L229.8,145.8L193.1,139.5L156.8,131.8L163.1,93.6Z" data-state="Idaho"/>
+              <path class="us-state" d="M120.9,123.3L156.8,131.8L193.1,139.5L177.0,222.8L162.8,254.6L108.2,172.5Z" data-state="Nevada"/>
+              <path class="us-state" d="M682.5,77.8L703.7,72.3L702.2,112.7L692.5,114.7Z" data-state="Vermont"/>
+              <path class="us-state" d="M443.3,312.8L483.6,311.6L478.6,345.8L505.6,344.2L509.8,357.8L511.0,371.2L492.2,378.1L475.8,365.5L447.4,368.9L451.2,343.6Z" data-state="Louisiana"/>
+              <path class="us-state" d="M715.3,133.9L713.1,122.4L721.3,125.5Z" data-state="Rhode Island"/>
+            </g>
+            <g class="state-labels">
+              <text class="state-label" x="612" y="368" text-anchor="middle">FL</text>
+              <text class="state-label" x="593" y="310" text-anchor="middle">GA</text>
+              <text class="state-label" x="540" y="193" text-anchor="middle">IN</text>
+              <text class="state-label" x="710" y="135" text-anchor="middle">MA</text>
+              <text class="state-label" x="437" y="91" text-anchor="middle">MN</text>
+              <text class="state-label" x="645" y="253" text-anchor="middle">NC</text>
+              <text class="state-label" x="369" y="342" text-anchor="middle">TX</text>
+              <text class="state-label" x="530" y="98" text-anchor="middle">MI</text>
+              <text class="state-label" x="145" y="53" text-anchor="middle">WA</text>
+              <text class="state-label" x="614" y="293" text-anchor="middle">SC</text>
+            </g>
+            <g class="pins">
+              <g transform="translate(607.5, 266.1)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(594.3, 272.6)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(603.6, 266.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(627.9, 307.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(634.3, 271.8)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(621.5, 259.2)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(596.0, 262.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(666.9, 244.4)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(630.7, 245.1)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(576.7, 290.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(569.3, 303.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(390.5, 359.3)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(425.0, 368.1)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(443.4, 362.4)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(629.1, 349.2)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(631.5, 412.6)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(717.2, 110.8)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(446.8, 106.1)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(575.1, 139.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(120.5, 23.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(120.3, 25.1)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+              <g transform="translate(531.5, 181.9)"><circle class="pin-outer" r="6"/><circle class="pin-inner" r="2.5"/></g>
+            </g>
+            <g class="pin-hq" transform="translate(601.5, 268.7)">
+              <circle class="pin-hq-pulse" r="13">
+                <animate attributeName="r" values="13;26;13" dur="2.8s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.55;0;0.55" dur="2.8s" repeatCount="indefinite"/>
+              </circle>
+              <circle class="pin-outer" r="11" opacity="0.55"/>
+              <circle class="pin-hq-core" r="7.5"/>
+              <text class="pin-hq-label" y="2.8" text-anchor="middle">HQ</text>
+            </g>
+          </svg>
+
+          <div class="map-legend">
+            <span><span class="legend-swatch state"></span>Member state</span>
+            <span><span class="legend-swatch office"></span>Office</span>
+            <span><span class="legend-swatch hq"></span>Headquarters · Greenville, SC</span>
+          </div>
+        </div>
+
+        <aside class="network-list">
+          <span class="label">Our footprint</span>
+          <h3>17 firms across 10 states.</h3>
+          <ul class="state-list">
+            {stateList.map(s => (
+              <li>
+                <span class="state-name">{s.name}</span>
+                <span class="state-meta"><strong>{s.offices}</strong>{s.offices === 1 ? 'office' : 'offices'}</span>
+              </li>
+            ))}
+          </ul>
+          <a class="btn-link more" href={url('/firms')}>Explore member firms →</a>
+        </aside>
+      </div>
+      <div class="firm-strip">
+        {firms.map(name => <div class="firm-tile">{name}</div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-elev">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">How a partnership works</p>
+        <h2>FOUR STEPS. NO SURPRISES.</h2>
+      </div>
+      <div class="steps">
+        {steps.map(s => (
+          <div class="step">
+            <div class="num">{s.num}</div>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="quote">
+        <div class="mark">&ldquo;</div>
+        <div class="text">We joined the alliance and still own our firm. That sentence doesn&rsquo;t exist anywhere else in this industry.</div>
+        <div class="attrib">
+          <div class="avatar"></div>
+          <div class="who">
+            <div class="name">Member firm principal</div>
+            <div class="firm">Quote placeholder · TBD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-strip">
+    <div class="container">
+      <div class="cta-row">
+        <h2>CURIOUS WHAT THIS COULD LOOK LIKE FOR YOU?</h2>
+        <div class="actions">
+          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href={url('/firms')}>Explore firms</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Site>

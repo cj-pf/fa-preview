@@ -1,0 +1,39 @@
+---
+import Logo from './Logo.astro';
+import { url } from '../utils/url';
+const year = 2026;
+---
+<footer class="site">
+  <div class="container">
+    <div class="row">
+      <div>
+        <Logo />
+        <p style="margin-top:1.25rem;color:#8A98AE;max-width:32ch;font-size:0.9375rem;">An advisor-owned network of independent RIAs. Greenville, SC.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a href={url('/why')}>Why FA</a>
+        <a href={url('/firms')}>Member Firms</a>
+        <a href={url('/team')}>Our Team</a>
+        <a href={url('/insights')}>Insights</a>
+      </div>
+      <div>
+        <h5>Get in touch</h5>
+        <a href={url('/contact')}>See if you&rsquo;re a fit</a>
+        <a href="tel:8643857999">864·385·7999</a>
+        <a href="mailto:admin-fa@fiduciaryalliance.org">admin-fa@fiduciaryalliance.org</a>
+      </div>
+      <div>
+        <h5>Compliance</h5>
+        <a href={url('/disclosures#adv')}>ADV / CRS</a>
+        <a href={url('/disclosures')}>Disclosures</a>
+        <a href={url('/disclosures#privacy')}>Privacy</a>
+        <a href={url('/disclosures#accessibility')}>Accessibility</a>
+      </div>
+    </div>
+    <div class="mini">
+      <span>© {year} Fiduciary Alliance, LLC</span>
+      <span>135 S Main Street, Suite 600 · Greenville, SC 29601</span>
+    </div>
+  </div>
+</footer>

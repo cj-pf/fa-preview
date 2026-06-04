@@ -1,0 +1,37 @@
+---
+import Logo from './Logo.astro';
+import { url } from '../utils/url';
+const currentPath = Astro.url.pathname;
+const nav = [
+  { href: '/why', label: 'Why FA' },
+  { href: '/firms', label: 'Firms' },
+  { href: '/team', label: 'Team' },
+  { href: '/insights', label: 'Insights' },
+];
+---
+<header class="site-header">
+  <div class="container row">
+    <Logo />
+    <nav class="nav">
+      {nav.map(item => (
+        <a href={url(item.href)} aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>
+      ))}
+    </nav>
+    <div class="nav-right">
+      <span class="phone">864·385·7999</span>
+      <a href={url('/contact')} class="btn btn-primary">See if you&rsquo;re a fit <span class="arrow">→</span></a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('.site-header');
+  if (header) {
+    const onScroll = () => {
+      if (window.scrollY > 80) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>
