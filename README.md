@@ -1,73 +1,59 @@
 # Fiduciary Alliance — Web
 
-The marketing website for Fiduciary Alliance, built with [Astro](https://astro.build) and deployed to **GitHub Pages** so the team can share a single URL.
+Marketing site for Fiduciary Alliance. Built with [Astro](https://astro.build), source on **GitHub** (`cj-pf/fa-preview`), hosted on **Vercel**.
 
 ## How the workflow works
 
 ```
-   Edit code here (Claude Code)        →  Push to GitHub  →  GitHub Actions builds  →  Pages serves a public URL
-   ~/Documents/Claude/Projects/             github.com/         (~1 min)              https://<you>.github.io/fa-web
-   Web Design/fa-web                        <you>/fa-web
+   Edit code here (Claude Code)  →  Push to GitHub  →  Vercel auto-deploys  →  Team visits the live URL
+                                                       (~30 seconds)
 ```
 
-Every time you push a change to the `main` branch, GitHub rebuilds the site and updates the live URL. The team always sees the latest version.
+Vercel watches the GitHub repo. Every push to `main` triggers a fresh deploy. The team always sees the latest version at the same URL.
 
 ## First-time setup
 
-### 1. Create the GitHub repo
+### 1. Get the code to GitHub
 
-- Go to **[github.com/new](https://github.com/new)**
-- Repository name: **`fa-web`** suggested (any name works — the deploy workflow auto-detects the repo name for internal links)
-- Choose **Private** (recommended while in progress — only people you invite can see the code, but the deployed site can still be public)
-- **Do not** check "Add a README" / .gitignore / license — this folder already has those
-- Click **Create repository**
+The project is already initialized as a git repo with one commit, pointing at `https://github.com/cj-pf/fa-preview.git`. You need to push that commit — three ways, pick whichever:
 
-### 2. Upload the project files
+**Option A — Web upload (no install, slowest for ongoing use)**
+On the empty GitHub repo page, click "uploading an existing file" → in Finder press ⌘⇧. to reveal hidden files → ⌘A to select all → drag into GitHub → Commit.
 
-On the empty repo page, find the small grey link **"uploading an existing file"** and click it.
+**Option B — GitHub Desktop (GUI, recommended for non-devs)**
+Download [desktop.github.com](https://desktop.github.com), sign in, **File → Add Local Repository** → select this folder → click **Push origin**. Once set up, future pushes are one click.
 
-Then in **Finder**:
+**Option C — Personal Access Token in Terminal.app (no GUI, no chat)**
+1. Generate a token at [github.com/settings/tokens?type=beta](https://github.com/settings/tokens?type=beta) — fine-grained, fa-preview repo only, Contents: read+write
+2. Open Terminal.app and run:
+   ```
+   cd "/Users/careyjohnson/Documents/Claude/Projects/Web Design/fa-web"
+   git config --global credential.helper osxkeychain
+   git push -u origin main
+   ```
+3. Username: `cj-pf` / Password: paste the token
+4. Keychain stores it; future pushes (including from Claude Code) work without prompts
 
-1. Open `~/Documents/Claude/Projects/Web Design/fa-web`
-2. Press **⌘ + Shift + .** (period) to reveal hidden files — you need `.devcontainer/`, `.github/`, and `.gitignore` to come along
-3. Press **⌘ + A** to select everything inside (you should see ~24 items)
-4. Drag the selected files into the GitHub upload area in your browser
-5. Wait until the file list shows everything (including the hidden folders that begin with `.`)
-6. Scroll down, leave the commit message as-is or write your own, click **Commit changes**
+### 2. Import the repo into Vercel
 
-### 3. Enable GitHub Pages
+You said Vercel is already connected to your GitHub account, so:
 
-- In your repo, click **Settings** (top right)
-- In the left sidebar, click **Pages**
-- Under **Build and deployment → Source**, select **GitHub Actions** (not "Deploy from a branch")
-- Save / close
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Find `cj-pf/fa-preview` in the list and click **Import**
+3. Vercel detects Astro automatically — leave the build settings alone
+4. Click **Deploy**
+5. ~30 seconds later, your live URL appears: something like `fa-preview-<random>.vercel.app` or `fa-preview.vercel.app`
 
-### 4. Watch the first deploy
+That URL is what you share with the team.
 
-- Click the **Actions** tab on your repo
-- You should see a workflow called **Deploy to GitHub Pages** running
-- Click into it to watch progress (~1 minute)
-- When it finishes, the live URL appears: `https://<your-username>.github.io/fa-web/`
+### 3. Future updates
 
-That URL is what you share with Brian, Shelby, and Caroline.
-
-## Updating the site
-
-Once it's live, the iteration loop is:
-
-1. We edit files together here in Claude Code
-2. You push the changes to GitHub (easiest way: install **[GitHub Desktop](https://desktop.github.com)** — free GUI, click-to-commit, click-to-push)
-3. GitHub Actions rebuilds within ~1 minute
-4. Team refreshes the URL and sees the new version
-
-(If you don't want to install GitHub Desktop, you can keep using the web UI: edit individual files in the GitHub web editor, or re-upload changed files via "Add file → Upload files". Slower, but no install.)
+Every push to GitHub triggers a new Vercel deploy automatically. You don't have to touch Vercel again.
 
 ## What's in here
 
 ```
 fa-web/
-├── .devcontainer/      ← Codespaces setup (optional; ignore for now)
-├── .github/workflows/  ← auto-deploy to Pages on every push
 ├── src/
 │   ├── pages/          ← one file per URL
 │   ├── components/     ← Header, Footer, Logo (used on every page)
@@ -75,9 +61,11 @@ fa-web/
 │   ├── styles/
 │   │   ├── tokens.css  ← brand colors, fonts, spacing (retheme here)
 │   │   └── global.css  ← shared component CSS
-│   └── utils/url.ts    ← helper so links work under /fa-web/ prefix
-├── astro.config.mjs
-└── package.json
+│   └── utils/url.ts    ← link helper (future-proof for custom domains)
+├── .devcontainer/      ← optional Codespaces config (ignore for now)
+├── astro.config.mjs    ← Astro config
+├── package.json        ← dependencies
+└── README.md           ← this file
 ```
 
 ### Pages currently in
@@ -100,20 +88,22 @@ fa-web/
 
 - **Brand tokens** (colors, fonts, spacing) → [`src/styles/tokens.css`](src/styles/tokens.css)
 - **Component styles** → [`src/styles/global.css`](src/styles/global.css)
-- **Page content** → the data arrays at the top of each `.astro` file in `src/pages/` are the easiest things to edit
+- **Page content** → the data arrays at the top of each `.astro` file are the easiest things to edit
 
 ## Known caveats
 
-- **Hero images** pull from Unsplash CDN URLs (placeholders). Replace with real FA brand photography before launch.
-- **Logo SVG** is the approximation from v3, not the real brand asset. Swap when you have the file.
-- **Stats** still show `$—B (tbd)` for client assets — needs real number from Brian.
-- **Qualifier form** isn't built yet — `/contact` is a placeholder with phone/email.
-- **Rename caveat** — if you rename the repo after the first deploy, the live URL changes (it always matches the repo name).
+- **Hero images** are Unsplash CDN URLs (placeholders). Replace with real FA brand photography before launch.
+- **Logo SVG** is the approximation from v3, not the real brand asset.
+- **Stats** show `$—B (tbd)` — needs the real number from Brian.
+- **Qualifier form** isn't built yet — `/contact` is a placeholder.
 
 ## Custom domain later
 
-Once you're ready to point `fiduciaryalliance.org` at this site, GitHub Pages supports custom domains under **Settings → Pages → Custom domain**. At that point the `/fa-web/` prefix goes away and the site is served at the root.
+When ready to point `fiduciaryalliance.org` at this site:
+- In Vercel: project **Settings → Domains → Add** `fiduciaryalliance.org`
+- Vercel walks you through the DNS records to add at your domain registrar
+- HTTPS is automatic via Let's Encrypt
 
 ## Eventually: Sanity (the CMS)
 
-Today, content is hardcoded in the page files — fast to iterate, but only Claude (or you in this repo) can edit it. Once design is locked, we'll wire in [Sanity](https://www.sanity.io) so non-designers (Brian, Shelby, Caroline) can edit copy and add firms / team members / blog posts through a clean editor UI. Free for our usage. The data shapes in the page files already match the schemas the Content System doc calls for, so the migration is mostly mechanical.
+Today, content is hardcoded in the page files — fast to iterate, but only Claude (or you in this repo) can edit it. Once design is locked, we'll wire in [Sanity](https://www.sanity.io) so Brian, Shelby, and Caroline can edit copy and add firms / team members / blog posts through a clean editor UI. Free for our usage. The data shapes in the page files already match the schemas the Content System doc calls for, so the migration is mostly mechanical.

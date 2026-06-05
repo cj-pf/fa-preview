@@ -1,14 +1,10 @@
 import { defineConfig } from 'astro/config';
 
-// Site URL and base path. Auto-populated by the GitHub Actions workflow
-// from the repo owner + name, so this just works once you push.
-// Override locally by setting PUBLIC_SITE_URL / PUBLIC_BASE_PATH env vars.
-const site = process.env.PUBLIC_SITE_URL || 'https://fiduciaryalliance.org';
-const base = process.env.PUBLIC_BASE_PATH || '/';
-
+// Vercel serves at the root of its assigned subdomain (e.g. fa-preview.vercel.app),
+// so no base path needed. The url() helper in src/utils/url.ts stays as-is —
+// it's a no-op when BASE_URL is "/" and gives us flexibility later (custom domain, etc.).
 export default defineConfig({
-  site,
-  base,
+  site: process.env.PUBLIC_SITE_URL || 'https://fiduciaryalliance.org',
   server: {
     port: 4321,
     host: true,
