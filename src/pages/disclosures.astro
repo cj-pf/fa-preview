@@ -1,5 +1,13 @@
 ---
 import Site from '../layouts/Site.astro';
+import { sanityClient } from '../lib/sanity';
+
+const compliance = await sanityClient.fetch(`*[_type == "compliance"][0]{
+  "advUrl": formADV.asset->url,
+  "adv1aUrl": formADV1A.asset->url,
+  "adv2bUrl": formADV2B.asset->url,
+  "crsUrl": formCRS.asset->url
+}`);
 ---
 
 <Site title="Disclosures — Fiduciary Alliance">
@@ -7,8 +15,22 @@ import Site from '../layouts/Site.astro';
   <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:var(--section);">
     <div class="container">
       <p class="eyebrow">Disclosures</p>
-      <h1 style="margin-bottom:1.5rem;">COMPLIANCE &amp; LEGAL.</h1>
-      <p class="lede">ADV / CRS, privacy policy, terms of use, accessibility statement. Compliance-reviewed content coming soon.</p>
+      <h1 style="margin-bottom:2.5rem;">COMPLIANCE &amp; LEGAL.</h1>
+      <p style="max-width:75ch;color:#8A98AE;line-height:1.7;font-size:1rem;">
+        The Fiduciary Alliance, LLC is a registered investment adviser located in Greenville, South Carolina. Advisor and its representatives are in compliance with the current filing requirements imposed upon SEC registered investment advisers by those states in which Advisor maintains clients. Advisor may only transact business in those states in which it is registered or qualifies for an exemption or exclusion from registration requirements. Advisor's web site is limited to the dissemination of general information pertaining to its advisory services, together with access to additional investment-related information, publications, and links. Accordingly, the publication of Advisor's web site on the Internet should not be construed by any consumer and/or prospective client as Advisor's solicitation to effect, or attempt to effect transactions in securities, or the rendering of personalized investment advice for compensation, over the Internet. Any testimonials or endorsements contained on this page or in videos may be given by current clients or non-clients and are not paid for. There are no conflicts of interest involved with any of those individuals' giving testimonials or endorsements.
+      </p>
+    </div>
+  </section>
+
+  <section id="adv" style="padding-bottom:var(--section);">
+    <div class="container">
+      <h2 style="margin-bottom:1rem;">SEC Filings</h2>
+      <p style="margin-bottom:2rem;color:#8A98AE;">Download our most recent disclosure documents:</p>
+
+      <p><a href={compliance?.advUrl} target="_blank" rel="noopener">Download ADV (PDF)</a></p>
+      <p style="margin-top:0.5rem;"><a href={compliance?.adv1aUrl} target="_blank" rel="noopener">Download ADV Part 1A (PDF)</a></p>
+      <p style="margin-top:0.5rem;"><a href={compliance?.adv2bUrl} target="_blank" rel="noopener">Download ADV Part 2B (PDF)</a></p>
+      <p style="margin-top:0.5rem;"><a href={compliance?.crsUrl} target="_blank" rel="noopener">Download Form CRS (PDF)</a></p>
     </div>
   </section>
 

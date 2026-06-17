@@ -6,13 +6,5 @@ interface Props {
 const { href = '/' } = Astro.props;
 ---
 <a href={url(href)} class="logo">
-  <svg class="logo-mark" viewBox="42 17 37 57" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
-    <path d="M 73.695312 27.984375 L 49.746094 51.933594 L 43.46875 45.65625 L 69.890625 19.230469 L 73.695312 23.035156 C 75.0625 24.402344 75.0625 26.617188 73.695312 27.984375 "/>
-    <path d="M 75.417969 46.40625 L 59.820312 62.003906 L 53.539062 55.726562 L 71.613281 37.652344 L 75.417969 41.457031 C 76.785156 42.824219 76.785156 45.039062 75.417969 46.40625 "/>
-    <path d="M 76.457031 65.511719 L 69.890625 72.074219 L 63.613281 65.800781 L 72.652344 56.757812 L 76.457031 60.5625 C 77.824219 61.929688 77.824219 64.144531 76.457031 65.511719 "/>
-  </svg>
-  <span class="logo-text">
-    <span class="logo-fiduciary">FIDUCIARY</span>
-    <span class="logo-alliance">ALLIANCE</span>
-  </span>
+  <img src="/logo.png" alt="Fiduciary Alliance" style="height:40px;width:auto;display:block;" />
 </a>
