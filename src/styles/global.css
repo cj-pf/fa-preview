@@ -93,10 +93,13 @@ footer.site .logo-alliance { color: #A8B0BD; }
 
 /* ============ site header (overlays hero) ============ */
 .site-header {
-  position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  background: rgba(10, 26, 36, 0.88);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 .site-header.scrolled {
-  position: sticky; top: 0;
   background: rgba(10, 26, 36, 0.88); backdrop-filter: saturate(140%) blur(12px);
   border-bottom: 1px solid var(--line);
 }

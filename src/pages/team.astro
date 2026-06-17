@@ -1,15 +1,296 @@
 ---
 import Site from '../layouts/Site.astro';
+import { sanityClient } from '../lib/sanity';
+
+const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(displayOrder asc) {
+  _id,
+  name,
+  title,
+  bio,
+  "photoUrl": photo.asset->url
+}`);
 ---
 
-<Site title="Our Team — Fiduciary Alliance">
+<Site title="Your Team — Fiduciary Alliance">
 
-  <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:var(--section);">
+  <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:3rem;">
     <div class="container">
-      <p class="eyebrow">Our team</p>
-      <h1 style="margin-bottom:1.5rem;">THE PEOPLE BEHIND FA.</h1>
-      <p class="lede">FA central team and member firm advisors. Directory coming soon.</p>
+      <h1 style="margin-bottom:1.5rem;">YOUR TEAM.</h1>
+      <p class="lede" style="max-width:55ch;">The people behind Fiduciary Alliance.</p>
     </div>
   </section>
 
+  <section style="padding-bottom:var(--section);">
+    <div class="container">
+      <div class="team-grid">
+        {team.map((member, idx) => (
+          <button class="team-card" data-modal={`bio-${idx}`} type="button">
+            <div class="team-photo-wrap">
+              {member.photoUrl && (
+                <img src={member.photoUrl} alt={member.name} class="team-photo" />
+              )}
+            </div>
+            <div class="team-name">{member.name}</div>
+            <div class="team-title">{member.title}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {team.map((member, idx) => (
+    <dialog id={`bio-${idx}`} class="bio-modal">
+      <div class="bio-content">
+        <button class="bio-close" aria-label="Close" type="button">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        {member.photoUrl && (
+          <div class="bio-photo-wrap">
+            <img src={member.photoUrl} alt={member.name} class="bio-photo" />
+          </div>
+        )}
+        <div class="bio-body">
+          <div class="bio-eyebrow">{member.title}</div>
+          <h2 class="bio-name">{member.name}</h2>
+          <div class="bio-divider"></div>
+          <div class="bio-text">{member.bio}</div>
+        </div>
+      </div>
+    </dialog>
+  ))}
+
 </Site>
+
+<script>
+  document.querySelectorAll('[data-modal]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const modalId = btn.getAttribute('data-modal');
+      if (!modalId) return;
+      const dialog = document.getElementById(modalId) as HTMLDialogElement | null;
+      if (dialog) dialog.showModal();
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('.bio-modal').forEach((dialog) => {
+    const closeBtn = dialog.querySelector('.bio-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => dialog.close());
+    }
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+</script>
+
+<style>
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 3.5rem 2.5rem;
+}
+
+.team-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  color: inherit;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+}
+
+.team-photo-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  margin-bottom: 1.5rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 16px;
+  transition: box-shadow 0.35s ease;
+}
+
+.team-card:hover .team-photo-wrap {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+}
+
+.team-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.team-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  margin: 0 0 0.35rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+
+.team-title {
+  color: #8A98AE;
+  font-size: 0.8125rem;
+  margin: 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Modal */
+.bio-modal {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: 960px;
+  width: 95%;
+  color: #fff;
+}
+
+.bio-modal::backdrop {
+  background: rgba(8, 14, 22, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.bio-modal[open] .bio-content {
+  animation: modalEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bio-content {
+  background: #0E1B29;
+  border-radius: 16px;
+  position: relative;
+  height: 85vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.bio-photo-wrap {
+  flex: 0 0 340px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  align-self: stretch;
+}
+
+.bio-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bio-body {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  padding: 3.5rem 3rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.25) transparent;
+}
+
+.bio-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bio-body::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 3px;
+}
+
+.bio-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+.bio-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bio-eyebrow {
+  color: #4FB9D3;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.bio-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.5rem;
+  margin: 0 0 1.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.bio-divider {
+  width: 40px;
+  height: 2px;
+  background: #4FB9D3;
+  margin-bottom: 1.75rem;
+}
+
+.bio-text {
+  white-space: pre-wrap;
+  line-height: 1.75;
+  color: #C5CCD8;
+  font-size: 0.9375rem;
+}
+
+.bio-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.bio-close:hover {
+  background: rgba(255,255,255,0.18);
+  transform: rotate(90deg);
+}
+
+@media (max-width: 720px) {
+  .bio-content {
+    flex-direction: column;
+    height: 90vh;
+  }
+  .bio-photo-wrap {
+    flex: 0 0 auto;
+    aspect-ratio: 4 / 3;
+  }
+  .bio-body {
+    padding: 2rem 1.5rem;
+  }
+  .bio-name {
+    font-size: 2rem;
+  }
+}
+</style>
