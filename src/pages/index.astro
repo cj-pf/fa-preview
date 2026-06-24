@@ -3,9 +3,9 @@ import Site from '../layouts/Site.astro';
 import { url } from '../utils/url';
 
 const stats = [
-  { num: '17', lbl: 'Member firms' },
+  { num: '24', lbl: 'Member firms' },
   { num: '10', lbl: 'States' },
-  { num: '25+', lbl: 'Office locations' },
+  { num: '$1.8B', lbl: 'Client assets' },
   { num: '$—B', lbl: 'Client assets (tbd)' },
 ];
 
@@ -38,7 +38,7 @@ const steps = [
     <div class="container grid">
       <div>
         <p class="eyebrow">Advisor-owned · PE-free</p>
-        <h1>TURNKEY<br/>INDEPENDENCE.<br/>TRUE PARTNERSHIP.</h1>
+        <h1>YOUR GROWTH,<br/>OUR MISSION.</h1>
         <div class="actions">
           <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href={url('/how-it-works')}>How it works</a>
@@ -229,7 +229,7 @@ const steps = [
 
         <aside class="network-list">
           <span class="label">Our footprint</span>
-          <h3>17 firms across 10 states.</h3>
+          <h3>24 firms across 10 states.</h3>
           <ul class="state-list">
             {stateList.map(s => (
               <li>
