@@ -3,18 +3,21 @@ import Logo from './Logo.astro';
 import { url } from '../utils/url';
 const currentPath = Astro.url.pathname;
 const nav = [
+  { href: '/', label: 'Home' },
   { href: '/why', label: 'Why FA' },
   { href: '/firms', label: 'Firms' },
   { href: '/team', label: 'Team' },
   { href: '/insights', label: 'Insights' },
 ];
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 <header class="site-header">
   <div class="container row">
     <Logo />
     <nav class="nav">
       {nav.map(item => (
-        <a href={url(item.href)} aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>
+        <a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
       ))}
     </nav>
     <div class="nav-right">
