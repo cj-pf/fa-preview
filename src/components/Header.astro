@@ -2,9 +2,17 @@
 import Logo from './Logo.astro';
 import { url } from '../utils/url';
 const currentPath = Astro.url.pathname;
-const nav = [
+type NavChild = { href: string; label: string };
+type NavItem = { href?: string; label: string; children?: NavChild[] };
+const nav: NavItem[] = [
   { href: '/', label: 'Home' },
-  { href: '/why', label: 'Why FA' },
+  {
+    label: 'Why FA',
+    children: [
+      { href: '/for-ria-owners', label: 'For RIA Owners' },
+      { href: '/for-iars', label: 'For Advisors' },
+    ],
+  },
   { href: '/firms', label: 'Firms' },
   { href: '/team', label: 'Team' },
   { href: '/insights', label: 'Insights' },
@@ -17,7 +25,31 @@ const isActive = (href: string) =>
     <Logo />
     <nav class="nav">
       {nav.map(item => (
-        <a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+        item.children ? (
+          <div class="nav-item has-dropdown">
+            <span class="nav-trigger" aria-current={item.children.some(c => isActive(c.href)) ? 'page' : undefined}>
+              <span class="nav-label">{item.label}</span>
+              <button
+                type="button"
+                class="nav-caret"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-label={`Open ${item.label} menu`}
+              >
+                <span class="caret" aria-hidden="true">▾</span>
+              </button>
+            </span>
+            <ul class="dropdown" role="menu">
+              {item.children.map(c => (
+                <li role="none">
+                  <a role="menuitem" href={url(c.href)} aria-current={isActive(c.href) ? 'page' : undefined}>{c.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <a href={url(item.href!)} aria-current={isActive(item.href!) ? 'page' : undefined}>{item.label}</a>
+        )
       ))}
     </nav>
     <div class="nav-right">
@@ -36,5 +68,20 @@ const isActive = (href: string) =>
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
+    const carets = header.querySelectorAll<HTMLButtonElement>('.nav-caret');
+    const closeAll = (except?: HTMLButtonElement) => {
+      carets.forEach(c => { if (c !== except) c.setAttribute('aria-expanded', 'false'); });
+    };
+    carets.forEach(caret => {
+      caret.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = caret.getAttribute('aria-expanded') === 'true';
+        closeAll(caret);
+        caret.setAttribute('aria-expanded', open ? 'false' : 'true');
+      });
+    });
+    document.addEventListener('click', () => closeAll());
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
   }
 </script>

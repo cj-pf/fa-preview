@@ -23,16 +23,19 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
     <div class="container">
       <h1 style="margin-bottom:1.5rem;">24 FIRMS. 10 STATES.</h1>
 
-      <div style="margin-top:5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;">
+      <div class="firm-grid">
         {firms.map((firm) => (
-          <article style="position:relative;border:1px solid rgba(255,255,255,0.12);padding:1.25rem 1.5rem 1.75rem;border-radius:4px;min-height:11rem;">
-            <h2 style="margin:0 0 0.5rem;font-size:1.125rem;letter-spacing:0.04em;line-height:1.3;padding-right:5rem;">{firm.name}</h2>
-            {firm.streetAddress && <p style="margin:0;opacity:0.65;font-size:0.875rem;line-height:1.4;">{firm.streetAddress}</p>}
-            <p style="margin:0;opacity:0.65;font-size:0.875rem;line-height:1.4;">{firm.city}, {firm.state}{firm.zipCode ? ` ${firm.zipCode}` : ''}</p>
-            {firm.phone && <p style="margin:0.4rem 0 0;opacity:0.65;font-size:0.875rem;"><a href={`tel:${firm.phone}`} style="color:inherit;text-decoration:none;">{firm.phone}</a></p>}
-            {firm.shortDescription && <p style="margin:0.75rem 0 0;font-size:0.9rem;line-height:1.5;">{firm.shortDescription}</p>}
-            {firm.website && <p style="margin:0.75rem 0 0;font-size:0.875rem;"><a href={firm.website} target="_blank" rel="noopener" style="color:inherit;">Visit website →</a></p>}
-            {firm.logoUrl && <img src={firm.logoUrl} alt={`${firm.name} logo`} style="position:absolute;bottom:1rem;right:1rem;max-width:80px;max-height:48px;object-fit:contain;opacity:0.9;" />}
+          <article class={`firm-card${firm.website ? ' is-linked' : ''}`}>
+            <h2 class="firm-name">
+              {firm.website ? (
+                <a href={firm.website} target="_blank" rel="noopener" class="firm-link">{firm.name}</a>
+              ) : firm.name}
+            </h2>
+            {firm.streetAddress && <p class="firm-meta">{firm.streetAddress}</p>}
+            <p class="firm-meta">{firm.city}, {firm.state}{firm.zipCode ? ` ${firm.zipCode}` : ''}</p>
+            {firm.phone && <p class="firm-meta firm-phone-line"><a href={`tel:${firm.phone}`} class="firm-phone">{firm.phone}</a></p>}
+            {firm.shortDescription && <p class="firm-desc">{firm.shortDescription}</p>}
+            {firm.logoUrl && <img src={firm.logoUrl} alt={`${firm.name} logo`} class="firm-logo" />}
           </article>
         ))}
       </div>
@@ -40,3 +43,79 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
   </section>
 
 </Site>
+
+<style>
+.firm-grid {
+  margin-top: 5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.firm-card {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1.25rem 1.5rem 1.75rem;
+  border-radius: 4px;
+  min-height: 11rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.firm-card.is-linked { cursor: pointer; }
+
+.firm-card.is-linked:hover,
+.firm-card.is-linked:focus-within {
+  border-color: var(--brand-teal-bright);
+  box-shadow: 0 8px 28px rgba(46, 137, 181, 0.22);
+  background: rgba(46, 137, 181, 0.04);
+}
+
+.firm-name {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  padding-right: 5rem;
+}
+
+.firm-link { color: inherit; text-decoration: none; }
+.firm-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.firm-link:focus-visible { outline: 2px solid var(--brand-teal-bright); outline-offset: 2px; }
+
+.firm-meta {
+  margin: 0;
+  opacity: 0.65;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.firm-phone-line { margin-top: 0.4rem; }
+.firm-phone {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+}
+.firm-phone:hover { color: var(--brand-teal-bright); }
+
+.firm-desc {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.firm-logo {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  max-width: 80px;
+  max-height: 48px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+</style>

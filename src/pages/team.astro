@@ -7,7 +7,7 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(displayO
   name,
   title,
   bio,
-  "photoUrl": photo.asset->url
+  "photoUrl": photo.asset->url + "?w=800&auto=format&q=80"
 }`);
 ---
 
@@ -27,7 +27,7 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(displayO
           <button class="team-card" data-modal={`bio-${idx}`} type="button">
             <div class="team-photo-wrap">
               {member.photoUrl && (
-                <img src={member.photoUrl} alt={member.name} class="team-photo" />
+                <img src={member.photoUrl} alt={member.name} class="team-photo" decoding="async" />
               )}
             </div>
             <div class="team-name">{member.name}</div>
@@ -48,7 +48,7 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(displayO
         </button>
         {member.photoUrl && (
           <div class="bio-photo-wrap">
-            <img src={member.photoUrl} alt={member.name} class="bio-photo" />
+            <img src={member.photoUrl} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
           </div>
         )}
         <div class="bio-body">
