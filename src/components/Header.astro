@@ -2,15 +2,15 @@
 import Logo from './Logo.astro';
 import { url } from '../utils/url';
 const currentPath = Astro.url.pathname;
-type NavChild = { href: string; label: string };
-type NavItem = { href?: string; label: string; children?: NavChild[] };
+type NavChild = { href: string; label: string; external?: boolean };
+type NavItem = { href?: string; label: string; external?: boolean; children?: NavChild[] };
 const nav: NavItem[] = [
   { href: '/', label: 'Home' },
   {
     label: 'Why FA',
     children: [
-      { href: '/for-ria-owners', label: 'For RIA Owners' },
-      { href: '/for-iars', label: 'For Advisors' },
+      { href: '/why-fa/breakaway', label: 'Breakaway' },
+      { href: '/why-fa/ria-owners', label: 'RIA Owners' },
     ],
   },
   { href: '/firms', label: 'Firms' },
@@ -47,6 +47,8 @@ const isActive = (href: string) =>
               ))}
             </ul>
           </div>
+        ) : item.external ? (
+          <a href={item.href!} target="_blank" rel="noopener">{item.label}</a>
         ) : (
           <a href={url(item.href!)} aria-current={isActive(item.href!) ? 'page' : undefined}>{item.label}</a>
         )
@@ -54,7 +56,7 @@ const isActive = (href: string) =>
     </nav>
     <div class="nav-right">
       <span class="phone">864·385·7999</span>
-      <a href={url('/contact')} class="btn btn-primary">See if you&rsquo;re a fit <span class="arrow">→</span></a>
+      <a href="https://calendly.com/boughner" target="_blank" rel="noopener" class="btn btn-primary">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
     </div>
   </div>
 </header>

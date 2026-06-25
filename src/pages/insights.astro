@@ -1,15 +1,200 @@
 ---
 import Site from '../layouts/Site.astro';
+
+const CHANNEL_ID = 'UCERu76vbIZfLg8BIpvUT-tQ';
+const FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+
+type Video = { id: string; title: string; desc: string; thumb: string };
+
+function decodeHtml(str: string): string {
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'");
+}
+
+function shortDesc(d: string): string {
+  // Stop at first double-newline (e.g. before "Chapters" sections), then truncate.
+  const firstPara = d.split(/\n\s*\n/)[0].trim();
+  if (firstPara.length > 200) return firstPara.slice(0, 197) + '…';
+  return firstPara;
+}
+
+async function fetchVideos(): Promise<Video[]> {
+  try {
+    const res = await fetch(FEED_URL);
+    if (!res.ok) return [];
+    const xml = await res.text();
+    const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)].map(m => m[1]);
+    return entries
+      .map(entry => {
+        const id = entry.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1] || '';
+        const titleRaw = entry.match(/<title>([\s\S]*?)<\/title>/)?.[1] || '';
+        const descRaw = entry.match(/<media:description>([\s\S]*?)<\/media:description>/)?.[1] || '';
+        const thumb = entry.match(/<media:thumbnail url="(.*?)"/)?.[1] || `https://i3.ytimg.com/vi/${id}/hqdefault.jpg`;
+        return {
+          id,
+          title: decodeHtml(titleRaw).trim(),
+          desc: shortDesc(decodeHtml(descRaw)),
+          thumb,
+        };
+      })
+      .filter(v => v.id);
+  } catch (e) {
+    console.error('Failed to fetch YouTube feed:', e);
+    return [];
+  }
+}
+
+const videos = await fetchVideos();
 ---
 
 <Site title="Insights — Fiduciary Alliance">
 
-  <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:var(--section);">
+  <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:2rem;">
     <div class="container">
       <p class="eyebrow">Insights</p>
       <h1 style="margin-bottom:1.5rem;">PERSPECTIVES FROM THE ALLIANCE.</h1>
-      <p class="lede">Blog and resource library coming when there are 6–8 publishable articles ready. An empty blog hurts more than no blog at all.</p>
+      <p class="lede" style="margin-bottom:0;">Conversations, walkthroughs, and ideas from the Fiduciary Alliance YouTube channel.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:2rem;padding-bottom:var(--section);">
+    <div class="container">
+      {videos.length === 0 ? (
+        <p class="lede">Videos coming soon. <a href="https://www.youtube.com/@FiduciaryAlliance" target="_blank" rel="noopener" style="color:var(--brand-teal-bright);">Visit the channel →</a></p>
+      ) : (
+        <>
+          <div class="video-grid">
+            {videos.map(v => (
+              <article class="video-card">
+                <button class="video-thumb" type="button" data-video-id={v.id} aria-label={`Play: ${v.title}`}>
+                  <img src={v.thumb} alt="" loading="lazy" decoding="async" />
+                  <span class="video-play" aria-hidden="true">
+                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="28" cy="28" r="28" fill="rgba(0,0,0,0.72)"/>
+                      <path d="M22 18l16 10-16 10V18z" fill="#fff"/>
+                    </svg>
+                  </span>
+                </button>
+                <h3 class="video-title">{v.title}</h3>
+                {v.desc && <p class="video-desc">{v.desc}</p>}
+              </article>
+            ))}
+          </div>
+          <div class="video-more">
+            <a class="btn btn-ghost" href="https://www.youtube.com/@FiduciaryAlliance" target="_blank" rel="noopener">More <span class="arrow">→</span></a>
+          </div>
+        </>
+      )}
     </div>
   </section>
 
 </Site>
+
+<script>
+  function setupVideoCards() {
+    document.querySelectorAll<HTMLButtonElement>('.video-thumb').forEach(btn => {
+      if (btn.dataset.ready === '1') return;
+      btn.dataset.ready = '1';
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-video-id');
+        if (!id) return;
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.title = 'YouTube video player';
+        iframe.className = 'video-iframe';
+        btn.replaceWith(iframe);
+      });
+    });
+  }
+  setupVideoCards();
+  document.addEventListener('astro:page-load', setupVideoCards);
+</script>
+
+<style>
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+@media (max-width: 900px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .video-grid { grid-template-columns: 1fr; } }
+
+.video-card { display: flex; flex-direction: column; gap: 0.875rem; }
+
+.video-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.video-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.video-thumb:hover { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4); transform: translateY(-2px); }
+.video-thumb:hover img { transform: scale(1.05); }
+.video-thumb:focus-visible {
+  outline: 2px solid var(--brand-teal-bright);
+  outline-offset: 3px;
+}
+
+.video-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.video-play svg circle { transition: fill 0.2s ease; }
+.video-thumb:hover .video-play svg circle { fill: var(--brand-teal-bright); }
+
+.video-iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 8px;
+  display: block;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.video-title {
+  font-family: var(--display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.video-desc {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: none;
+}
+
+.video-more {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+</style>

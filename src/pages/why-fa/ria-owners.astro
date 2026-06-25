@@ -1,0 +1,48 @@
+---
+import Site from '../../layouts/Site.astro';
+import WhyFaShared from '../../components/WhyFaShared.astro';
+
+const pains = [
+  'WEARING TOO MANY HATS — GROWTH HAS STALLED',
+  'PLATEAUED AND NEED BETTER COACHING AND STRATEGY',
+  'NEED MORE SCALE WITHOUT GIVING UP CONTROL',
+  'MISSING THE INFRASTRUCTURE TO COMPETE WITH LARGER FIRMS',
+  'DOING IT ALONE WHEN YOU DON’T HAVE TO',
+];
+---
+
+<Site title="Keep Your Firm. Gain Leverage. — Fiduciary Alliance">
+
+  <section class="hero hero-ria">
+    <div class="container grid">
+      <div>
+        <p class="eyebrow">For RIA Owners</p>
+        <h1>KEEP YOUR FIRM.<br/>KEEP YOUR CLIENTS.<br/>KEEP YOUR NAME<br/>ON THE DOOR.</h1>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="#how-a-partnership-works">How a partnership works</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <p class="lede">A true partnership for independent RIAs — not a tuck-in, not an acquisition. Gain leverage, give up nothing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="pains">
+        <div>
+          <p class="eyebrow">If any of this sounds familiar</p>
+          <h2>YOU&rsquo;VE HIT A&nbsp;CEILING.</h2>
+        </div>
+        <ul class="pain-list">
+          {pains.map(p => <li>{p}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <WhyFaShared />
+
+</Site>

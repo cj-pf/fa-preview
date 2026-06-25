@@ -3,9 +3,9 @@ import Site from '../layouts/Site.astro';
 import { url } from '../utils/url';
 
 const stats = [
-  { num: '24', lbl: 'Member firms' },
-  { num: '10', lbl: 'States' },
-  { num: '$1.8B', lbl: 'Assets under mgmt' },
+  { to: 24,  decimals: 0, prefix: '',  suffix: '',  lbl: 'Member firms' },
+  { to: 10,  decimals: 0, prefix: '',  suffix: '',  lbl: 'States' },
+  { to: 1.8, decimals: 1, prefix: '$', suffix: 'B', lbl: 'Assets under mgmt' },
 ];
 
 const stateList = [
@@ -39,15 +39,15 @@ const steps = [
     </video>
     <div class="container grid">
       <div>
-        <p class="eyebrow">Advisor-owned · PE-free</p>
+        <p class="eyebrow">Advisor-owned · No private equity</p>
         <h1>YOUR GROWTH,<br/>OUR MISSION.</h1>
         <div class="actions">
-          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href={url('/how-it-works')}>How it works</a>
         </div>
       </div>
       <div class="hero-aside">
-        <p class="lede">A network of independent RIAs built to grow — not to be sold.</p>
+        <p class="lede">A network of independent RIAs designed to grow.</p>
       </div>
     </div>
   </section>
@@ -55,9 +55,15 @@ const steps = [
   <section class="stats">
     <div class="container">
       <div class="row">
-        {stats.map(s => (
-          <div class="stat">
-            <div class="num">{s.num}</div>
+        {stats.map((s, i) => (
+          <div class="stat anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
+            <div
+              class="num"
+              data-counter-to={s.to}
+              data-counter-decimals={s.decimals}
+              data-counter-prefix={s.prefix}
+              data-counter-suffix={s.suffix}
+            >{s.prefix}0{s.decimals > 0 ? '.' + '0'.repeat(s.decimals) : ''}{s.suffix}</div>
             <div class="lbl">{s.lbl}</div>
           </div>
         ))}
@@ -67,18 +73,18 @@ const steps = [
 
   <section>
     <div class="container">
-      <div class="section-head">
+      <div class="section-head anim-hidden">
         <p class="eyebrow">Choose your path</p>
         <h2>TWO WAYS IN.<br/>ONE ALLIANCE BEHIND YOU.</h2>
       </div>
       <div class="grid-2">
-        <a class="persona-card" href={url('/for-iars')}>
+        <a class="persona-card anim-hidden" style="--anim-delay: 100ms" href={url('/why-fa/breakaway')}>
           <span class="tag">For IARs &amp; RRs</span>
           <h3>BREAK AWAY.<br/>WITHOUT STARTING OVER.</h3>
           <p>A turnkey platform — compliance, ops, tech, peers — so you can go independent without rebuilding from scratch.</p>
           <span class="more">For advisors <span class="arrow">→</span></span>
         </a>
-        <a class="persona-card" href={url('/for-ria-owners')}>
+        <a class="persona-card anim-hidden" style="--anim-delay: 200ms" href={url('/why-fa/ria-owners')}>
           <span class="tag">For RIA owners</span>
           <h3>KEEP YOUR FIRM.<br/>GAIN LEVERAGE.</h3>
           <p>A true partnership for independent RIAs. Not a tuck-in. Not an acquisition. Keep what you built.</p>
@@ -88,14 +94,21 @@ const steps = [
     </div>
   </section>
 
+  <section class="visual-break visual-break-1">
+    <div class="visual-break-content">
+      <h2 class="anim-hidden">INDEPENDENCE.<br/>BUILT TO LAST.</h2>
+      <p class="anim-hidden" style="--anim-delay: 120ms">Your firm. Your clients. Your future.</p>
+    </div>
+  </section>
+
   <section class="surface-elev">
     <div class="container">
-      <div class="section-head" style="max-width:840px;">
+      <div class="section-head anim-hidden" style="max-width:840px;">
         <p class="eyebrow">What we are. What we&rsquo;re not.</p>
         <h2>AN ALLIANCE — NOT A ROLLUP.</h2>
       </div>
       <div class="contrast">
-        <div class="we-are">
+        <div class="we-are anim-hidden" data-anim-from="left">
           <h4>We are</h4>
           <ul>
             <li>ADVISOR-OWNED</li>
@@ -104,7 +117,7 @@ const steps = [
             <li>GROWTH-FOCUSED</li>
           </ul>
         </div>
-        <div class="we-arent">
+        <div class="we-arent anim-hidden" data-anim-from="right">
           <h4>We&rsquo;re not</h4>
           <ul>
             <li>PE-BACKED</li>
@@ -119,11 +132,11 @@ const steps = [
 
   <section>
     <div class="container">
-      <div class="section-head">
+      <div class="section-head anim-hidden">
         <p class="eyebrow">A national network</p>
         <h2>24 FIRMS. 10 STATES.<br/>ONE ALLIANCE.</h2>
       </div>
-      <div class="network-block">
+      <div class="network-block anim-hidden" style="--anim-delay: 100ms">
         <div class="network-map">
           <svg class="us-map" viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg" aria-label="Map of Fiduciary Alliance member firms across the United States">
             <g class="us-states">
@@ -227,11 +240,14 @@ const steps = [
             <span><span class="legend-swatch office"></span>Office</span>
             <span><span class="legend-swatch hq"></span>Headquarters · Greenville, SC</span>
           </div>
+
+          <div class="firm-strip">
+            {firms.map((name, i) => <div class="firm-tile anim-hidden" style={`--anim-delay: ${i * 80}ms`}>{name}</div>)}
+          </div>
         </div>
 
         <aside class="network-list">
           <span class="label">Our footprint</span>
-          <h3>24 firms across 10 states.</h3>
           <ul class="state-list">
             {stateList.map(s => (
               <li>
@@ -243,21 +259,25 @@ const steps = [
           <a class="btn-link more" href={url('/firms')}>Explore member firms →</a>
         </aside>
       </div>
-      <div class="firm-strip">
-        {firms.map(name => <div class="firm-tile">{name}</div>)}
-      </div>
+    </div>
+  </section>
+
+  <section class="visual-break visual-break-2">
+    <div class="visual-break-content">
+      <h2 class="anim-hidden">24 FIRMS.<br/>ONE ALLIANCE.</h2>
+      <p class="anim-hidden" style="--anim-delay: 120ms">Growing together across 10 states.</p>
     </div>
   </section>
 
   <section class="surface-elev">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head anim-hidden">
         <p class="eyebrow">How a partnership works</p>
         <h2>FOUR STEPS. NO SURPRISES.</h2>
       </div>
       <div class="steps">
-        {steps.map(s => (
-          <div class="step">
+        {steps.map((s, i) => (
+          <div class="step anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
             <div class="num">{s.num}</div>
             <h3>{s.title}</h3>
             <p>{s.body}</p>
@@ -269,7 +289,7 @@ const steps = [
 
   <section>
     <div class="container">
-      <div class="quote">
+      <div class="quote anim-hidden">
         <div class="mark">&ldquo;</div>
         <div class="text">We joined the alliance and still own our firm. That sentence doesn&rsquo;t exist anywhere else in this industry.</div>
         <div class="attrib">
@@ -283,12 +303,19 @@ const steps = [
     </div>
   </section>
 
+  <section class="visual-break visual-break-3">
+    <div class="visual-break-content">
+      <h2 class="anim-hidden">READY TO SEE<br/>IF YOU&rsquo;RE A FIT?</h2>
+      <p class="anim-hidden" style="--anim-delay: 120ms">It starts with one conversation.</p>
+    </div>
+  </section>
+
   <section class="cta-strip">
     <div class="container">
       <div class="cta-row">
-        <h2>CURIOUS WHAT THIS COULD LOOK LIKE FOR YOU?</h2>
-        <div class="actions">
-          <a class="btn btn-primary" href={url('/contact')}>See if you&rsquo;re a fit <span class="arrow">→</span></a>
+        <h2 class="anim-hidden">CURIOUS WHAT THIS COULD LOOK LIKE FOR YOU?</h2>
+        <div class="actions anim-hidden" style="--anim-delay: 120ms">
+          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href={url('/firms')}>Explore firms</a>
         </div>
       </div>
@@ -296,3 +323,69 @@ const steps = [
   </section>
 
 </Site>
+
+<script>
+  function setupHomeAnimations() {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.anim-hidden').forEach(el => el.classList.add('anim-visible'));
+      return;
+    }
+
+    const animObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        animObserver.unobserve(el);
+        el.classList.add('anim-visible');
+        const cleanup = () => el.classList.remove('anim-hidden', 'anim-visible');
+        el.addEventListener('transitionend', cleanup, { once: true });
+        window.setTimeout(cleanup, 1800);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    // Above-the-fold elements: reveal immediately (no entry animation) to avoid a flash.
+    // Below-the-fold elements: observe and animate as they scroll in.
+    const vh = window.innerHeight;
+    document.querySelectorAll<HTMLElement>('.anim-hidden').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < vh && rect.bottom > 0;
+      if (inView) {
+        el.classList.remove('anim-hidden');
+      } else {
+        animObserver.observe(el);
+      }
+    });
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        counterObserver.unobserve(el);
+        animateCounter(el);
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll<HTMLElement>('[data-counter-to]').forEach(el => counterObserver.observe(el));
+  }
+
+  function animateCounter(el: HTMLElement) {
+    const target = parseFloat(el.dataset.counterTo || '0');
+    const decimals = parseInt(el.dataset.counterDecimals || '0', 10);
+    const prefix = el.dataset.counterPrefix || '';
+    const suffix = el.dataset.counterSuffix || '';
+    const duration = 1000;
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = target * eased;
+      el.textContent = `${prefix}${value.toFixed(decimals)}${suffix}`;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  setupHomeAnimations();
+  document.addEventListener('astro:page-load', setupHomeAnimations);
+</script>

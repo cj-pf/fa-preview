@@ -1,0 +1,48 @@
+---
+import Site from '../../layouts/Site.astro';
+import WhyFaShared from '../../components/WhyFaShared.astro';
+
+const pains = [
+  'COMPLIANCE BOTTLENECK SLOWING YOU DOWN',
+  'CORPORATE MANDATES YOU CAN’T OVERRIDE',
+  'PAYOUTS CAPPED WELL BELOW MARKET',
+  'BEING TREATED LIKE A DISTRIBUTION CHANNEL',
+  'MARKETING BUILT FOR THE FIRM, NOT FOR YOU',
+];
+---
+
+<Site title="Break Away Without Starting Over — Fiduciary Alliance">
+
+  <section class="hero hero-iar">
+    <div class="container grid">
+      <div>
+        <p class="eyebrow">For Advisors</p>
+        <h1>BREAK AWAY<br/>WITHOUT STARTING&nbsp;OVER.</h1>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="#how-a-partnership-works">How a partnership works</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <p class="lede">Go independent without rebuilding from scratch. Turnkey platform, compliance, ops, tech, and peers — ready on day one.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="pains">
+        <div>
+          <p class="eyebrow">If any of this sounds familiar</p>
+          <h2>YOU&rsquo;VE OUTGROWN WHERE YOU&nbsp;ARE.</h2>
+        </div>
+        <ul class="pain-list">
+          {pains.map(p => <li>{p}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <WhyFaShared />
+
+</Site>

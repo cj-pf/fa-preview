@@ -1,0 +1,276 @@
+---
+const comparison = [
+  { label: 'Your brand', them: 'Replaced or co-branded', us: 'YOURS, UNCHANGED' },
+  { label: 'Your clients', them: 'Theirs at exit', us: 'ALWAYS YOURS' },
+  { label: 'Your equity', them: 'Sold for cash + earnout', us: 'YOU STAY THE OWNER' },
+  { label: 'Exit pressure', them: 'Built to flip in 5–7 yrs', us: 'LONG-TERM HOLD' },
+  { label: 'Investment freedom', them: 'Mandated models', us: 'YOU CHOOSE' },
+  { label: 'Ownership', them: 'PE-backed', us: 'ADVISOR-OWNED' },
+];
+
+const outcomes = [
+  { num: '01', title: 'RATIONAL COMPLIANCE THAT WORKS FOR YOU.' },
+  { num: '02', title: 'FLEXIBILITY IN TECHNOLOGY.' },
+  { num: '03', title: 'AI-DRIVEN TOOLS AND SUPPORT.' },
+  { num: '04', title: 'OWN YOUR BOOK AND BUILD YOUR OWN EQUITY.' },
+  { num: '05', title: 'A PEER NETWORK — YOU’RE NOT ALONE.' },
+  { num: '06', title: 'SUCCESSION OPTIONALITY, GROWTH TAILWIND, AND MARKETING SUPPORT.' },
+];
+
+type ServiceItem = { name: string; desc: string };
+type ServiceTab = {
+  id: string;
+  title: string;
+  summary: string;
+  icon: string;
+  proofNum: string;
+  proofLabel: string;
+  items: ServiceItem[];
+};
+
+const serviceTabs: ServiceTab[] = [
+  {
+    id: 'technology',
+    title: 'Technology',
+    summary: 'Institutional-grade tools — configured, supported, and ready to go on day one.',
+    icon: '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+    proofNum: '7',
+    proofLabel: 'Tech platforms',
+    items: [
+      { name: 'Black Diamond Performance / Account Reporting', desc: 'Institutional-grade portfolio reporting and performance analytics that elevate your client presentations and streamline account management.' },
+      { name: 'By All Account Aggregation', desc: 'Comprehensive account aggregation across all client assets, providing a complete financial picture for better planning and advisory services.' },
+      { name: 'Salentica Salesforce CRM', desc: 'Purpose-built wealth management CRM that helps you systematize client relationships, track opportunities, and scale your practice efficiently.' },
+      { name: 'Egnyte Cloud Client File System', desc: 'Secure, compliant cloud storage that enables seamless document management and team collaboration from anywhere.' },
+      { name: 'Office 365 Suite and Email', desc: 'Enterprise-level productivity tools including email, Teams, and the complete Microsoft Office suite for professional client communications.' },
+      { name: 'Preferred Pricing on Fintech Software', desc: 'Access to negotiated pricing on leading financial technology platforms, reducing your overhead and improving profit margins.' },
+      { name: 'Ongoing Training and Support', desc: 'Continuous education and technical support ensuring you maximize the value of every technology platform we provide.' },
+    ],
+  },
+  {
+    id: 'operations',
+    title: 'Operations',
+    summary: 'We handle the back office so you can focus on clients — not paperwork.',
+    icon: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+    proofNum: '8',
+    proofLabel: 'Back-office capabilities',
+    items: [
+      { name: 'Quarterly Fees & Billing', desc: 'Quarterly fee calculation, billing, and collection processes that eliminate administrative burden and ensure consistent cash flow.' },
+      { name: 'Initial Training for Support Staff', desc: 'Comprehensive onboarding and training for your team on FA systems and custodial platforms.' },
+      { name: 'Docusign Account Opening Process', desc: 'Streamlined digital account opening that enhances client experience while reducing paperwork and processing time.' },
+      { name: 'Multiple Custodial Access', desc: 'Pre-established relationships with multiple custodians giving you flexibility in serving clients and negotiating better terms.' },
+      { name: 'Operations Backup', desc: 'Experienced operations team ready to support your practice during staff transitions, vacations, or unexpected absences.' },
+      { name: 'Transition Support', desc: 'White-glove onboarding assistance that handles the heavy lifting of moving your practice, minimizing disruption to your business.' },
+      { name: 'Alternative Investments Access (RIA)', desc: 'Access to institutional alternative investment platforms and due diligence, expanding your ability to serve sophisticated clients.' },
+      { name: 'Integration & Workflow Automation', desc: 'Seamless integration between platforms with automated workflows that eliminate redundant data entry and reduce errors.' },
+    ],
+  },
+  {
+    id: 'compliance',
+    title: 'Compliance',
+    summary: 'Full regulatory oversight — so you can focus on what you do best and never lose sleep over an audit.',
+    icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+    proofNum: '12',
+    proofLabel: 'Regulatory safeguards',
+    items: [
+      { name: 'Overall Compliance Oversight', desc: 'Comprehensive regulatory supervision that protects your practice and allows you to focus on serving clients rather than compliance minutiae.' },
+      { name: 'SEC and FINRA Registrations', desc: 'Expert handling of all regulatory registrations, filings, and ongoing requirements.' },
+      { name: 'Audits', desc: 'Professional preparation and representation during regulatory examinations, minimizing disruption and ensuring favorable outcomes.' },
+      { name: 'Policy & Procedures Manual', desc: 'Comprehensive, regularly updated compliance manual tailored to wealth management practices.' },
+      { name: 'Code of Ethics Manual', desc: 'Clear ethical guidelines and personal trading policies that protect both your clients and your reputation.' },
+      { name: 'Email & Social Media Archiving & Review', desc: 'Automated capture and monitoring of all electronic communications ensuring compliance with FINRA and SEC record-keeping requirements.' },
+      { name: 'E&O Insurance', desc: 'Group errors and omissions coverage providing comprehensive liability protection at preferred rates.' },
+      { name: 'Annual Attestations', desc: 'Systematic management of all required annual certifications and attestations.' },
+      { name: 'Brokerage Account Review', desc: 'Regular review of client account activity to identify and address potential compliance issues proactively.' },
+      { name: 'Smart RIA Compliance Software', desc: 'Industry-leading compliance platform that automates workflows, document management, and regulatory reporting.' },
+      { name: 'Chief Compliance Officer Support', desc: 'Direct access to an experienced CCO for guidance on complex compliance matters and regulatory inquiries.' },
+      { name: 'ADV Updates & Filing', desc: 'Expert preparation and submission of all Form ADV updates and amendments.' },
+    ],
+  },
+  {
+    id: 'growth-coaching',
+    title: 'Growth Coaching',
+    summary: 'A proven system designed to drive 20–30% annual growth — with the coaching, tools, and network to back it up.',
+    icon: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+    proofNum: '20–30%',
+    proofLabel: 'Annual growth',
+    items: [
+      { name: '5 Pillar Growth Plan', desc: 'Proven framework that systematically drives 20–30% annual growth through strategic client acquisition and relationship development.' },
+      { name: 'Book of Business Segmentation and Optimization', desc: 'Data-driven analysis to identify your best clients, optimize service models, and increase profitability per relationship.' },
+      { name: 'Client Advocacy / Referral Development', desc: 'Structured programs that transform satisfied clients into active advocates, creating predictable referral-based growth.' },
+      { name: 'Next-Gen Outreach Strategies', desc: 'Modern marketing and engagement approaches designed to attract and retain the next generation of high-net-worth clients.' },
+      { name: 'COI Referral Strategy', desc: 'Systematic approach to building and leveraging relationships with Centers of Influence who consistently refer ideal clients.' },
+      { name: '1v1 Planning & Coaching Sessions', desc: 'Regular personalized coaching with experienced advisors who have successfully scaled their practices.' },
+      { name: 'Access to the FA Advisory Network', desc: 'Collaborative community of growth-focused advisors sharing best practices, strategies, and support.' },
+      { name: 'Workshop / Seminar System', desc: 'Turnkey educational events and marketing programs that position you as the local expert while generating qualified prospects.' },
+      { name: 'Talent Strategy', desc: 'Recruiting and staffing processes to help you acquire and maintain the best team.' },
+    ],
+  },
+];
+---
+
+<section class="surface-elev">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">The difference</p>
+      <h2>AN ALLIANCE — NOT AN AGGREGATOR.</h2>
+    </div>
+    <table class="ctable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Typical aggregator</th>
+          <th class="col-us-head">Fiduciary Alliance</th>
+        </tr>
+      </thead>
+      <tbody>
+        {comparison.map(row => (
+          <tr>
+            <td class="row-label">{row.label}</td>
+            <td class="col-them">{row.them}</td>
+            <td class="col-us">{row.us}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">The FA difference</p>
+      <h2>WHAT CHANGES WHEN YOU JOIN.</h2>
+    </div>
+    <div class="outcomes">
+      {outcomes.map(o => (
+        <div class="outcome">
+          <div class="num">{o.num}</div>
+          <h3>{o.title}</h3>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="services-section">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">The platform</p>
+      <h2>WHAT WE PROVIDE.</h2>
+    </div>
+    <div class="services-tabs">
+      <div class="tabs-nav" role="tablist" aria-label="Service categories">
+        {serviceTabs.map((tab, i) => (
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id={`tab-${tab.id}`}
+            aria-controls={`panel-${tab.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >{tab.title}</button>
+        ))}
+      </div>
+      {serviceTabs.map((tab, i) => (
+        <div
+          class="tab-panel"
+          role="tabpanel"
+          id={`panel-${tab.id}`}
+          aria-labelledby={`tab-${tab.id}`}
+          hidden={i !== 0}
+        >
+          <div class="tab-panel-grid">
+            <div class="tab-panel-left">
+              <div class="tab-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <Fragment set:html={tab.icon} />
+                </svg>
+              </div>
+              <h3 class="tab-headline">{tab.title}</h3>
+              <p class="tab-summary">{tab.summary}</p>
+              <div class="tab-proof">
+                <span class="tab-proof-num">{tab.proofNum}</span>
+                <span class="tab-proof-label">{tab.proofLabel}</span>
+              </div>
+            </div>
+            <ul class="tab-items">
+              {tab.items.map(item => (
+                <li class="tab-item">
+                  <details class="tab-item-details">
+                    <summary>
+                      <span class="tab-item-icon" aria-hidden="true">
+                        <svg viewBox="0 0 20 20" width="14" height="14">
+                          <path d="M5 10l3.5 3.5L15 7" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                      <span class="tab-item-name">{item.name}</span>
+                      <span class="tab-item-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 20 20" width="16" height="16">
+                          <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </summary>
+                    <p class="tab-item-desc">{item.desc}</p>
+                  </details>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section id="how-a-partnership-works">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">How a partnership works</p>
+      <h2>FROM FIRST CONVERSATION TO LAUNCH.</h2>
+      <p style="margin-top:1.25rem;max-width:60ch;">A step-by-step walkthrough of the partnership process — onboarding, transition support, and what your first 90 days look like inside the alliance. Detailed timeline coming soon.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-strip">
+  <div class="container">
+    <div class="cta-row">
+      <h2>READY TO SEE IF YOU&rsquo;RE A FIT?</h2>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function setupServiceTabs() {
+    document.querySelectorAll<HTMLElement>('.services-tabs').forEach(group => {
+      if (group.dataset.ready === '1') return;
+      group.dataset.ready = '1';
+      const tabs = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+      const panels = Array.from(group.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+      const activate = (idx: number) => {
+        tabs.forEach((t, i) => {
+          const on = i === idx;
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.setAttribute('tabindex', on ? '0' : '-1');
+          panels[i].hidden = !on;
+        });
+      };
+      tabs.forEach((tab, idx) => {
+        tab.addEventListener('click', () => activate(idx));
+        tab.addEventListener('keydown', (e) => {
+          const len = tabs.length;
+          if (e.key === 'ArrowRight') { e.preventDefault(); const n = (idx + 1) % len; activate(n); tabs[n].focus(); }
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); const n = (idx - 1 + len) % len; activate(n); tabs[n].focus(); }
+          else if (e.key === 'Home') { e.preventDefault(); activate(0); tabs[0].focus(); }
+          else if (e.key === 'End') { e.preventDefault(); activate(len - 1); tabs[len - 1].focus(); }
+        });
+      });
+    });
+  }
+  setupServiceTabs();
+  document.addEventListener('astro:page-load', setupServiceTabs);
+</script>
