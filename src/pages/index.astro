@@ -13,27 +13,45 @@ const home = await sanityClient.fetch(`*[_type == "homePage"][0]{
 // Preserve the designed line break: a comma in the headline becomes a line break.
 const heroHeadlineHtml = (home?.heroHeadline ?? 'YOUR GROWTH, OUR MISSION.').replace(/,\s*/g, ',<br/>');
 
+const firmCount = home?.statFirms ?? 24;
+const stateCount = home?.statStates ?? 10;
+
 // Firms & States count up from a number; AUM is shown verbatim (it's a free-text field, e.g. "$1.8B").
 const stats = [
-  { to: home?.statFirms ?? 24,  decimals: 0, prefix: '', suffix: '', lbl: 'Member firms',        text: null as string | null },
-  { to: home?.statStates ?? 10, decimals: 0, prefix: '', suffix: '', lbl: 'States',              text: null as string | null },
-  { to: 0,                      decimals: 0, prefix: '', suffix: '', lbl: 'Assets under mgmt',   text: (home?.statAum ?? '$1.8B') as string | null },
+  { to: firmCount,  decimals: 0, prefix: '', suffix: '', lbl: 'Member firms',      text: null as string | null },
+  { to: stateCount, decimals: 0, prefix: '', suffix: '', lbl: 'States',            text: null as string | null },
+  { to: 0,          decimals: 0, prefix: '', suffix: '', lbl: 'Assets under mgmt', text: (home?.statAum ?? '$1.8B') as string | null },
 ];
 
-const stateList = [
-  { name: 'South Carolina', offices: 7 },
-  { name: 'North Carolina', offices: 4 },
-  { name: 'Texas', offices: 3 },
-  { name: 'Georgia', offices: 2 },
-  { name: 'Florida', offices: 2 },
-  { name: 'Washington', offices: 2 },
-  { name: 'Massachusetts', offices: 1 },
-  { name: 'Michigan', offices: 1 },
-  { name: 'Minnesota', offices: 1 },
-  { name: 'Indiana', offices: 1 },
-];
+const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined(name)]{
+  name,
+  state,
+  numberOfOffices
+} | order(name asc)`);
 
-const firms = ['PARALLEL FINANCIAL', 'ECHELON', 'STEWARDSHIP', 'KINGDOM WEALTH', 'ELM WEALTH', 'MERRIMACK'];
+// Firm-name strip: live, distinct firm brands (city branches like "X (Atlanta)" collapsed to "X").
+const firmSeen = new Set<string>();
+const firms: string[] = [];
+for (const f of memberFirms) {
+  const brand = String(f.name).replace(/\s*\([^)]*\)\s*$/, '').trim();
+  const key = brand.toUpperCase();
+  if (!brand || firmSeen.has(key)) continue;
+  firmSeen.add(key);
+  firms.push(brand);
+}
+
+// "Our footprint": member firms grouped by state, most first. Offices = numberOfOffices (min 1 per firm).
+const US_STATES: Record<string, string> = { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NE:'Nebraska', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NY:'New York', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OK:'Oklahoma', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont', VA:'Virginia', WA:'Washington', WV:'West Virginia', WI:'Wisconsin', WY:'Wyoming', DC:'District of Columbia' };
+const stateOffices: Record<string, number> = {};
+for (const f of memberFirms) {
+  if (!f.state) continue;
+  const abbr = String(f.state).toUpperCase().trim();
+  const offices = Number(f.numberOfOffices) > 0 ? Number(f.numberOfOffices) : 1;
+  stateOffices[abbr] = (stateOffices[abbr] || 0) + offices;
+}
+const stateList = Object.entries(stateOffices)
+  .map(([abbr, offices]) => ({ name: US_STATES[abbr] || abbr, offices }))
+  .sort((a, b) => b.offices - a.offices || a.name.localeCompare(b.name));
 
 const steps = [
   { num: '01', title: 'TALK', body: 'A short conversation to see if there’s a fit. Both directions.' },
@@ -159,7 +177,7 @@ const steps = [
     <div class="container">
       <div class="section-head anim-hidden">
         <p class="eyebrow">A national network</p>
-        <h2>24 FIRMS. 10 STATES.<br/>ONE ALLIANCE.</h2>
+        <h2>{firmCount} FIRMS. {stateCount} STATES.<br/>ONE ALLIANCE.</h2>
       </div>
       <div class="network-block anim-hidden" style="--anim-delay: 100ms">
         <div class="network-map">
@@ -289,8 +307,8 @@ const steps = [
 
   <section class="visual-break visual-break-2">
     <div class="visual-break-content">
-      <h2 class="anim-hidden">24 FIRMS.<br/>ONE ALLIANCE.</h2>
-      <p class="anim-hidden" style="--anim-delay: 120ms">Growing together across 10 states.</p>
+      <h2 class="anim-hidden">{firmCount} FIRMS.<br/>ONE ALLIANCE.</h2>
+      <p class="anim-hidden" style="--anim-delay: 120ms">Growing together across {stateCount} states.</p>
     </div>
   </section>
 
