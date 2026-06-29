@@ -1,7 +1,9 @@
 ---
 import Site from '../layouts/Site.astro';
 import { url } from '../utils/url';
-import { sanityClient } from '../lib/sanity';
+import { sanityClient, getSiteSettings } from '../lib/sanity';
+
+const settings = await getSiteSettings();
 
 const home = await sanityClient.fetch(`*[_type == "homePage"][0]{
   heroHeadline,
@@ -70,7 +72,7 @@ const steps = [
         <p class="eyebrow">Advisor-owned · No private equity</p>
         <h1 set:html={heroHeadlineHtml}></h1>
         <div class="actions">
-          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+          <a class="btn btn-primary" href={settings.calendlyUrl} target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href={url('/how-it-works')}>How it works</a>
         </div>
       </div>
@@ -344,7 +346,7 @@ const steps = [
       <div class="cta-row">
         <h2 class="anim-hidden">CURIOUS WHAT THIS COULD LOOK LIKE FOR YOU?</h2>
         <div class="actions anim-hidden" style="--anim-delay: 120ms">
-          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+          <a class="btn btn-primary" href={settings.calendlyUrl} target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href={url('/firms')}>Explore firms</a>
         </div>
       </div>

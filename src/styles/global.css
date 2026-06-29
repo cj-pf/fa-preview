@@ -151,7 +151,8 @@ footer.site .logo-alliance { color: #A8B0BD; }
 }
 .dropdown a:hover, .dropdown a[aria-current="page"] { opacity: 1; color: var(--brand-green-bright); background: rgba(255,255,255,0.04); }
 .nav-right { display: flex; align-items: center; gap: 1.25rem; }
-.nav-right .phone { color: var(--ink-soft); font-size: 0.875rem; font-weight: 500; }
+.nav-right .phone { color: var(--ink-soft); font-size: 0.875rem; font-weight: 500; text-decoration: none; }
+.nav-right .phone:hover { color: var(--ink); }
 
 @media (max-width: 820px) {
   .nav { display: none; }

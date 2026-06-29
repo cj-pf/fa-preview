@@ -1,6 +1,8 @@
 ---
 import Site from '../../layouts/Site.astro';
 import WhyFaShared from '../../components/WhyFaShared.astro';
+import { getSiteSettings } from '../../lib/sanity';
+const settings = await getSiteSettings();
 
 const pains = [
   'WEARING TOO MANY HATS — GROWTH HAS STALLED',
@@ -19,7 +21,7 @@ const pains = [
         <p class="eyebrow">For RIA Owners</p>
         <h1>KEEP YOUR FIRM.<br/>KEEP YOUR CLIENTS.<br/>KEEP YOUR NAME<br/>ON THE DOOR.</h1>
         <div class="actions">
-          <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+          <a class="btn btn-primary" href={settings.calendlyUrl} target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href="#how-a-partnership-works">How a partnership works</a>
         </div>
       </div>

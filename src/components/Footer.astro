@@ -1,6 +1,8 @@
 ---
 import Logo from './Logo.astro';
 import { url } from '../utils/url';
+import { getSiteSettings, phoneToTel } from '../lib/sanity';
+const settings = await getSiteSettings();
 const year = 2026;
 ---
 <footer class="site">
@@ -20,9 +22,9 @@ const year = 2026;
       </div>
       <div>
         <h5>Get in touch</h5>
-        <a href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit</a>
-        <a href="tel:8643857999">864·385·7999</a>
-        <a href="mailto:admin-fa@fiduciaryalliance.org">admin-fa@fiduciaryalliance.org</a>
+        <a href={settings.calendlyUrl} target="_blank" rel="noopener">See If You&rsquo;re a Fit</a>
+        <a href={`tel:${phoneToTel(settings.phone)}`}>{settings.phone}</a>
+        <a href={`mailto:${settings.email}`}>{settings.email}</a>
       </div>
       <div>
         <h5><a href={url('/disclosures')} class="footer-section-link">Compliance</a></h5>
@@ -30,7 +32,7 @@ const year = 2026;
     </div>
     <div class="mini">
       <span>© {year} Fiduciary Alliance, LLC</span>
-      <span>135 S Main Street, Suite 600 · Greenville, SC 29601</span>
+      <span>{settings.address}</span>
     </div>
   </div>
 </footer>

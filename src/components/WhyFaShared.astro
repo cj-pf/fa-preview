@@ -1,4 +1,7 @@
 ---
+import { getSiteSettings } from '../lib/sanity';
+const settings = await getSiteSettings();
+
 const comparison = [
   { label: 'Your brand', them: 'Replaced or co-branded', us: 'YOURS, UNCHANGED' },
   { label: 'Your clients', them: 'Theirs at exit', us: 'ALWAYS YOURS' },
@@ -238,7 +241,7 @@ const serviceTabs: ServiceTab[] = [
     <div class="cta-row">
       <h2>READY TO SEE IF YOU&rsquo;RE A FIT?</h2>
       <div class="actions">
-        <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+        <a class="btn btn-primary" href={settings.calendlyUrl} target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
       </div>
     </div>
   </div>

@@ -1,6 +1,8 @@
 ---
 import Logo from './Logo.astro';
 import { url } from '../utils/url';
+import { getSiteSettings, phoneToTel } from '../lib/sanity';
+const settings = await getSiteSettings();
 const currentPath = Astro.url.pathname;
 type NavChild = { href: string; label: string; external?: boolean };
 type NavItem = { href?: string; label: string; external?: boolean; children?: NavChild[] };
@@ -55,8 +57,8 @@ const isActive = (href: string) =>
       ))}
     </nav>
     <div class="nav-right">
-      <span class="phone">864·385·7999</span>
-      <a href="https://calendly.com/boughner" target="_blank" rel="noopener" class="btn btn-primary">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+      <a class="phone" href={`tel:${phoneToTel(settings.phone)}`}>{settings.phone}</a>
+      <a href={settings.calendlyUrl} target="_blank" rel="noopener" class="btn btn-primary">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
     </div>
   </div>
 </header>

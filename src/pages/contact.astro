@@ -1,5 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
+import { getSiteSettings, phoneToTel } from '../lib/sanity';
+const settings = await getSiteSettings();
 ---
 
 <Site title="Contact — Fiduciary Alliance">
@@ -13,13 +15,13 @@ import Site from '../layouts/Site.astro';
       <div class="grid-2" style="align-items:start;">
         <div>
           <h3 style="margin-bottom:1rem;">In the meantime</h3>
-          <p style="margin-bottom:0.5rem;"><a href="tel:8643857999" class="btn-link">864·385·7999</a></p>
-          <p style="margin-bottom:0.5rem;"><a href="mailto:admin-fa@fiduciaryalliance.org" class="btn-link">admin-fa@fiduciaryalliance.org</a></p>
+          <p style="margin-bottom:0.5rem;"><a href={`tel:${phoneToTel(settings.phone)}`} class="btn-link">{settings.phone}</a></p>
+          <p style="margin-bottom:0.5rem;"><a href={`mailto:${settings.email}`} class="btn-link">{settings.email}</a></p>
           <p style="margin-top:2rem;color:var(--ink-mute);font-size:0.9375rem;">RIA owners — partnership inquiries route to Brian directly: <a href="mailto:partnership@fiduciaryalliance.org" style="color:var(--brand-teal-bright);">partnership@fiduciaryalliance.org</a>.</p>
         </div>
         <div>
           <h3 style="margin-bottom:1rem;">Where we are</h3>
-          <p>135 S Main Street, Suite 600<br/>Greenville, SC 29601</p>
+          <p>{settings.address}</p>
         </div>
       </div>
     </div>
