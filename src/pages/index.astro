@@ -1,11 +1,23 @@
 ---
 import Site from '../layouts/Site.astro';
 import { url } from '../utils/url';
+import { sanityClient } from '../lib/sanity';
 
+const home = await sanityClient.fetch(`*[_type == "homePage"][0]{
+  heroHeadline,
+  statFirms,
+  statStates,
+  statAum
+}`);
+
+// Preserve the designed line break: a comma in the headline becomes a line break.
+const heroHeadlineHtml = (home?.heroHeadline ?? 'YOUR GROWTH, OUR MISSION.').replace(/,\s*/g, ',<br/>');
+
+// Firms & States count up from a number; AUM is shown verbatim (it's a free-text field, e.g. "$1.8B").
 const stats = [
-  { to: 24,  decimals: 0, prefix: '',  suffix: '',  lbl: 'Member firms' },
-  { to: 10,  decimals: 0, prefix: '',  suffix: '',  lbl: 'States' },
-  { to: 1.8, decimals: 1, prefix: '$', suffix: 'B', lbl: 'Assets under mgmt' },
+  { to: home?.statFirms ?? 24,  decimals: 0, prefix: '', suffix: '', lbl: 'Member firms',        text: null as string | null },
+  { to: home?.statStates ?? 10, decimals: 0, prefix: '', suffix: '', lbl: 'States',              text: null as string | null },
+  { to: 0,                      decimals: 0, prefix: '', suffix: '', lbl: 'Assets under mgmt',   text: (home?.statAum ?? '$1.8B') as string | null },
 ];
 
 const stateList = [
@@ -34,13 +46,22 @@ const steps = [
 <Site title="Fiduciary Alliance — Turnkey independence. True partnership.">
 
   <section class="hero hero-home">
-    <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <video
+      class="hero-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=75&auto=format"
+      aria-hidden="true"
+    >
       <source src={url('/hero.mp4')} type="video/mp4" />
     </video>
     <div class="container grid">
       <div>
         <p class="eyebrow">Advisor-owned · No private equity</p>
-        <h1>YOUR GROWTH,<br/>OUR MISSION.</h1>
+        <h1 set:html={heroHeadlineHtml}></h1>
         <div class="actions">
           <a class="btn btn-primary" href="https://calendly.com/boughner" target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href={url('/how-it-works')}>How it works</a>
@@ -57,13 +78,17 @@ const steps = [
       <div class="row">
         {stats.map((s, i) => (
           <div class="stat anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
-            <div
-              class="num"
-              data-counter-to={s.to}
-              data-counter-decimals={s.decimals}
-              data-counter-prefix={s.prefix}
-              data-counter-suffix={s.suffix}
-            >{s.prefix}0{s.decimals > 0 ? '.' + '0'.repeat(s.decimals) : ''}{s.suffix}</div>
+            {s.text !== null ? (
+              <div class="num">{s.text}</div>
+            ) : (
+              <div
+                class="num"
+                data-counter-to={s.to}
+                data-counter-decimals={s.decimals}
+                data-counter-prefix={s.prefix}
+                data-counter-suffix={s.suffix}
+              >{s.prefix}0{s.decimals > 0 ? '.' + '0'.repeat(s.decimals) : ''}{s.suffix}</div>
+            )}
             <div class="lbl">{s.lbl}</div>
           </div>
         ))}
