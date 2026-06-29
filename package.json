@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@sanity/client": "^7.22.1",
+    "@sanity/visual-editing": "^5.4.4",
     "astro": "^5.0.0"
   }
 }

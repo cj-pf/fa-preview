@@ -34,5 +34,14 @@ const {
     <Header transition:persist />
     <slot />
     <Footer />
+    <script>
+      // Connect to Sanity's Presentation (preview) pane so editors can navigate
+      // the site from the Studio. Only runs inside an iframe (the preview pane),
+      // and the (heavy) library is dynamically imported so normal visitors never
+      // download it.
+      if (window.self !== window.top) {
+        import('@sanity/visual-editing').then(({enableVisualEditing}) => enableVisualEditing());
+      }
+    </script>
   </body>
 </html>
