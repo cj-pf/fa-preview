@@ -29,17 +29,6 @@ const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined
   numberOfOffices
 } | order(name asc)`);
 
-// Firm-name strip: live, distinct firm brands (city branches like "X (Atlanta)" collapsed to "X").
-const firmSeen = new Set<string>();
-const firms: string[] = [];
-for (const f of memberFirms) {
-  const brand = String(f.name).replace(/\s*\([^)]*\)\s*$/, '').trim();
-  const key = brand.toUpperCase();
-  if (!brand || firmSeen.has(key)) continue;
-  firmSeen.add(key);
-  firms.push(brand);
-}
-
 // "Our footprint": member firms grouped by state, most first. Offices = numberOfOffices (min 1 per firm).
 const US_STATES: Record<string, string> = { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NE:'Nebraska', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NY:'New York', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OK:'Oklahoma', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont', VA:'Virginia', WA:'Washington', WV:'West Virginia', WI:'Wisconsin', WY:'Wyoming', DC:'District of Columbia' };
 const stateOffices: Record<string, number> = {};
@@ -284,9 +273,6 @@ const steps = [
             <span><span class="legend-swatch hq"></span>Headquarters · Greenville, SC</span>
           </div>
 
-          <div class="firm-strip">
-            {firms.map((name, i) => <div class="firm-tile anim-hidden" style={`--anim-delay: ${i * 80}ms`}>{name}</div>)}
-          </div>
         </div>
 
         <aside class="network-list">

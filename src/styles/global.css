@@ -383,22 +383,6 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
 }
 .network-list .more { margin-top: 1.5rem; }
 
-/* ============ firm strip (lives inside .network-map) ============ */
-.firm-strip {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; align-items: center;
-  margin-top: 1.5rem; padding-top: 1.5rem;
-  border-top: 1px solid var(--line);
-}
-.firm-tile {
-  height: 56px; border-radius: 4px; background: var(--surface);
-  border: 1px solid var(--line);
-  display: grid; place-items: center; padding: 0 0.75rem;
-  font-family: var(--display); font-size: 0.8125rem; color: var(--ink-soft);
-  text-align: center; line-height: 1.2; font-weight: 500;
-  letter-spacing: 0.04em;
-}
-@media (max-width: 800px) { .firm-strip { grid-template-columns: repeat(2, 1fr); } }
-
 /* ============ testimonial ============ */
 .quote { max-width: 880px; margin: 0 auto; text-align: center; }
 .quote .mark { font-family: var(--display); font-size: 5rem; line-height: 1; color: var(--brand-green-bright); margin-bottom: 0.5rem; font-weight: 700; }
