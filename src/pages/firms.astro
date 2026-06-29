@@ -15,13 +15,16 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
   website,
   "logoUrl": logo.asset->url
 }`);
+
+const firmCount = firms.length;
+const stateCount = new Set(firms.map((f: { state?: string }) => f.state).filter(Boolean)).size;
 ---
 
 <Site title="Member Firms — Fiduciary Alliance">
 
   <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:var(--section);">
     <div class="container">
-      <h1 style="margin-bottom:1.5rem;">24 FIRMS. 10 STATES.</h1>
+      <h1 style="margin-bottom:1.5rem;">{firmCount} FIRMS. {stateCount} STATES.</h1>
 
       <div class="firm-grid">
         {firms.map((firm) => (
