@@ -295,7 +295,7 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: clamp(2rem, 4vw, 3.5rem);
-  align-items: stretch;
+  align-items: start;
 }
 @media (max-width: 900px) { .network-block { grid-template-columns: 1fr; } }
 

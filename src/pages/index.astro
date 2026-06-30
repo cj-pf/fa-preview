@@ -43,7 +43,8 @@ for (const f of memberFirms) {
 }
 const stateList = Object.entries(stateOffices)
   .map(([abbr, offices]) => ({ name: US_STATES[abbr] || abbr, offices }))
-  .sort((a, b) => b.offices - a.offices || a.name.localeCompare(b.name));
+  .sort((a, b) => b.offices - a.offices || a.name.localeCompare(b.name))
+  .slice(0, 7);
 
 const steps = [
   { num: '01', title: 'TALK', body: 'A short conversation to see if there’s a fit. Both directions.' },
