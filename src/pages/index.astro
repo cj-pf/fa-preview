@@ -1,5 +1,6 @@
 ---
 import Site from '../layouts/Site.astro';
+import AISection from '../components/AISection.astro';
 import { url } from '../utils/url';
 import { sanityClient, getSiteSettings } from '../lib/sanity';
 
@@ -156,6 +157,8 @@ const steps = [
       </div>
     </div>
   </section>
+
+  <AISection />
 
   <section>
     <div class="container">
