@@ -18,13 +18,18 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
 
 const firmCount = firms.length;
 const stateCount = new Set(firms.map((f: { state?: string }) => f.state).filter(Boolean)).size;
+
+// Editable heading from the Studio (Member Firms → Page Heading).
+// Falls back to the live counts if it hasn't been set yet.
+const firmsPage = await sanityClient.fetch(`*[_type == "firmsPage"][0]{heading}`);
+const heading = firmsPage?.heading ?? `${firmCount} FIRMS. ${stateCount} STATES.`;
 ---
 
 <Site title="Member Firms — Fiduciary Alliance">
 
   <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:var(--section);">
     <div class="container">
-      <h1 style="margin-bottom:1.5rem;">{firmCount} FIRMS. {stateCount} STATES.</h1>
+      <h1 style="margin-bottom:1.5rem;">{heading}</h1>
 
       <div class="firm-grid">
         {firms.map((firm) => (
