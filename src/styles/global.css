@@ -220,7 +220,7 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
 .section-head p { font-size: 1.125rem; line-height: 1.55; }
 
 /* ============ stats ============ */
-.stats { padding: clamp(3rem, 5vw, 4.5rem) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats { padding: clamp(3rem, 5vw, 4.5rem) 0; }
 .stats .row { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(3rem, 14vw, 11rem); }
 .stat { text-align: center; }
 .stat .num {
