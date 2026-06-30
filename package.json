@@ -14,5 +14,11 @@
     "@sanity/client": "^7.22.1",
     "@sanity/visual-editing": "^5.4.4",
     "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.0",
+    "@types/topojson-client": "^3.1.5",
+    "d3-geo": "^3.1.1",
+    "topojson-client": "^3.1.0"
   }
 }
