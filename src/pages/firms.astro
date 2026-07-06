@@ -18,11 +18,7 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
 
 const firmCount = firms.length;
 const stateCount = new Set(firms.map((f: { state?: string }) => f.state).filter(Boolean)).size;
-
-// Editable heading from the Studio (Member Firms → Page Heading).
-// Falls back to the live counts if it hasn't been set yet.
-const firmsPage = await sanityClient.fetch(`*[_type == "firmsPage"][0]{heading}`);
-const heading = firmsPage?.heading ?? `${firmCount} FIRMS. ${stateCount} STATES.`;
+const heading = `${firmCount} FIRMS. ${stateCount} STATES.`;
 ---
 
 <Site title="Member Firms — Fiduciary Alliance">
