@@ -6,22 +6,34 @@ import { sanityClient, getSiteSettings } from '../lib/sanity';
 import { feature } from 'topojson-client';
 import { geoAlbersUsa, geoPath } from 'd3-geo';
 import usTopologyRaw from '../data/us-states-10m.json';
-import { FIRM_CITY_COORDS, FIPS_TO_ABBR } from '../data/firmCityCoords';
+import { FIPS_TO_ABBR } from '../data/firmCityCoords';
+import { geocodeFirm } from '../lib/geocode';
 
 const settings = await getSiteSettings();
 
 const home = await sanityClient.fetch(`*[_type == "homePage"][0]{
   heroHeadline,
-  statFirms,
-  statStates,
   statAum
 }`);
 
 // Preserve the designed line break: a comma in the headline becomes a line break.
 const heroHeadlineHtml = (home?.heroHeadline ?? 'YOUR GROWTH, OUR MISSION.').replace(/,\s*/g, ',<br/>');
 
-const firmCount = home?.statFirms ?? 24;
-const stateCount = home?.statStates ?? 10;
+const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined(name)]{
+  name,
+  streetAddress,
+  city,
+  state,
+  zipCode,
+  numberOfOffices
+} | order(name asc)`);
+
+// Firm and state counts are derived from the published member firms so they
+// stay in sync as firms are added / removed in Studio.
+const firmCount = memberFirms.length;
+const stateCount = new Set(
+  memberFirms.map((f: any) => String(f.state || '').toUpperCase().trim()).filter(Boolean)
+).size;
 
 // Firms & States count up from a number; AUM is shown verbatim (it's a free-text field, e.g. "$1.8B").
 const stats = [
@@ -29,13 +41,6 @@ const stats = [
   { to: stateCount, decimals: 0, prefix: '', suffix: '', lbl: 'States',            text: null as string | null },
   { to: 0,          decimals: 0, prefix: '', suffix: '', lbl: 'Assets under mgmt', text: (home?.statAum ?? '$1.8B') as string | null },
 ];
-
-const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined(name)]{
-  name,
-  city,
-  state,
-  numberOfOffices
-} | order(name asc)`);
 
 // "Our footprint": member firms grouped by state, most first. Offices = numberOfOffices (min 1 per firm).
 const US_STATES: Record<string, string> = { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NE:'Nebraska', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NY:'New York', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OK:'Oklahoma', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont', VA:'Virginia', WA:'Washington', WV:'West Virginia', WI:'Wisconsin', WY:'Wyoming', DC:'District of Columbia' };
@@ -79,8 +84,7 @@ type PinGroup = { x: number; y: number; firms: string[]; isHq: boolean };
 const pinGroups = new Map<string, PinGroup>();
 
 for (const firm of memberFirms) {
-  const cityKey = `${(firm.city ?? '').trim()},${String(firm.state ?? '').toUpperCase().trim()}`;
-  const coords = FIRM_CITY_COORDS[cityKey];
+  const coords = await geocodeFirm(firm);
   if (!coords) continue;
   const projected = projection([coords[1], coords[0]] as [number, number]);
   if (!projected) continue;

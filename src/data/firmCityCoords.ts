@@ -1,33 +1,3 @@
-// Lat/lng for every city currently used by member firms in Sanity.
-// Format: `${city},${stateAbbr}` (case-sensitive city, uppercase state).
-// If you add a new firm in a new city, add one entry here.
-//
-// Coordinates are city-center approximations (good enough for a national map).
-export const FIRM_CITY_COORDS: Record<string, [number, number]> = {
-  'Naples,FL':          [26.142, -81.795],
-  'St. Augustine,FL':   [29.895, -81.314],
-  'Atlanta,GA':         [33.749, -84.388],
-  'LaGrange,GA':        [33.039, -85.031],
-  'Lafayette,IN':       [40.417, -86.876],
-  'Tewksbury,MA':       [42.612, -71.234],
-  'Sterling Heights,MI':[42.580, -83.030],
-  'Anoka,MN':           [45.198, -93.387],
-  'Brevard,NC':         [35.234, -82.734],
-  'Charlotte,NC':       [35.227, -80.843],
-  'Greenville,NC':      [35.613, -77.366],
-  'High Point,NC':      [35.956, -80.005],
-  'Greenville,SC':      [34.852, -82.394],
-  'Greer,SC':           [34.939, -82.227],
-  'Hartsville,SC':      [34.374, -80.073],
-  'Okatie,SC':          [32.366, -80.876],
-  'Seneca,SC':          [34.685, -82.953],
-  'Austin,TX':          [30.267, -97.743],
-  'Beaumont,TX':        [30.080, -94.126],
-  'Houston,TX':         [29.760, -95.370],
-  'Bellevue,WA':        [47.610, -122.187],
-  'Kirkland,WA':        [47.681, -122.209],
-};
-
 // us-atlas TopoJSON uses FIPS state codes; we need USPS abbreviations to
 // match Sanity's `state` field.
 export const FIPS_TO_ABBR: Record<string, string> = {
