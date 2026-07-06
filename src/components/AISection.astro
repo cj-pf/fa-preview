@@ -5,11 +5,11 @@ const tools = ["Zocks", "Claude", "Black Diamond"];
 const imageSrc = "/images/ai-tools.jpg";
 ---
 <section class="ai-section" aria-labelledby="ai-heading">
-  <div class="ai-wrap">
+  <div class="container">
     <div class="ai-grid">
       <div class="ai-copy">
-        <p class="ai-eyebrow">Technology that scales you</p>
-        <h2 id="ai-heading" class="ai-headline">We're not afraid of AI.<br><span class="ai-accent">We put it to work for you.</span></h2>
+        <p class="eyebrow ai-eyebrow">Technology that scales you</p>
+        <h2 id="ai-heading">WE&rsquo;RE NOT AFRAID OF AI.<br/>WE PUT IT TO WORK FOR YOU.</h2>
         <p class="ai-sub">We put AI to work where it counts — meeting notes, follow-ups, research, and reporting. Less admin, more time to grow your practice.</p>
 
         <p class="ai-tools-label">The AI tools we run</p>
@@ -18,7 +18,7 @@ const imageSrc = "/images/ai-tools.jpg";
           <li class="ai-tool ai-tool--more">+ more</li>
         </ul>
 
-        <p class="ai-effort"><strong>We don't just hand you tools — we train you to scale with them.</strong> Live walkthroughs, an advisor community, and ongoing coaching. Built for advisors ready to put in the effort and grow.</p>
+        <p class="ai-effort"><strong>We don&rsquo;t just hand you tools — we train you to scale with them.</strong> Live walkthroughs, an advisor community, and ongoing coaching. Built for advisors ready to put in the effort and grow.</p>
       </div>
 
       <div class="ai-visual">
@@ -29,47 +29,97 @@ const imageSrc = "/images/ai-tools.jpg";
 </section>
 
 <style>
-  .ai-section{
-    --ai-accent:#5FB6D9;
-    --ai-accent-2:#7FE0CB;
-    --ai-line:rgba(255,255,255,.10);
-    --ai-line-strong:rgba(255,255,255,.18);
-    --ai-glass:rgba(232,240,245,.08);
-    position:relative;
-    overflow:hidden;
-    background:var(--bg);
-    color:#EAF1F5;
-    padding:clamp(72px,9vw,120px) 24px;
+  .ai-eyebrow { color: var(--brand-green-bright); }
+
+  .ai-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.82fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: stretch;
   }
-  .ai-wrap{max-width:1120px;margin:0 auto;}
-  .ai-grid{display:grid;grid-template-columns:1fr .82fr;gap:54px;align-items:stretch;}
 
-  .ai-eyebrow{font-family:var(--display);font-size:0.875rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ai-accent);font-weight:600;margin:0 0 20px;display:flex;align-items:center;gap:12px;}
-  .ai-eyebrow::before{content:"";width:26px;height:1px;background:var(--ai-accent);opacity:.75;}
-
-  .ai-headline{font-family:var(--display);font-size:clamp(2.25rem,4.5vw,3.5rem);line-height:1.02;font-weight:600;letter-spacing:.01em;margin:0 0 22px;color:var(--ink);}
-  .ai-accent{background:linear-gradient(92deg,var(--ai-accent),var(--ai-accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
-
-  .ai-sub{font-family:var(--body);font-size:1.0625rem;line-height:1.55;color:var(--ink-soft);opacity:.95;max-width:560px;margin:0 0 36px;}
-
-  .ai-tools-label{font-family:var(--display);font-size:0.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ai-accent);font-weight:600;margin:0 0 14px;}
-  .ai-tools{list-style:none;padding:0;margin:0;display:flex;gap:10px;flex-wrap:wrap;}
-  .ai-tool{font-family:var(--display);font-size:0.9375rem;font-weight:600;letter-spacing:.04em;padding:11px 18px;border-radius:999px;background:var(--ai-glass);border:1px solid var(--ai-line-strong);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:var(--ink);}
-  .ai-tool--more{font-weight:500;opacity:.65;}
-
-  .ai-effort{font-family:var(--body);margin:38px 0 0;padding-top:24px;border-top:1px solid var(--ai-line);max-width:48ch;font-size:0.9375rem;line-height:1.6;color:var(--ink-soft);opacity:.88;}
-  .ai-effort strong{font-weight:700;opacity:1;color:var(--ink);}
-
-  .ai-visual{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--ai-line-strong);box-shadow:0 30px 80px rgba(0,0,0,.45);min-height:100%;}
-  .ai-visual img{position:absolute;left:0;top:-6%;width:100%;height:112%;object-fit:cover;display:block;will-change:transform;}
-  .ai-visual::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 58%,rgba(8,17,25,.38));}
-
-  @media (max-width:860px){
-    .ai-grid{grid-template-columns:1fr;gap:40px;}
-    .ai-visual{aspect-ratio:3/4;max-width:360px;width:100%;margin:0 auto;}
+  .ai-sub {
+    margin-top: 1.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 56ch;
   }
-  @media (prefers-reduced-motion:reduce){
-    .ai-visual img{transform:none !important;top:0;height:100%;}
+
+  .ai-tools-label {
+    font-family: var(--display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brand-green-bright);
+    font-weight: 600;
+    margin: 2.5rem 0 0.875rem;
+  }
+  .ai-tools {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+  }
+  .ai-tool {
+    font-family: var(--display);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.625rem 1.125rem;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .ai-tool--more { opacity: 0.6; font-weight: 400; }
+
+  .ai-effort {
+    margin: 2.5rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    max-width: 52ch;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .ai-effort strong { color: var(--ink); font-weight: 600; }
+
+  .ai-visual {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    min-height: 100%;
+  }
+  .ai-visual img {
+    position: absolute;
+    left: 0;
+    top: -6%;
+    width: 100%;
+    height: 112%;
+    object-fit: cover;
+    display: block;
+    will-change: transform;
+  }
+  .ai-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 58%, rgba(6, 21, 32, 0.4));
+  }
+
+  @media (max-width: 860px) {
+    .ai-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .ai-visual { aspect-ratio: 3/4; max-width: 360px; width: 100%; margin: 0 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-visual img { transform: none !important; top: 0; height: 100%; }
   }
 </style>
 
