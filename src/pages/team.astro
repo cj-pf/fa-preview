@@ -1,15 +1,22 @@
 ---
 import Site from '../layouts/Site.astro';
-import { sanityClient } from '../lib/sanity';
+import { sanityClient, urlFor } from '../lib/sanity';
 
+// Fetch the full `photo` object so hotspot/crop (set in Studio) are available
+// to urlFor(). Both the card and modal use a 4:5 portrait crop; urlFor honors
+// the hotspot so the subject stays centered where the editor placed it.
 const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(orderRank asc) {
   _id,
   name,
   title,
   bio,
-  "photoUrl":      photo.asset->url + "?w=700&auto=format&q=85",
-  "photoUrlLarge": photo.asset->url + "?w=1600&auto=format&q=90"
+  photo
 }`);
+
+function photoUrl(photo: any, w: number, h: number) {
+  if (!photo?.asset) return null;
+  return urlFor(photo).width(w).height(h).fit('crop').auto('format').quality(85).url();
+}
 ---
 
 <Site title="Your Team — Fiduciary Alliance">
@@ -27,8 +34,8 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(orderRan
         {team.map((member, idx) => (
           <button class="team-card" data-modal={`bio-${idx}`} type="button">
             <div class="team-photo-wrap">
-              {member.photoUrl && (
-                <img src={member.photoUrl} alt={member.name} class="team-photo" decoding="async" />
+              {photoUrl(member.photo, 700, 875) && (
+                <img src={photoUrl(member.photo, 700, 875)} alt={member.name} class="team-photo" decoding="async" />
               )}
             </div>
             <div class="team-name">{member.name}</div>
@@ -47,9 +54,9 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(orderRan
             <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </button>
-        {member.photoUrlLarge && (
+        {photoUrl(member.photo, 1400, 1750) && (
           <div class="bio-photo-wrap">
-            <img src={member.photoUrlLarge} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
+            <img src={photoUrl(member.photo, 1400, 1750)} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
           </div>
         )}
         <div class="bio-body">

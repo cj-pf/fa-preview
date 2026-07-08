@@ -1,4 +1,5 @@
 import {createClient} from '@sanity/client'
+import imageUrlBuilder from '@sanity/image-url'
 
 export const sanityClient = createClient({
   projectId: 'mg8jdbar',
@@ -9,6 +10,14 @@ export const sanityClient = createClient({
   // seconds, which would otherwise bake stale values into the static build.
   useCdn: false,
 })
+
+// Build Sanity image URLs that honor hotspot/crop set in the Studio.
+// Pass the full image object (with _ref, hotspot, crop), not just the URL,
+// and chain .width()/.height()/.fit('crop') to get a properly-cropped image.
+const imgBuilder = imageUrlBuilder(sanityClient)
+export function urlFor(source: any) {
+  return imgBuilder.image(source)
+}
 
 export type SiteSettings = {
   calendlyUrl: string
