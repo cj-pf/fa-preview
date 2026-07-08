@@ -7,7 +7,8 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(orderRan
   name,
   title,
   bio,
-  "photoUrl": photo.asset->url + "?w=800&auto=format&q=80"
+  "photoUrl":      photo.asset->url + "?w=700&auto=format&q=85",
+  "photoUrlLarge": photo.asset->url + "?w=1600&auto=format&q=90"
 }`);
 ---
 
@@ -46,9 +47,9 @@ const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(orderRan
             <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </button>
-        {member.photoUrl && (
+        {member.photoUrlLarge && (
           <div class="bio-photo-wrap">
-            <img src={member.photoUrl} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
+            <img src={member.photoUrlLarge} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
           </div>
         )}
         <div class="bio-body">
