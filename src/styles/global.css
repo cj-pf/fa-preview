@@ -211,7 +211,9 @@ footer.site .logo-alliance { color: #A8B0BD; }
 section { padding-top: var(--section); padding-bottom: var(--section); }
 .section-sm { padding-top: clamp(3.5rem, 6vw, 5rem); padding-bottom: clamp(3.5rem, 6vw, 5rem); }
 
-/* Small context strip on the homepage (between stats and Choose your path) */
+/* Small context strip on the homepage (between stats and Choose your path).
+   Overrides .section-sm's top padding to sit closer to the stats above. */
+.home-context { padding-top: clamp(0.5rem, 1.5vw, 1.25rem); }
 .home-context .container { text-align: center; }
 .home-context-line {
   font-family: var(--display);
