@@ -186,7 +186,13 @@ footer.site .logo-alliance { color: #A8B0BD; }
     linear-gradient(180deg, rgba(10, 26, 36, 0.55) 0%, rgba(10, 26, 36, 0.30) 35%, rgba(10, 26, 36, 0.92) 100%),
     linear-gradient(90deg, rgba(17, 86, 113, 0.55) 0%, rgba(10, 26, 36, 0.05) 50%, rgba(53, 95, 61, 0.30) 100%);
 }
-.hero-home::before { background-image: var(--hero-home); }
+/* Hero-home shows the video only. The photo fallback is hidden on desktop
+   so it doesn't flash before the video starts, and is only revealed if the
+   video fails to load (via a .hero--video-failed class added by JS). Mobile
+   keeps the photo since .hero-video is display:none there. */
+.hero-home::before { background-image: none; }
+@media (max-width: 800px) { .hero-home::before { background-image: var(--hero-home); } }
+.hero.hero--video-failed::before { background-image: var(--hero-home); }
 .hero-why::before  { background-image: var(--hero-why); }
 .hero-iar::before  { background-image: var(--hero-iar); }
 .hero-ria::before  { background-image: var(--hero-ria); }

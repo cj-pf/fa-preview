@@ -120,7 +120,6 @@ const steps = [
       loop
       playsinline
       preload="metadata"
-      poster="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=75&auto=format"
       aria-hidden="true"
     >
       <source src={url('/hero.mp4')} type="video/mp4" />
@@ -409,10 +408,22 @@ const steps = [
     });
   }
 
+  function setupHeroVideoFallback() {
+    const video = document.querySelector<HTMLVideoElement>('.hero-video');
+    const hero = document.querySelector<HTMLElement>('.hero-home');
+    if (!video || !hero) return;
+    const showPhoto = () => hero.classList.add('hero--video-failed');
+    video.addEventListener('error', showPhoto);
+    const source = video.querySelector('source');
+    if (source) source.addEventListener('error', showPhoto);
+  }
+
   setupHomeAnimations();
   setupMapTooltip();
+  setupHeroVideoFallback();
   document.addEventListener('astro:page-load', () => {
     setupHomeAnimations();
     setupMapTooltip();
+    setupHeroVideoFallback();
   });
 </script>
