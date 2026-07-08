@@ -2,7 +2,7 @@
 import Site from '../layouts/Site.astro';
 import { sanityClient } from '../lib/sanity';
 
-const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(displayOrder asc) {
+const team = await sanityClient.fetch(`*[_type == "teamMember"] | order(orderRank asc) {
   _id,
   name,
   title,
