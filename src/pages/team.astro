@@ -72,24 +72,33 @@ function photoUrl(photo: any, w: number, h: number) {
 </Site>
 
 <script>
-  document.querySelectorAll('[data-modal]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const modalId = btn.getAttribute('data-modal');
-      if (!modalId) return;
-      const dialog = document.getElementById(modalId) as HTMLDialogElement | null;
-      if (dialog) dialog.showModal();
+  function setupBioModals() {
+    document.querySelectorAll<HTMLElement>('[data-modal]').forEach((btn) => {
+      if (btn.dataset.ready === '1') return;
+      btn.dataset.ready = '1';
+      btn.addEventListener('click', () => {
+        const modalId = btn.getAttribute('data-modal');
+        if (!modalId) return;
+        const dialog = document.getElementById(modalId) as HTMLDialogElement | null;
+        if (dialog) dialog.showModal();
+      });
     });
-  });
 
-  document.querySelectorAll<HTMLDialogElement>('.bio-modal').forEach((dialog) => {
-    const closeBtn = dialog.querySelector('.bio-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => dialog.close());
-    }
-    dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) dialog.close();
+    document.querySelectorAll<HTMLDialogElement>('.bio-modal').forEach((dialog) => {
+      if (dialog.dataset.ready === '1') return;
+      dialog.dataset.ready = '1';
+      const closeBtn = dialog.querySelector('.bio-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => dialog.close());
+      }
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+      });
     });
-  });
+  }
+
+  setupBioModals();
+  document.addEventListener('astro:page-load', setupBioModals);
 </script>
 
 <style>
