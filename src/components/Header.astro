@@ -58,14 +58,50 @@ const isActive = (href: string) =>
     </nav>
     <div class="nav-right">
       <a class="phone" href={`tel:${phoneToTel(settings.phone)}`}>{settings.phone}</a>
-      <a href={settings.calendlyUrl} target="_blank" rel="noopener" class="btn btn-primary">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+      <a href={settings.calendlyUrl} target="_blank" rel="noopener" class="btn btn-primary nav-cta">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+        <span class="nav-toggle-box" aria-hidden="true">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </span>
+      </button>
     </div>
   </div>
 </header>
 
+<nav class="mobile-menu" id="mobile-menu" aria-label="Site">
+    <ul class="mobile-nav">
+      {nav.map(item => (
+        item.children ? (
+          <li class="mobile-group">
+            <span class="mobile-group-label">{item.label}</span>
+            <ul>
+              {item.children.map(c => (
+                <li><a href={url(c.href)} aria-current={isActive(c.href) ? 'page' : undefined}>{c.label}</a></li>
+              ))}
+            </ul>
+          </li>
+        ) : item.external ? (
+          <li><a href={item.href!} target="_blank" rel="noopener">{item.label}</a></li>
+        ) : (
+          <li><a href={url(item.href!)} aria-current={isActive(item.href!) ? 'page' : undefined}>{item.label}</a></li>
+        )
+      ))}
+    </ul>
+    <div class="mobile-menu-foot">
+      <a href={settings.calendlyUrl} target="_blank" rel="noopener" class="btn btn-primary">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
+      <a class="mobile-phone" href={`tel:${phoneToTel(settings.phone)}`}>{settings.phone}</a>
+    </div>
+  </nav>
+
 <script>
-  const header = document.querySelector('.site-header');
-  if (header) {
+  function initHeader() {
+    const header = document.querySelector<HTMLElement>('.site-header');
+    // Header uses transition:persist, so it survives view transitions — bind once.
+    if (!header || header.dataset.ready === '1') return;
+    header.dataset.ready = '1';
+
     const onScroll = () => {
       if (window.scrollY > 80) header.classList.add('scrolled');
       else header.classList.remove('scrolled');
@@ -86,6 +122,34 @@ const isActive = (href: string) =>
       });
     });
     document.addEventListener('click', () => closeAll());
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+
+    // Mobile hamburger menu
+    const toggle = header.querySelector<HTMLButtonElement>('.nav-toggle');
+    const closeMenu = () => {
+      header.classList.remove('menu-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    };
+    const openMenu = () => {
+      header.classList.add('menu-open');
+      toggle?.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+    };
+    if (toggle) {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        header.classList.contains('menu-open') ? closeMenu() : openMenu();
+      });
+      document.querySelectorAll('.mobile-menu a').forEach(a => a.addEventListener('click', closeMenu));
+      window.addEventListener('resize', () => { if (window.innerWidth > 820) closeMenu(); });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeAll(); closeMenu(); }
+    });
+    // Close the mobile menu whenever a view transition swaps the page.
+    document.addEventListener('astro:before-swap', closeMenu);
   }
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
 </script>

@@ -5,25 +5,22 @@ const tools = ["Zocks", "Claude", "Black Diamond"];
 const imageSrc = "/images/ai-tools.jpg";
 ---
 <section class="ai-section" aria-labelledby="ai-heading">
+  <div class="ai-bg" aria-hidden="true">
+    <img src={imageSrc} alt="" width="1086" height="1448" loading="lazy" data-ai-parallax />
+  </div>
   <div class="container">
-    <div class="ai-grid">
-      <div class="ai-copy anim-hidden" data-anim-from="left">
-        <p class="eyebrow ai-eyebrow">Technology that scales you</p>
-        <h2 id="ai-heading">WE&rsquo;RE NOT AFRAID OF AI.<br/>WE PUT IT TO WORK FOR YOU.</h2>
-        <p class="ai-sub">We put AI to work where it counts — meeting notes, follow-ups, research, and reporting. Less admin, more time to grow your practice.</p>
+    <div class="ai-copy anim-hidden" data-anim-from="left">
+      <p class="eyebrow ai-eyebrow">Technology that scales you</p>
+      <h2 id="ai-heading">WE&rsquo;RE NOT AFRAID OF AI.<br/>WE PUT IT TO WORK FOR YOU.</h2>
+      <p class="ai-sub">We put AI to work where it counts — meeting notes, follow-ups, research, and reporting. Less admin, more time to grow your practice.</p>
 
-        <p class="ai-tools-label">The AI tools we run</p>
-        <ul class="ai-tools">
-          {tools.map((t) => <li class="ai-tool">{t}</li>)}
-          <li class="ai-tool ai-tool--more">+ more</li>
-        </ul>
+      <p class="ai-tools-label">The AI tools we run</p>
+      <ul class="ai-tools">
+        {tools.map((t) => <li class="ai-tool">{t}</li>)}
+        <li class="ai-tool ai-tool--more">+ more</li>
+      </ul>
 
-        <p class="ai-effort"><strong>We don&rsquo;t just hand you tools — we train you to scale with them.</strong> Live walkthroughs, an advisor community, and ongoing coaching. Built for advisors ready to put in the effort and grow.</p>
-      </div>
-
-      <div class="ai-visual anim-hidden" data-anim-from="right" style="--anim-delay: 150ms">
-        <img src={imageSrc} alt="Layered AI technology stack" width="1086" height="1448" loading="lazy" data-ai-parallax />
-      </div>
+      <p class="ai-effort"><strong>We don&rsquo;t just hand you tools — we train you to scale with them.</strong> Live walkthroughs, an advisor community, and ongoing coaching. Built for advisors ready to put in the effort and grow.</p>
     </div>
   </div>
 </section>
@@ -31,12 +28,42 @@ const imageSrc = "/images/ai-tools.jpg";
 <style>
   .ai-eyebrow { color: var(--brand-green-bright); }
 
-  .ai-grid {
-    display: grid;
-    grid-template-columns: 1fr 0.82fr;
-    gap: clamp(2rem, 5vw, 4rem);
-    align-items: stretch;
+  /* Full-bleed blurred parallax photo behind the copy */
+  .ai-section {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
   }
+  .ai-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+  }
+  .ai-bg img {
+    position: absolute;
+    left: 0;
+    top: -10%;
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    filter: blur(4px);
+    transform: scale(1.08);
+    will-change: transform;
+  }
+  /* Dark scrim keeps the light text readable over the photo */
+  .ai-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(7, 21, 31, 0.92) 0%, rgba(7, 21, 31, 0.78) 55%, rgba(7, 21, 31, 0.6) 100%),
+      radial-gradient(120% 120% at 15% 0%, rgba(7, 21, 31, 0.25), transparent 60%);
+  }
+
+  .ai-copy { max-width: 620px; }
 
   .ai-sub {
     margin-top: 1.5rem;
@@ -88,38 +115,14 @@ const imageSrc = "/images/ai-tools.jpg";
   }
   .ai-effort strong { color: var(--ink); font-weight: 600; }
 
-  .ai-visual {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-    min-height: 100%;
-  }
-  .ai-visual img {
-    position: absolute;
-    left: 0;
-    top: -6%;
-    width: 100%;
-    height: 112%;
-    object-fit: cover;
-    display: block;
-    will-change: transform;
-  }
-  .ai-visual::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(180deg, transparent 58%, rgba(6, 21, 32, 0.4));
-  }
-
-  @media (max-width: 860px) {
-    .ai-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    .ai-visual { aspect-ratio: 3/4; max-width: 360px; width: 100%; margin: 0 auto; }
+  @media (max-width: 640px) {
+    .ai-bg img { filter: blur(3px); }
+    .ai-section::after {
+      background: linear-gradient(90deg, rgba(7, 21, 31, 0.9) 0%, rgba(7, 21, 31, 0.82) 100%);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .ai-visual img { transform: none !important; top: 0; height: 100%; }
+    .ai-bg img { transform: scale(1.08) !important; }
   }
 </style>
 
@@ -132,8 +135,8 @@ const imageSrc = "/images/ai-tools.jpg";
     let ticking = false;
     function update(){
       const rect = section.getBoundingClientRect();
-      const shift = (rect.top + rect.height/2 - window.innerHeight/2) * -0.04;
-      img.style.transform = 'translateY(' + shift.toFixed(1) + 'px)';
+      const shift = (rect.top + rect.height/2 - window.innerHeight/2) * -0.06;
+      img.style.transform = 'translateY(' + shift.toFixed(1) + 'px) scale(1.08)';
       ticking = false;
     }
     function onScroll(){ if(!ticking){ requestAnimationFrame(update); ticking = true; } }
