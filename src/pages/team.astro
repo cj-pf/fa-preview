@@ -54,9 +54,9 @@ function photoUrl(photo: any, w: number, h: number) {
             <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </button>
-        {photoUrl(member.photo, 1400, 1750) && (
+        {photoUrl(member.photo, 1200, 1500) && (
           <div class="bio-photo-wrap">
-            <img src={photoUrl(member.photo, 1400, 1750)} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
+            <img src={photoUrl(member.photo, 1200, 1500)} alt={member.name} class="bio-photo" decoding="async" loading="lazy" />
           </div>
         )}
         <div class="bio-body">
@@ -76,6 +76,23 @@ function photoUrl(photo: any, w: number, h: number) {
     document.querySelectorAll<HTMLElement>('[data-modal]').forEach((btn) => {
       if (btn.dataset.ready === '1') return;
       btn.dataset.ready = '1';
+
+      // Warm the modal's high-res photo before the click so it's cached
+      // (or already downloading) by the time the dialog opens.
+      const warm = () => {
+        if (btn.dataset.warmed === '1') return;
+        const modalId = btn.getAttribute('data-modal');
+        if (!modalId) return;
+        const img = document.getElementById(modalId)?.querySelector('.bio-photo');
+        const src = img?.getAttribute('src');
+        if (!src) return;
+        btn.dataset.warmed = '1';
+        new Image().src = src;
+      };
+      btn.addEventListener('pointerenter', warm);
+      btn.addEventListener('focus', warm);
+      btn.addEventListener('touchstart', warm, { passive: true });
+
       btn.addEventListener('click', () => {
         const modalId = btn.getAttribute('data-modal');
         if (!modalId) return;
