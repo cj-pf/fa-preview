@@ -1,0 +1,159 @@
+---
+import Site from '../../layouts/Site.astro';
+import { sanityClient, urlFor } from '../../lib/sanity';
+import { toHTML } from '@portabletext/to-html';
+
+export async function getStaticPaths() {
+  let articles: any[] = [];
+  try {
+    articles = await sanityClient.fetch(
+      `*[_type == "article" && defined(slug.current)]{
+        _id, title, "slug": slug.current, excerpt, publishedAt, author, coverImage, body
+      }`,
+    );
+  } catch (e) {
+    console.error('Failed to fetch articles for paths:', e);
+  }
+  return articles.map(a => ({ params: { slug: a.slug }, props: { article: a } }));
+}
+
+const { article } = Astro.props;
+
+function formatDate(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// Serialize Sanity portable-text `body` to HTML. Custom serializer for image
+// blocks so inline images honor hotspot/crop via urlFor.
+const bodyHtml = article?.body
+  ? toHTML(article.body, {
+      components: {
+        types: {
+          image: ({ value }: any) =>
+            value?.asset
+              ? `<img class="article-inline-img" src="${urlFor(value).width(1200).fit('max').auto('format').quality(85).url()}" alt="${value.alt || ''}" loading="lazy" decoding="async" />`
+              : '',
+        },
+      },
+    })
+  : '';
+---
+
+<Site title={`${article.title} — Fiduciary Alliance`}>
+
+  <article class="article-page">
+    <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:1rem;">
+      <div class="container article-container">
+        <a class="article-back" href="/insights">← Insights</a>
+        {article.publishedAt && <span class="article-date">{formatDate(article.publishedAt)}</span>}
+        <h1 class="article-heading">{article.title}</h1>
+        {article.author && <p class="article-byline">By {article.author}</p>}
+      </div>
+    </section>
+
+    {article.coverImage?.asset && (
+      <section style="padding-bottom:2.5rem;">
+        <div class="container article-container">
+          <img
+            class="article-cover"
+            src={urlFor(article.coverImage).width(1600).height(900).fit('crop').auto('format').quality(85).url()}
+            alt={article.title}
+            decoding="async"
+          />
+        </div>
+      </section>
+    )}
+
+    <section style="padding-bottom:var(--section);">
+      <div class="container article-container">
+        {bodyHtml
+          ? <div class="article-body" set:html={bodyHtml} />
+          : <p class="lede">{article.excerpt}</p>}
+      </div>
+    </section>
+  </article>
+
+</Site>
+
+<style>
+.article-container {
+  max-width: 760px;
+}
+.article-back {
+  display: inline-block;
+  font-family: var(--display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand-teal-bright);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+}
+.article-back:hover { text-decoration: underline; }
+.article-date {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-teal-bright);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.article-heading {
+  margin: 0 0 1rem;
+  line-height: 1.05;
+}
+.article-byline {
+  color: var(--ink-mute);
+  font-size: 0.9375rem;
+  margin: 0;
+}
+.article-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+.article-body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+.article-body :global(h2) {
+  font-family: var(--display);
+  color: var(--ink);
+  font-size: 1.75rem;
+  margin: 2.5rem 0 1rem;
+  letter-spacing: 0.01em;
+}
+.article-body :global(h3) {
+  font-family: var(--display);
+  color: var(--ink);
+  font-size: 1.375rem;
+  margin: 2rem 0 0.75rem;
+}
+.article-body :global(p) { margin: 0 0 1.25rem; }
+.article-body :global(a) { color: var(--brand-teal-bright); }
+.article-body :global(ul),
+.article-body :global(ol) { margin: 0 0 1.25rem 1.25rem; }
+.article-body :global(li) { margin-bottom: 0.5rem; }
+.article-body :global(blockquote) {
+  border-left: 3px solid var(--brand-teal-bright);
+  padding-left: 1.25rem;
+  margin: 1.75rem 0;
+  color: var(--ink);
+  font-style: italic;
+}
+.article-body :global(.article-inline-img) {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 1.75rem 0;
+  display: block;
+}
+</style>
