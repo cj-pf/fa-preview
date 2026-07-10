@@ -1,6 +1,5 @@
 ---
 import Site from '../layouts/Site.astro';
-import { sanityClient, urlFor } from '../lib/sanity';
 
 const CHANNEL_ID = 'UCERu76vbIZfLg8BIpvUT-tQ';
 const FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
@@ -50,108 +49,47 @@ async function fetchVideos(): Promise<Video[]> {
   }
 }
 
-type Article = {
-  _id: string;
-  title: string;
-  slug: string;
-  excerpt?: string;
-  publishedAt?: string;
-  coverImage?: any;
-};
-
-// Sanity `article` documents. Returns [] until the schema exists / content is
-// published, so the Articles tab shows a clean "coming soon" state in the meantime.
-async function fetchArticles(): Promise<Article[]> {
-  try {
-    return await sanityClient.fetch<Article[]>(
-      `*[_type == "article" && defined(slug.current)] | order(publishedAt desc) {
-        _id, title, "slug": slug.current, excerpt, publishedAt, coverImage
-      }`,
-    );
-  } catch (e) {
-    console.error('Failed to fetch articles:', e);
-    return [];
-  }
-}
-
-const [videos, articles] = await Promise.all([fetchVideos(), fetchArticles()]);
-
-function formatDate(iso?: string): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-}
+const videos = await fetchVideos();
 ---
 
 <Site title="Insights — Fiduciary Alliance">
 
   <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:2rem;">
     <div class="container">
-      <div class="insights-toggle" role="tablist" aria-label="Insights type">
-        <button type="button" role="tab" class="insights-toggle-btn" id="tab-videos" aria-controls="panel-videos" aria-selected="true" tabindex="0">Videos</button>
-        <button type="button" role="tab" class="insights-toggle-btn" id="tab-articles" aria-controls="panel-articles" aria-selected="false" tabindex="-1">Articles</button>
-      </div>
+      <p class="eyebrow">Insights</p>
       <h1 style="margin-bottom:1.5rem;">PERSPECTIVES FROM THE ALLIANCE.</h1>
-      <p class="lede" style="margin-bottom:0;">Conversations, walkthroughs, and ideas from the Fiduciary Alliance.</p>
+      <p class="lede" style="margin-bottom:0;">Conversations, walkthroughs, and ideas from the Fiduciary Alliance YouTube channel.</p>
     </div>
   </section>
 
-  <section class="insights-tabs" style="padding-top:2rem;padding-bottom:var(--section);">
+  <section style="padding-top:2rem;padding-bottom:var(--section);">
     <div class="container">
-
-      <div class="insights-panel" role="tabpanel" id="panel-videos" aria-labelledby="tab-videos">
-        {videos.length === 0 ? (
-          <p class="lede">Videos coming soon. <a href="https://www.youtube.com/@FiduciaryAlliance" target="_blank" rel="noopener" style="color:var(--brand-teal-bright);">Visit the channel →</a></p>
-        ) : (
-          <>
-            <div class="video-grid">
-              {videos.map(v => (
-                <article class="video-card">
-                  <button class="video-thumb" type="button" data-video-id={v.id} aria-label={`Play: ${v.title}`}>
-                    <img src={v.thumb} alt="" loading="lazy" decoding="async" />
-                    <span class="video-play" aria-hidden="true">
-                      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="28" cy="28" r="28" fill="rgba(0,0,0,0.72)"/>
-                        <path d="M22 18l16 10-16 10V18z" fill="#fff"/>
-                      </svg>
-                    </span>
-                  </button>
-                  <h3 class="video-title">{v.title}</h3>
-                  {v.desc && <p class="video-desc">{v.desc}</p>}
-                </article>
-              ))}
-            </div>
-            <div class="video-more">
-              <a class="btn btn-ghost" href="https://www.youtube.com/@FiduciaryAlliance" target="_blank" rel="noopener">More <span class="arrow">→</span></a>
-            </div>
-          </>
-        )}
-      </div>
-
-      <div class="insights-panel" role="tabpanel" id="panel-articles" aria-labelledby="tab-articles" hidden>
-        {articles.length === 0 ? (
-          <p class="lede">Articles coming soon.</p>
-        ) : (
+      {videos.length === 0 ? (
+        <p class="lede">Videos coming soon. <a href="https://www.youtube.com/@FiduciaryAlliance" target="_blank" rel="noopener" style="color:var(--brand-teal-bright);">Visit the channel →</a></p>
+      ) : (
+        <>
           <div class="video-grid">
-            {articles.map(a => (
-              <a class="article-card" href={`/insights/${a.slug}`}>
-                <div class="article-thumb">
-                  {a.coverImage?.asset ? (
-                    <img src={urlFor(a.coverImage).width(800).height(450).fit('crop').auto('format').quality(85).url()} alt="" loading="lazy" decoding="async" />
-                  ) : (
-                    <span class="article-thumb-fallback" aria-hidden="true">FA</span>
-                  )}
-                </div>
-                {a.publishedAt && <span class="article-date">{formatDate(a.publishedAt)}</span>}
-                <h3 class="video-title">{a.title}</h3>
-                {a.excerpt && <p class="video-desc">{a.excerpt}</p>}
-              </a>
+            {videos.map(v => (
+              <article class="video-card">
+                <button class="video-thumb" type="button" data-video-id={v.id} aria-label={`Play: ${v.title}`}>
+                  <img src={v.thumb} alt="" loading="lazy" decoding="async" />
+                  <span class="video-play" aria-hidden="true">
+                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="28" cy="28" r="28" fill="rgba(0,0,0,0.72)"/>
+                      <path d="M22 18l16 10-16 10V18z" fill="#fff"/>
+                    </svg>
+                  </span>
+                </button>
+                <h3 class="video-title">{v.title}</h3>
+                {v.desc && <p class="video-desc">{v.desc}</p>}
+              </article>
             ))}
           </div>
-        )}
-      </div>
-
+          <div class="video-more">
+            <a class="btn btn-ghost" href="https://www.youtube.com/@FiduciaryAlliance" target="_blank" rel="noopener">More <span class="arrow">→</span></a>
+          </div>
+        </>
+      )}
     </div>
   </section>
 
@@ -175,74 +113,11 @@ function formatDate(iso?: string): string {
       });
     });
   }
-
-  function setupInsightsTabs() {
-    document.querySelectorAll<HTMLElement>('.insights-toggle').forEach(group => {
-      if (group.dataset.ready === '1') return;
-      group.dataset.ready = '1';
-      const tabs = Array.from(group.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
-      const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls') || ''));
-      const activate = (idx: number) => {
-        tabs.forEach((t, i) => {
-          const on = i === idx;
-          t.setAttribute('aria-selected', on ? 'true' : 'false');
-          t.setAttribute('tabindex', on ? '0' : '-1');
-          const panel = panels[i];
-          if (panel) panel.hidden = !on;
-        });
-      };
-      tabs.forEach((tab, idx) => {
-        tab.addEventListener('click', () => activate(idx));
-        tab.addEventListener('keydown', (e) => {
-          const len = tabs.length;
-          if (e.key === 'ArrowRight') { e.preventDefault(); const n = (idx + 1) % len; activate(n); tabs[n].focus(); }
-          else if (e.key === 'ArrowLeft') { e.preventDefault(); const n = (idx - 1 + len) % len; activate(n); tabs[n].focus(); }
-          else if (e.key === 'Home') { e.preventDefault(); activate(0); tabs[0].focus(); }
-          else if (e.key === 'End') { e.preventDefault(); activate(len - 1); tabs[len - 1].focus(); }
-        });
-      });
-    });
-  }
-
   setupVideoCards();
-  setupInsightsTabs();
-  document.addEventListener('astro:page-load', () => { setupVideoCards(); setupInsightsTabs(); });
+  document.addEventListener('astro:page-load', setupVideoCards);
 </script>
 
 <style>
-.insights-toggle {
-  display: inline-flex;
-  gap: 0.25rem;
-  padding: 0.3rem;
-  margin-bottom: 1.75rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-.insights-toggle-btn {
-  font-family: var(--display);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  background: transparent;
-  border: none;
-  padding: 0.55rem 1.5rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease;
-}
-.insights-toggle-btn:hover { color: var(--ink); }
-.insights-toggle-btn[aria-selected="true"] {
-  color: #fff;
-  background: var(--brand-teal-bright);
-}
-.insights-toggle-btn:focus-visible {
-  outline: 2px solid var(--brand-teal-bright);
-  outline-offset: 2px;
-}
-
 .video-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -322,56 +197,4 @@ function formatDate(iso?: string): string {
   justify-content: center;
   margin-top: clamp(2.5rem, 5vw, 4rem);
 }
-
-/* Article cards (Articles tab) */
-.article-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  text-decoration: none;
-  color: inherit;
-}
-.article-thumb {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-  display: grid;
-  place-items: center;
-}
-.article-card:hover .article-thumb { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4); transform: translateY(-2px); }
-.article-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.article-card:hover .article-thumb img { transform: scale(1.05); }
-.article-thumb-fallback {
-  font-family: var(--display);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--brand-teal-light);
-  opacity: 0.5;
-}
-.article-card:focus-visible { outline: none; }
-.article-card:focus-visible .article-thumb {
-  outline: 2px solid var(--brand-teal-bright);
-  outline-offset: 3px;
-}
-.article-date {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--brand-teal-bright);
-  font-weight: 600;
-}
-.article-card:hover .video-title { color: var(--brand-teal-bright); }
 </style>
