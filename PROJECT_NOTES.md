@@ -1,6 +1,6 @@
 # Fiduciary Alliance Website — Project Notes
 
-> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated at commit `03a09fc`.
+> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated at commit `d508fb1`.
 
 ---
 
@@ -44,7 +44,7 @@ A website redesign for **Fiduciary Alliance, LLC** — a registered investment a
 3. **Context strip** (`.home-context`) — "You deserve more FREEDOM, FLEXIBILITY, AND SCALE with your advisory practice. Keep more of what you earn." Sits close under the stats.
 4. **Choose your path** — two persona cards → `/why-fa/breakaway` and `/why-fa/ria-owners`.
 5. **We are / We're not** — "AN ALLIANCE — NOT A ROLLUP." Uses base `--bg` (NOT `.surface-elev`) to match the AI section.
-6. **AI section** (`<AISection />`) — "WE'RE NOT AFRAID OF AI." two-column with image + tool pills (Zocks, Claude, Black Diamond, + more).
+6. **AI section** (`<AISection />`) — "WE'RE NOT AFRAID OF AI." + tool pills (Zocks, Claude, Black Diamond, + more). **Responsive treatment differs by breakpoint** — desktop is the two-column layout with the image in a bordered card; ≤820px the photo becomes a full-bleed blurred parallax background behind the copy (see §8).
 7. **National network / map** — real US map (see Automations §4), pins per firm, hover tooltip with firm name(s). Right column = "Our footprint" state list (capped at top 7 states).
 8. **Four steps** (`.surface-elev`) — "FOUR STEPS. NO SURPRISES." TALK / DILIGENCE / PLAN / LAUNCH.
 9. **Quote** — placeholder testimonial ("Member firm principal · Quote placeholder · TBD").
@@ -97,7 +97,7 @@ The **What We Provide tabs section** (on the Why FA pages) is a deliberate **lig
 
 ### Branding decisions
 - **Header:** fixed, always dark translucent `rgba(10,26,36,0.88)` + backdrop blur.
-- **Nav:** Home · Why FA (dropdown: Breakaway, RIA Owners) · Firms · Team · Insights. Astro `ClientRouter` view transitions, `transition:persist` on Header.
+- **Nav:** Home · Why FA (dropdown: Breakaway, RIA Owners) · Firms · Team · Insights. Astro `ClientRouter` view transitions, `transition:persist` on Header. Collapses to a hamburger overlay at ≤820px (see §8).
 - **"Why FA" dropdown:** opens on hover; the caret is a separate clickable button (label itself is not a link). Uses pointer cursor.
 - **Primary CTA everywhere:** "See If You're a Fit" → `https://calendly.com/boughner` (opens new tab). Driven by site settings (see §7).
 - **Logo:** static `public/logo.png` via `Logo.astro`.
@@ -222,6 +222,37 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 **Design continuity:**
 - New sections must use the existing tokens, fonts (Barlow Condensed display / Mulish body), and accent colors — no one-off custom palettes. The AI section was explicitly reworked to remove custom cyan/mint colors and gradient text and to match the site.
 - Hero fallback photo should only appear if the video fails to load (desktop); mobile shows the photo (video hidden). No photo "flash" before the video starts.
+
+---
+
+## 8. Mobile / tablet (responsive)
+
+The site is a single responsive build — no separate mobile pages. Layout is fluid via the `clamp()` tokens; the notes below cover the breakpoint-specific behavior. **Key breakpoint: `820px`.** At/below it the site switches to its "mobile/tablet" treatment (hamburger nav + AI blurred background); above it is "desktop." A second, smaller breakpoint at `640px` tightens spacing and eases blur/scrim for phones. The two preview presets used while building were **mobile = 375px** and **tablet = 768px** (both ≤820 → mobile/tablet treatment); **1280px** = desktop.
+
+### a) Header → hamburger menu (`Header.astro` + `global.css`)
+- **Desktop (>820px): unchanged** — full nav row + phone + "See If You're a Fit" CTA.
+- **≤820px:** the inline nav and the header CTA are hidden; a **hamburger button** (`.nav-toggle`) appears. Tapping it opens a **full-screen overlay** (`.mobile-menu`) listing every page — Home, Why FA → Breakaway / RIA Owners (as a labeled sub-group), Firms, Team, Insights — with the current page highlighted in `--brand-green-bright`, plus the CTA button and phone number pinned at the bottom. Hamburger animates to an X; body scroll locks while open.
+- **Critical structural detail:** the `.mobile-menu` is rendered as a **sibling *after* `</header>`, NOT inside it.** The header has `backdrop-filter`, which makes it the containing block for `position:fixed` descendants — a fixed menu nested inside would be trapped to the 84px header height. The open state is therefore keyed off **`body.menu-open`** (toggled in JS), not a class on the header.
+- JS (`initHeader()` in `Header.astro`) is guarded with `header.dataset.ready` because the header uses `transition:persist` (persists across view transitions — bind once). Menu closes on link click, Escape, `astro:before-swap`, and on resize above 820px.
+
+### b) Tighter section spacing on phones (`global.css`)
+- The `--section` token floor (`clamp(5rem, 10vw, 8rem)` → 5rem min) felt too tall on narrow screens. At **≤640px**, `:root { --section: 3.25rem }` and `.section-sm` drops to `2.5rem`. This tightens vertical rhythm site-wide (every `<section>` uses `--section`).
+
+### c) AI section — blurred parallax background (mobile/tablet only) (`AISection.astro`)
+The component ships **both layouts in one markup** and toggles by breakpoint:
+- **Desktop (>820px):** original two-column grid — copy left, photo in a bordered card (`.ai-visual`) right. `.ai-bg` and the scrim `::after` are `display:none`. This is the canonical/unchanged desktop design.
+- **≤820px:** `.ai-visual` card is hidden; the photo renders as a **full-bleed blurred parallax background** (`.ai-bg`) behind the copy, under a dark scrim (`::after`) that keeps the light text readable.
+
+Hard-won details in the mobile treatment (each fixes a specific bug the user caught — don't regress these):
+- **Full-width coverage:** the bg image uses horizontal overscan (`left:-6%; width:112%`) **plus `max-width:none`** — the global `img { max-width:100% }` reset was silently clamping the 112% back to 100%, leaving an uncovered strip on the right.
+- **Edge blending:** the top and bottom of the photo dissolve into the neighboring `--bg` sections via the scrim's **vertical gradient to opaque `#0A1A24`** at the 0–5% and 95–100% stops (long ~30% fade ramps). An earlier CSS `mask-image` approach was removed — it glitched on mobile GPUs over the blurred layer.
+- **No hairline seam:** the bg image has **no `will-change`**. Promoting a `filter: blur()` layer to its own compositor layer and clipping it with `overflow:hidden` renders a 1px seam at the section's clip edge. Parallax still works (it's driven by the actual `transform`).
+- **Parallax:** driven by JS setting a `--parallax-y` CSS variable on all `[data-ai-parallax]` images. The mobile bg consumes the full value (factor `-0.14`); the desktop card **damps it in CSS** (`calc(var(--parallax-y) * 0.3)`) so bumping the shared factor for mobile didn't over-move the desktop card.
+- **Reveal:** an `IntersectionObserver` adds `.ai-in` to fade the photo in (opacity 0→1) as the section scrolls into view.
+- **Motion/blur tiers:** blur is `2px` (≤820) / `1.5px` (≤640); `prefers-reduced-motion` shows the photo statically (no reveal fade, no parallax).
+
+### d) Verified on both presets
+Hero, stats, "We are / We're not" list, AI section, map + footprint, four-step section, firm cards (single column), team portraits, and the Insights video grid all stack and scale cleanly at 375px and 768px. The hamburger, blurred AI background, and tightened spacing were all confirmed in the browser preview.
 
 ---
 
