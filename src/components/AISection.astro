@@ -142,10 +142,6 @@ const imageSrc = "/images/ai-tools.jpg";
       inset: 0;
       z-index: -2;
       overflow: hidden;
-      /* Feather the top and bottom so the photo dissolves into the
-         --bg sections above and below instead of cutting a hard edge */
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
       /* Populate the photo as the section scrolls into view */
       opacity: 0;
       transition: opacity 1s ease;
@@ -153,16 +149,21 @@ const imageSrc = "/images/ai-tools.jpg";
     .ai-section.ai-in .ai-bg { opacity: 1; }
     .ai-bg img {
       position: absolute;
-      left: 0;
+      /* Overscan on all sides: horizontal covers blur bleed / subpixel gaps,
+         vertical gives room for the parallax travel */
+      left: -6%;
       top: -30%;
-      width: 100%;
-      height: 160%;      /* extra overscan for the longer parallax travel */
+      width: 112%;
+      max-width: none;   /* override the global `img { max-width: 100% }` reset */
+      height: 160%;
       object-fit: cover;
       filter: blur(2px);
-      transform: translateY(var(--parallax-y, 0)) scale(1.05);
+      transform: translateY(var(--parallax-y, 0)) scale(1.04);
       will-change: transform;
     }
-    /* Dark scrim keeps the light text readable over the photo — feathered to match */
+    /* Scrim keeps the light text readable AND blends the photo into the
+       --bg sections above/below via the opaque top/bottom stops (no mask,
+       which glitches on mobile GPUs when applied over a blurred layer). */
     .ai-section::after {
       display: block;
       content: "";
@@ -171,17 +172,18 @@ const imageSrc = "/images/ai-tools.jpg";
       z-index: -1;
       pointer-events: none;
       background:
+        linear-gradient(180deg, #0A1A24 0%, rgba(10, 26, 36, 0) 18%, rgba(10, 26, 36, 0) 82%, #0A1A24 100%),
         linear-gradient(90deg, rgba(7, 21, 31, 0.92) 0%, rgba(7, 21, 31, 0.78) 55%, rgba(7, 21, 31, 0.6) 100%),
         radial-gradient(120% 120% at 15% 0%, rgba(7, 21, 31, 0.25), transparent 60%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
     }
   }
 
   @media (max-width: 640px) {
     .ai-bg img { filter: blur(1.5px); }
     .ai-section::after {
-      background: linear-gradient(90deg, rgba(7, 21, 31, 0.9) 0%, rgba(7, 21, 31, 0.82) 100%);
+      background:
+        linear-gradient(180deg, #0A1A24 0%, rgba(10, 26, 36, 0) 18%, rgba(10, 26, 36, 0) 82%, #0A1A24 100%),
+        linear-gradient(90deg, rgba(7, 21, 31, 0.9) 0%, rgba(7, 21, 31, 0.82) 100%);
     }
   }
 
