@@ -5,22 +5,30 @@ const tools = ["Zocks", "Claude", "Black Diamond"];
 const imageSrc = "/images/ai-tools.jpg";
 ---
 <section class="ai-section" aria-labelledby="ai-heading">
+  <!-- Mobile/tablet only: photo becomes a blurred parallax background -->
   <div class="ai-bg" aria-hidden="true">
     <img src={imageSrc} alt="" width="1086" height="1448" loading="lazy" data-ai-parallax />
   </div>
   <div class="container">
-    <div class="ai-copy anim-hidden" data-anim-from="left">
-      <p class="eyebrow ai-eyebrow">Technology that scales you</p>
-      <h2 id="ai-heading">WE&rsquo;RE NOT AFRAID OF AI.<br/>WE PUT IT TO WORK FOR YOU.</h2>
-      <p class="ai-sub">We put AI to work where it counts — meeting notes, follow-ups, research, and reporting. Less admin, more time to grow your practice.</p>
+    <div class="ai-grid">
+      <div class="ai-copy anim-hidden" data-anim-from="left">
+        <p class="eyebrow ai-eyebrow">Technology that scales you</p>
+        <h2 id="ai-heading">WE&rsquo;RE NOT AFRAID OF AI.<br/>WE PUT IT TO WORK FOR YOU.</h2>
+        <p class="ai-sub">We put AI to work where it counts — meeting notes, follow-ups, research, and reporting. Less admin, more time to grow your practice.</p>
 
-      <p class="ai-tools-label">The AI tools we run</p>
-      <ul class="ai-tools">
-        {tools.map((t) => <li class="ai-tool">{t}</li>)}
-        <li class="ai-tool ai-tool--more">+ more</li>
-      </ul>
+        <p class="ai-tools-label">The AI tools we run</p>
+        <ul class="ai-tools">
+          {tools.map((t) => <li class="ai-tool">{t}</li>)}
+          <li class="ai-tool ai-tool--more">+ more</li>
+        </ul>
 
-      <p class="ai-effort"><strong>We don&rsquo;t just hand you tools — we train you to scale with them.</strong> Live walkthroughs, an advisor community, and ongoing coaching. Built for advisors ready to put in the effort and grow.</p>
+        <p class="ai-effort"><strong>We don&rsquo;t just hand you tools — we train you to scale with them.</strong> Live walkthroughs, an advisor community, and ongoing coaching. Built for advisors ready to put in the effort and grow.</p>
+      </div>
+
+      <!-- Desktop only: photo sits in a bordered card in the right column -->
+      <div class="ai-visual anim-hidden" data-anim-from="right" style="--anim-delay: 150ms">
+        <img src={imageSrc} alt="Layered AI technology stack" width="1086" height="1448" loading="lazy" data-ai-parallax />
+      </div>
     </div>
   </div>
 </section>
@@ -28,42 +36,12 @@ const imageSrc = "/images/ai-tools.jpg";
 <style>
   .ai-eyebrow { color: var(--brand-green-bright); }
 
-  /* Full-bleed blurred parallax photo behind the copy */
-  .ai-section {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
+  .ai-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.82fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: stretch;
   }
-  .ai-bg {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    overflow: hidden;
-  }
-  .ai-bg img {
-    position: absolute;
-    left: 0;
-    top: -10%;
-    width: 100%;
-    height: 120%;
-    object-fit: cover;
-    filter: blur(4px);
-    transform: scale(1.08);
-    will-change: transform;
-  }
-  /* Dark scrim keeps the light text readable over the photo */
-  .ai-section::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(7, 21, 31, 0.92) 0%, rgba(7, 21, 31, 0.78) 55%, rgba(7, 21, 31, 0.6) 100%),
-      radial-gradient(120% 120% at 15% 0%, rgba(7, 21, 31, 0.25), transparent 60%);
-  }
-
-  .ai-copy { max-width: 620px; }
 
   .ai-sub {
     margin-top: 1.5rem;
@@ -115,28 +93,100 @@ const imageSrc = "/images/ai-tools.jpg";
   }
   .ai-effort strong { color: var(--ink); font-weight: 600; }
 
+  /* ---------- Desktop (>820px): photo in a bordered card, no blurred bg ---------- */
+  .ai-bg { display: none; }              /* blurred background is mobile/tablet only */
+  .ai-section::after { display: none; }  /* scrim only exists over the blurred bg */
+
+  .ai-visual {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    min-height: 100%;
+  }
+  .ai-visual img {
+    position: absolute;
+    left: 0;
+    top: -6%;
+    width: 100%;
+    height: 112%;
+    object-fit: cover;
+    display: block;
+    transform: translateY(var(--parallax-y, 0));
+    will-change: transform;
+  }
+  .ai-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 58%, rgba(6, 21, 32, 0.4));
+  }
+
+  /* ---------- Mobile / tablet (<=820px): full-bleed blurred parallax photo ---------- */
+  @media (max-width: 820px) {
+    .ai-section {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+    .ai-grid { grid-template-columns: 1fr; }
+    .ai-copy { max-width: 620px; }
+    .ai-visual { display: none; }        /* hide the desktop card */
+
+    .ai-bg {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+    }
+    .ai-bg img {
+      position: absolute;
+      left: 0;
+      top: -10%;
+      width: 100%;
+      height: 120%;
+      object-fit: cover;
+      filter: blur(4px);
+      transform: translateY(var(--parallax-y, 0)) scale(1.08);
+      will-change: transform;
+    }
+    /* Dark scrim keeps the light text readable over the photo */
+    .ai-section::after {
+      display: block;
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(7, 21, 31, 0.92) 0%, rgba(7, 21, 31, 0.78) 55%, rgba(7, 21, 31, 0.6) 100%),
+        radial-gradient(120% 120% at 15% 0%, rgba(7, 21, 31, 0.25), transparent 60%);
+    }
+  }
+
   @media (max-width: 640px) {
     .ai-bg img { filter: blur(3px); }
     .ai-section::after {
       background: linear-gradient(90deg, rgba(7, 21, 31, 0.9) 0%, rgba(7, 21, 31, 0.82) 100%);
     }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .ai-bg img { transform: scale(1.08) !important; }
-  }
 </style>
 
 <script>
   function initAIParallax(){
-    const img = document.querySelector('[data-ai-parallax]');
+    const imgs = document.querySelectorAll<HTMLElement>('[data-ai-parallax]');
     const section = document.querySelector('.ai-section');
-    if(!img || !section) return;
+    if(!imgs.length || !section) return;
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let ticking = false;
     function update(){
-      const rect = section.getBoundingClientRect();
+      const rect = section!.getBoundingClientRect();
       const shift = (rect.top + rect.height/2 - window.innerHeight/2) * -0.06;
-      img.style.transform = 'translateY(' + shift.toFixed(1) + 'px) scale(1.08)';
+      // JS only drives the translate; each image composes its own scale in CSS.
+      imgs.forEach(img => img.style.setProperty('--parallax-y', shift.toFixed(1) + 'px'));
       ticking = false;
     }
     function onScroll(){ if(!ticking){ requestAnimationFrame(update); ticking = true; } }
