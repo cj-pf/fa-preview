@@ -113,7 +113,8 @@ const imageSrc = "/images/ai-tools.jpg";
     height: 112%;
     object-fit: cover;
     display: block;
-    transform: translateY(var(--parallax-y, 0));
+    /* Damp the shared parallax value so the desktop card keeps its subtle drift */
+    transform: translateY(calc(var(--parallax-y, 0px) * 0.3));
     will-change: transform;
   }
   .ai-visual::after {
@@ -141,19 +142,27 @@ const imageSrc = "/images/ai-tools.jpg";
       inset: 0;
       z-index: -2;
       overflow: hidden;
+      /* Feather the top and bottom so the photo dissolves into the
+         --bg sections above and below instead of cutting a hard edge */
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+      /* Populate the photo as the section scrolls into view */
+      opacity: 0;
+      transition: opacity 1s ease;
     }
+    .ai-section.ai-in .ai-bg { opacity: 1; }
     .ai-bg img {
       position: absolute;
       left: 0;
-      top: -10%;
+      top: -30%;
       width: 100%;
-      height: 120%;
+      height: 160%;      /* extra overscan for the longer parallax travel */
       object-fit: cover;
-      filter: blur(4px);
-      transform: translateY(var(--parallax-y, 0)) scale(1.08);
+      filter: blur(2px);
+      transform: translateY(var(--parallax-y, 0)) scale(1.05);
       will-change: transform;
     }
-    /* Dark scrim keeps the light text readable over the photo */
+    /* Dark scrim keeps the light text readable over the photo — feathered to match */
     .ai-section::after {
       display: block;
       content: "";
@@ -164,28 +173,51 @@ const imageSrc = "/images/ai-tools.jpg";
       background:
         linear-gradient(90deg, rgba(7, 21, 31, 0.92) 0%, rgba(7, 21, 31, 0.78) 55%, rgba(7, 21, 31, 0.6) 100%),
         radial-gradient(120% 120% at 15% 0%, rgba(7, 21, 31, 0.25), transparent 60%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
     }
   }
 
   @media (max-width: 640px) {
-    .ai-bg img { filter: blur(3px); }
+    .ai-bg img { filter: blur(1.5px); }
     .ai-section::after {
       background: linear-gradient(90deg, rgba(7, 21, 31, 0.9) 0%, rgba(7, 21, 31, 0.82) 100%);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-bg { opacity: 1 !important; transition: none; }
   }
 </style>
 
 <script>
   function initAIParallax(){
     const imgs = document.querySelectorAll<HTMLElement>('[data-ai-parallax]');
-    const section = document.querySelector('.ai-section');
-    if(!imgs.length || !section) return;
+    const section = document.querySelector<HTMLElement>('.ai-section');
+    if(!section) return;
+
+    // Reveal: fade the photo in as the section scrolls into view.
+    if(section.dataset.revealReady !== '1'){
+      section.dataset.revealReady = '1';
+      if('IntersectionObserver' in window){
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if(e.isIntersecting){ section.classList.add('ai-in'); io.disconnect(); }
+          });
+        }, { threshold: 0.12 });
+        io.observe(section);
+      } else {
+        section.classList.add('ai-in');
+      }
+    }
+
+    if(!imgs.length) return;
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let ticking = false;
     function update(){
       const rect = section!.getBoundingClientRect();
-      const shift = (rect.top + rect.height/2 - window.innerHeight/2) * -0.06;
-      // JS only drives the translate; each image composes its own scale in CSS.
+      // Mobile/tablet parallax travel; the desktop card damps this in CSS.
+      const shift = (rect.top + rect.height/2 - window.innerHeight/2) * -0.14;
       imgs.forEach(img => img.style.setProperty('--parallax-y', shift.toFixed(1) + 'px'));
       ticking = false;
     }
