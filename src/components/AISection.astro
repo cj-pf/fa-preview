@@ -159,7 +159,8 @@ const imageSrc = "/images/ai-tools.jpg";
       object-fit: cover;
       filter: blur(2px);
       transform: translateY(var(--parallax-y, 0)) scale(1.04);
-      will-change: transform;
+      /* No will-change here: promoting a blurred layer and clipping it with
+         overflow:hidden renders a 1px seam at the section's bottom edge. */
     }
     /* Scrim keeps the light text readable AND blends the photo into the
        --bg sections above/below via the opaque top/bottom stops (no mask,
