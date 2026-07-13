@@ -13,6 +13,13 @@ const page = await sanityClient.fetch(
 
 const pageTitle = page?.pageTitle || DEFAULTS.pageTitle;
 const iframeUrl = page?.iframeUrl || DEFAULTS.iframeUrl;
+
+// Fallback height used until the embedded app posts its actual content height.
+// Sized generously so the tallest single step still fits without an inner scroll.
+// Sized to fit the first step of the assessment (the tallest of the initial
+// screens). Once the embedded app posts its actual content height via
+// `postMessage({type:'assessment:resize', height})`, this is overridden.
+const FALLBACK_HEIGHT_PX = 900;
 ---
 
 <Site title={pageTitle}>
@@ -22,20 +29,19 @@ const iframeUrl = page?.iframeUrl || DEFAULTS.iframeUrl;
       src={iframeUrl}
       title="Practice Health Assessment"
       loading="lazy"
+      scrolling="no"
       allow="clipboard-write"
+      style={`height: ${FALLBACK_HEIGHT_PX}px;`}
     ></iframe>
   </section>
 </Site>
 
 <style>
-  /* Fill the viewport below the fixed 84px header so the survey feels like a dedicated app.
-     Footer sits below, reachable by scrolling past the iframe. */
-  /* Override the global `section` vertical padding so the iframe truly fills
-     the viewport below the fixed 84px header. */
+  /* Continuous white surface below the fixed 84px header — no dark band, no gap.
+     The outer page owns the scroll; the iframe stretches to whatever height the
+     embedded app reports (with a generous fallback below). */
   .assessment-shell {
     padding: 0;
-    height: calc(100vh - 84px);
-    min-height: 720px;
     width: 100%;
     background: #ffffff;
     display: block;
@@ -43,7 +49,36 @@ const iframeUrl = page?.iframeUrl || DEFAULTS.iframeUrl;
   .assessment-frame {
     display: block;
     width: 100%;
-    height: 100%;
     border: 0;
+    background: #ffffff;
   }
 </style>
+
+<script>
+  // Accept height updates from the embedded assessment app so the outer page
+  // owns the scroll (no inner iframe scrollbar). The app just needs to post:
+  //   window.parent.postMessage({type:'assessment:resize', height:N}, '*')
+  // We also accept a couple of common alternates (iframe-resizer, generic).
+  function initAssessmentAutoResize() {
+    const frame = document.querySelector<HTMLIFrameElement>('.assessment-frame');
+    if (!frame) return;
+    const EXPECTED_ORIGIN = new URL(frame.src).origin;
+    const handler = (e: MessageEvent) => {
+      if (e.origin !== EXPECTED_ORIGIN) return;
+      const data: any = e.data;
+      if (!data) return;
+      let h: number | undefined;
+      if (typeof data === 'object') {
+        if (data.type === 'assessment:resize' && typeof data.height === 'number') h = data.height;
+        else if (data.type === 'resize' && typeof data.height === 'number') h = data.height;
+        else if (typeof data.height === 'number') h = data.height;
+      } else if (typeof data === 'string' && data.startsWith('height:')) {
+        h = parseInt(data.slice(7), 10);
+      }
+      if (h && h > 200 && h < 10000) frame.style.height = h + 'px';
+    };
+    window.addEventListener('message', handler);
+  }
+  initAssessmentAutoResize();
+  document.addEventListener('astro:page-load', initAssessmentAutoResize);
+</script>
