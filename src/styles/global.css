@@ -108,6 +108,14 @@ footer.site .logo-alliance { color: #A8B0BD; }
   background: rgba(10, 26, 36, 0.88); backdrop-filter: saturate(140%) blur(12px);
   border-bottom: 1px solid var(--line);
 }
+/* Assessment page: let the header sit in normal flow and scroll away, so the
+   full-height embedded survey is one natural page scroll and its top is never
+   hidden behind a fixed bar. */
+body.assessment-page .site-header {
+  position: relative;
+  background: #0a1a24;
+  backdrop-filter: none;
+}
 .site-header .row { display: flex; align-items: center; justify-content: space-between; height: 84px; }
 .nav { display: flex; gap: 2rem; align-items: stretch; align-self: stretch; }
 .nav > a, .nav-trigger {

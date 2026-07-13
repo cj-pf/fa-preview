@@ -8,10 +8,12 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  bodyClass?: string;
 }
 const {
   title,
   description = 'Fiduciary Alliance — an advisor-owned network of independent RIAs.',
+  bodyClass,
 } = Astro.props;
 ---
 <!doctype html>
@@ -30,7 +32,7 @@ const {
     />
     <ClientRouter />
   </head>
-  <body>
+  <body class={bodyClass}>
     <Header transition:persist />
     <slot />
     <Footer />
