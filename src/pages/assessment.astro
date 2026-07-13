@@ -30,10 +30,15 @@ const iframeUrl = page?.iframeUrl || DEFAULTS.iframeUrl;
 <style>
   /* Fill the viewport below the fixed 84px header so the survey feels like a dedicated app.
      Footer sits below, reachable by scrolling past the iframe. */
+  /* Override the global `section` vertical padding so the iframe truly fills
+     the viewport below the fixed 84px header. */
   .assessment-shell {
+    padding: 0;
     height: calc(100vh - 84px);
+    min-height: 720px;
     width: 100%;
-    background: #0a1a24;
+    background: #ffffff;
+    display: block;
   }
   .assessment-frame {
     display: block;
