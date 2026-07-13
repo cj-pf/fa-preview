@@ -34,12 +34,12 @@ const pains = [
   <section class="section-sm">
     <div class="container">
       <div class="pains">
-        <div>
+        <div class="anim-hidden" data-anim-from="left">
           <p class="eyebrow">If any of this sounds familiar</p>
           <h2>YOU&rsquo;VE OUTGROWN WHERE YOU&nbsp;ARE.</h2>
         </div>
         <ul class="pain-list">
-          {pains.map(p => <li>{p}</li>)}
+          {pains.map((p, i) => <li class="anim-hidden" style={`--anim-delay: ${i * 80}ms`}>{p}</li>)}
         </ul>
       </div>
     </div>

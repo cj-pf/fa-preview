@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { url } from '../utils/url';
-import { getSiteSettings, phoneToTel } from '../lib/sanity';
+import { getSiteSettings } from '../lib/sanity';
 const settings = await getSiteSettings();
 const currentPath = Astro.url.pathname;
 type NavChild = { href: string; label: string; external?: boolean };
@@ -58,7 +58,6 @@ const isActive = (href: string) =>
       ))}
     </nav>
     <div class="nav-right">
-      <a class="phone" href={`tel:${phoneToTel(settings.phone)}`}>{settings.phone}</a>
       <a href={settings.calendlyUrl} target="_blank" rel="noopener" class="btn btn-primary nav-cta">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
       <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
         <span class="nav-toggle-box" aria-hidden="true">
@@ -92,7 +91,6 @@ const isActive = (href: string) =>
     </ul>
     <div class="mobile-menu-foot">
       <a href={settings.calendlyUrl} target="_blank" rel="noopener" class="btn btn-primary">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
-      <a class="mobile-phone" href={`tel:${phoneToTel(settings.phone)}`}>{settings.phone}</a>
     </div>
   </nav>
 

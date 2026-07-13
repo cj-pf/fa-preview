@@ -120,11 +120,11 @@ const serviceTabs: ServiceTab[] = [
 
 <section class="surface-elev">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head anim-hidden">
       <p class="eyebrow">The difference</p>
       <h2>AN ALLIANCE — NOT AN AGGREGATOR.</h2>
     </div>
-    <table class="ctable">
+    <table class="ctable anim-hidden">
       <thead>
         <tr>
           <th></th>
@@ -147,13 +147,13 @@ const serviceTabs: ServiceTab[] = [
 
 <section>
   <div class="container">
-    <div class="section-head">
+    <div class="section-head anim-hidden">
       <p class="eyebrow">The FA difference</p>
       <h2>WHAT CHANGES WHEN YOU JOIN.</h2>
     </div>
     <div class="outcomes">
-      {outcomes.map(o => (
-        <div class="outcome">
+      {outcomes.map((o, i) => (
+        <div class="outcome anim-hidden" style={`--anim-delay: ${i * 80}ms`}>
           <div class="num">{o.num}</div>
           <h3>{o.title}</h3>
         </div>
@@ -164,11 +164,11 @@ const serviceTabs: ServiceTab[] = [
 
 <section class="services-section">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head anim-hidden">
       <p class="eyebrow">The platform</p>
       <h2>WHAT WE PROVIDE.</h2>
     </div>
-    <div class="services-tabs">
+    <div class="services-tabs anim-hidden">
       <div class="tabs-nav" role="tablist" aria-label="Service categories">
         {serviceTabs.map((tab, i) => (
           <button
@@ -182,6 +182,7 @@ const serviceTabs: ServiceTab[] = [
           >{tab.title}</button>
         ))}
       </div>
+      <div class="tab-panels">
       {serviceTabs.map((tab, i) => (
         <div
           class="tab-panel"
@@ -221,13 +222,14 @@ const serviceTabs: ServiceTab[] = [
           </div>
         </div>
       ))}
+      </div>
     </div>
   </div>
 </section>
 
 <section id="how-a-partnership-works">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head anim-hidden">
       <p class="eyebrow">How a partnership works</p>
       <h2>FROM FIRST CONVERSATION TO LAUNCH.</h2>
       <p style="margin-top:1.25rem;max-width:60ch;">A step-by-step walkthrough of the partnership process — onboarding, transition support, and what your first 90 days look like inside the alliance. Detailed timeline coming soon.</p>
@@ -237,7 +239,7 @@ const serviceTabs: ServiceTab[] = [
 
 <section class="cta-strip">
   <div class="container">
-    <div class="cta-row">
+    <div class="cta-row anim-hidden">
       <h2>READY TO SEE IF YOU&rsquo;RE A FIT?</h2>
       <div class="actions">
         <a class="btn btn-primary" href={settings.calendlyUrl} target="_blank" rel="noopener">See If You&rsquo;re a Fit <span class="arrow">→</span></a>
@@ -273,6 +275,40 @@ const serviceTabs: ServiceTab[] = [
       });
     });
   }
+  function setupWhyFaAnimations() {
+    const els = document.querySelectorAll<HTMLElement>('.anim-hidden');
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.remove('anim-hidden'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        observer.unobserve(el);
+        el.classList.add('anim-visible');
+        const cleanup = () => el.classList.remove('anim-hidden', 'anim-visible');
+        el.addEventListener('transitionend', cleanup, { once: true });
+        window.setTimeout(cleanup, 1800);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    // Reveal anything already in view immediately (no entry animation) to avoid
+    // a flash; observe the rest so they animate in as they scroll into view.
+    const vh = window.innerHeight;
+    els.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < vh && rect.bottom > 0;
+      if (inView) el.classList.remove('anim-hidden');
+      else observer.observe(el);
+    });
+  }
+
   setupServiceTabs();
-  document.addEventListener('astro:page-load', setupServiceTabs);
+  setupWhyFaAnimations();
+  document.addEventListener('astro:page-load', () => {
+    setupServiceTabs();
+    setupWhyFaAnimations();
+  });
 </script>
