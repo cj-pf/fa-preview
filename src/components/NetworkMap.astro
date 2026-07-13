@@ -14,6 +14,7 @@ interface Props {
   eyebrow?: string;
   heading?: string; // use "\n" for the designed line break
   showExploreLink?: boolean; // hide on the firms page (it links to itself)
+  clearsHeader?: boolean; // add top padding to clear the fixed header when this is the first thing on a page
 }
 
 const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined(name)]{
@@ -34,6 +35,7 @@ const {
   eyebrow = 'A national network',
   heading = `${firmCount} FIRMS. ${stateCount} STATES.\nONE ALLIANCE.`,
   showExploreLink = true,
+  clearsHeader = false,
 } = Astro.props;
 
 // "Our footprint": member firms grouped by state, most first. Offices = numberOfOffices (min 1 per firm).
@@ -98,7 +100,7 @@ const pins = Array.from(pinGroups.values());
 
 const headingLines = heading.split('\n');
 ---
-<section data-network-map>
+<section data-network-map class:list={[{ 'clears-header': clearsHeader }]}>
   <div class="container">
     <div class="section-head anim-hidden">
       <p class="eyebrow">{eyebrow}</p>
@@ -150,6 +152,12 @@ const headingLines = heading.split('\n');
   </div>
 </section>
 
+<style>
+  /* When the map is the first element on a page, add enough top padding to
+     clear the fixed header (replaces a separate spacer + the section default). */
+  .clears-header { padding-top: clamp(6.5rem, 12vh, 9.5rem); }
+</style>
+
 <script>
   function initNetworkMap() {
     const root = document.querySelector<HTMLElement>('[data-network-map]');
@@ -165,7 +173,13 @@ const headingLines = heading.split('\n');
         if (!firms) return;
         tooltip.textContent = firms;
         const rect = (el as unknown as SVGGraphicsElement).getBoundingClientRect();
-        tooltip.style.left = `${rect.left + rect.width / 2}px`;
+        // Clamp horizontally so long firm names never spill off a narrow screen.
+        // (Tooltip is centered via translateX(-50%), so keep its center in bounds.)
+        const half = tooltip.offsetWidth / 2;
+        const margin = 8;
+        const center = rect.left + rect.width / 2;
+        const clamped = Math.min(Math.max(center, half + margin), window.innerWidth - half - margin);
+        tooltip.style.left = `${clamped}px`;
         tooltip.style.top = `${rect.top}px`;
         tooltip.classList.add('is-visible');
         tooltip.setAttribute('aria-hidden', 'false');

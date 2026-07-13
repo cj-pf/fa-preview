@@ -498,6 +498,23 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
 }
 .network-list .more { margin-top: 1.25rem; font-size: 0.8125rem; }
 
+/* --- Mobile/tablet map tuning (shared by home + firms pages) --- */
+@media (max-width: 640px) {
+  /* Trim the card padding so the scaled-down map gets more width */
+  .network-map { padding: 0.75rem; }
+  /* Bigger pins = easier tap targets on touch screens */
+  .pin { r: 8.5; }
+  .pin:hover, .pin:focus { r: 10; }
+  .pin-hq .pin-hq-core { r: 13.5; }
+  /* Let long firm-name tooltips wrap instead of running off-screen */
+  .map-tooltip {
+    white-space: normal;
+    max-width: min(80vw, 260px);
+    text-align: center;
+    line-height: 1.35;
+  }
+}
+
 /* ============ testimonial ============ */
 .quote { max-width: 880px; margin: 0 auto; text-align: center; }
 .quote .mark { font-family: var(--display); font-size: 5rem; line-height: 1; color: var(--brand-green-bright); margin-bottom: 0.5rem; font-weight: 700; }
