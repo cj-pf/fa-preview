@@ -112,22 +112,24 @@ const reasons = [
 
   <section>
     <div class="container">
+      <div class="summit-venue-head anim-hidden">
+        <p class="eyebrow">The venue</p>
+        <h2>DOWNTOWN GREENVILLE.</h2>
+      </div>
       <div class="grid-2 summit-venue">
         <a class="summit-venue-photo anim-hidden" data-anim-from="left" href={HOTEL_URL} target="_blank" rel="noopener" aria-label="Book your room at the AC Hotel, Greenville">
           <img src={HOTEL_IMG} alt="AC Hotel, downtown Greenville, SC" loading="lazy" />
           <span class="summit-venue-photo-tag">Book your room <span class="arrow">&rarr;</span></span>
         </a>
         <div class="anim-hidden" data-anim-from="right">
-          <p class="eyebrow">The venue</p>
-          <h2>DOWNTOWN GREENVILLE.</h2>
-          <p style="margin-top:1.5rem;">We’re hosted at the AC Hotel on Main Street — steps from world-class dining, shopping, and entertainment. Everything is walkable, so the conversations don’t stop when the sessions do.</p>
+          <p>We’re hosted at the AC Hotel on Main Street — steps from world-class dining, shopping, and entertainment. Everything is walkable, so the conversations don’t stop when the sessions do.</p>
           <ul class="summit-venue-list">
             <li><span>Location</span><strong>AC Hotel, Main Street</strong></li>
             <li><span>City</span><strong>Greenville, South Carolina</strong></li>
             <li><span>Getting around</span><strong>Fully walkable downtown</strong></li>
             <li><span>Nearby</span><strong>Dining, shopping, entertainment</strong></li>
           </ul>
-          <div class="actions" style="margin-top:2rem;">
+          <div class="actions summit-venue-actions" style="margin-top:2rem;">
             <a class="btn btn-primary" href={HOTEL_URL} target="_blank" rel="noopener">Book Your Room <span class="arrow">&rarr;</span></a>
           </div>
         </div>
@@ -226,7 +228,12 @@ const reasons = [
   }
 
   /* venue */
+  .summit-venue-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
   .summit-venue { align-items: center; }
+  .summit-venue-actions { display: flex; }
+  @media (min-width: 901px) {
+    .summit-venue-actions { justify-content: flex-end; }
+  }
   .summit-venue-photo {
     display: block; position: relative;
     border-radius: 14px; overflow: hidden;
