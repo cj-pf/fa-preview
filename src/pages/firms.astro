@@ -21,7 +21,7 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
 <Site title="Member Firms — Fiduciary Alliance">
 
   <div style="padding-top:clamp(6rem,12vh,9rem);"></div>
-  <NetworkMap />
+  <NetworkMap showExploreLink={false} />
 
   <section style="padding-top:0;padding-bottom:var(--section);">
     <div class="container">

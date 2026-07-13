@@ -13,6 +13,7 @@ import { geocodeFirm } from '../lib/geocode';
 interface Props {
   eyebrow?: string;
   heading?: string; // use "\n" for the designed line break
+  showExploreLink?: boolean; // hide on the firms page (it links to itself)
 }
 
 const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined(name)]{
@@ -32,6 +33,7 @@ const stateCount = new Set(
 const {
   eyebrow = 'A national network',
   heading = `${firmCount} FIRMS. ${stateCount} STATES.\nONE ALLIANCE.`,
+  showExploreLink = true,
 } = Astro.props;
 
 // "Our footprint": member firms grouped by state, most first. Offices = numberOfOffices (min 1 per firm).
@@ -142,7 +144,7 @@ const headingLines = heading.split('\n');
             </li>
           ))}
         </ul>
-        <a class="btn-link more" href={url('/firms')}>Explore member firms →</a>
+        {showExploreLink && <a class="btn-link more" href={url('/firms')}>Explore member firms →</a>}
       </aside>
     </div>
   </div>
