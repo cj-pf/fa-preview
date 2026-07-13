@@ -32,7 +32,20 @@ type ServiceTab = {
 // Shared graphic vocab: viewBox 400x340, brand green (#4F8458) + teal (#2E89B5)
 // accent, translucent fills, ~1.5–2.5px strokes, rounded shapes.
 const graphics = {
-  technology: `<img src="/images/technology-tab.png" alt="" loading="lazy" />`,
+  technology: `<svg viewBox="60 55 300 240" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" overflow="visible">
+    <path d="M140 110 Q140 82 168 80 Q178 62 202 66 Q226 60 240 82 Q268 82 268 110 Q282 118 278 132 Q272 144 258 144 L152 144 Q136 144 132 130 Q128 118 140 110 Z"
+          fill="rgba(46,137,181,0.10)" stroke="#2E89B5" stroke-width="1.75" stroke-linejoin="round"/>
+    <line x1="205" y1="150" x2="205" y2="182" stroke="#2E89B5" stroke-width="1.5" stroke-dasharray="3 5" stroke-linecap="round"/>
+    <rect x="100" y="182" width="210" height="120" rx="8" fill="rgba(79,132,88,0.10)" stroke="#4F8458" stroke-width="1.75"/>
+    <line x1="70" y1="304" x2="340" y2="304" stroke="#4F8458" stroke-width="1.75" stroke-linecap="round"/>
+    <g stroke="#4F8458" stroke-width="1.5" stroke-linecap="round">
+      <line x1="120" y1="208" x2="200" y2="208"/>
+      <line x1="120" y1="228" x2="240" y2="228"/>
+      <line x1="120" y1="248" x2="180" y2="248"/>
+    </g>
+    <circle cx="278" cy="248" r="14" fill="#ffffff" stroke="#4F8458" stroke-width="1.75"/>
+    <path d="M272 248 L277 253 L285 244" stroke="#4F8458" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>`,
   operations: `<svg viewBox="77 65 270 215" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" overflow="visible">
     <g transform="translate(155 155)">
       <g fill="rgba(79,132,88,0.10)" stroke="#4F8458" stroke-width="1.75">
