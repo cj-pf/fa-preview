@@ -728,20 +728,12 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
   max-width: 36ch;
   margin: 0;
 }
-.tab-graphic {
-  margin-top: 2.25rem;
-  width: 100%;
+.tab-icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.25rem;
 }
-.tab-graphic svg,
-.tab-graphic img { width: 100%; height: auto; display: block; }
-/* SVG graphics stay compact; bitmap image fills the full left-column width so
-   it spans from the left edge of the text to the right edge of the column. */
-.tab-graphic svg { max-width: 420px; }
-/* Graphics are desktop-only: at ≤900px the two-column layout collapses to a
-   single column, where the illustrations feel busy above the item list. */
-@media (max-width: 900px) {
-  .tab-graphic { display: none; }
-}
+.tab-icon svg { width: 100%; height: 100%; display: block; }
 
 .tab-items {
   list-style: none;
