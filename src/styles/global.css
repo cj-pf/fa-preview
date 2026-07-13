@@ -734,13 +734,9 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
   max-width: 420px;
 }
 .tab-graphic svg { width: 100%; height: auto; display: block; }
-/* In single-column mode (≤900px, e.g. portrait tablet) the panel-left stacks
-   above the item list — center the graphic instead of leaving it left-aligned. */
+/* Graphics are desktop-only: at ≤900px the two-column layout collapses to a
+   single column, where the illustrations feel busy above the item list. */
 @media (max-width: 900px) {
-  .tab-graphic { margin-left: auto; margin-right: auto; max-width: 380px; }
-}
-/* Hide only on phone widths where it would get cramped. */
-@media (max-width: 640px) {
   .tab-graphic { display: none; }
 }
 
