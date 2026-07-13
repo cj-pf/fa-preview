@@ -16,10 +16,10 @@ const iframeUrl = page?.iframeUrl || DEFAULTS.iframeUrl;
 
 // Fallback height used until the embedded app posts its actual content height.
 // Sized generously so the tallest single step still fits without an inner scroll.
-// Sized to fit the first step of the assessment (the tallest of the initial
-// screens). Once the embedded app posts its actual content height via
-// `postMessage({type:'assessment:resize', height})`, this is overridden.
-const FALLBACK_HEIGHT_PX = 900;
+// The embedded app renders step 1 at ~930px tall; buffer to 1000 so nothing
+// gets clipped. Overridden the moment the app posts a real height via
+// `postMessage({type:'assessment:resize', height})`.
+const FALLBACK_HEIGHT_PX = 1000;
 ---
 
 <Site title={pageTitle}>
@@ -41,7 +41,7 @@ const FALLBACK_HEIGHT_PX = 900;
      The outer page owns the scroll; the iframe stretches to whatever height the
      embedded app reports (with a generous fallback below). */
   .assessment-shell {
-    padding: 0;
+    padding: 84px 0 0;
     width: 100%;
     background: #ffffff;
     display: block;
