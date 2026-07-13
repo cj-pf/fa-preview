@@ -733,7 +733,8 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
   width: 100%;
   max-width: 420px;
 }
-.tab-graphic svg { width: 100%; height: auto; display: block; }
+.tab-graphic svg,
+.tab-graphic img { width: 100%; height: auto; display: block; }
 /* Graphics are desktop-only: at ≤900px the two-column layout collapses to a
    single column, where the illustrations feel busy above the item list. */
 @media (max-width: 900px) {
