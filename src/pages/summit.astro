@@ -5,11 +5,14 @@ import { getSiteSettings } from '../lib/sanity';
 
 const settings = await getSiteSettings();
 
-// NOTE: Registration form + hotel booking links are placeholders (#) until the
-// real URLs are confirmed. Speakers, agenda, and gallery are intentionally
-// omitted for now — those details aren't solidified.
+// NOTE: Registration form link is a placeholder (#) until the real URL is
+// confirmed. Speakers, agenda, and gallery are intentionally omitted for now —
+// those details aren't solidified.
 const REGISTER_URL = '#';
-const HOTEL_URL = '#';
+// Marriott group-booking link for the AC Hotel, downtown Greenville.
+const HOTEL_URL = 'https://www.marriott.com/event-reservations/reservation-link.mi?id=1774380583372&key=GRP&app=resvlink';
+// Venue photo. Placeholder stock image — swap for a real AC Hotel Greenville shot.
+const HOTEL_IMG = 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1600&q=80&auto=format';
 
 const pillars = [
   {
@@ -45,7 +48,7 @@ const reasons = [
         <p class="lede summit-lede">Three days built for growth-minded financial advisors ready to grow, scale, and connect.</p>
         <div class="actions">
           <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>
-          <a class="btn btn-ghost" href={HOTEL_URL}>Book Hotel</a>
+          <a class="btn btn-ghost" href={HOTEL_URL} target="_blank" rel="noopener">Book Hotel</a>
         </div>
       </div>
     </div>
@@ -109,21 +112,23 @@ const reasons = [
   <section>
     <div class="container">
       <div class="grid-2 summit-venue">
-        <div class="anim-hidden" data-anim-from="left">
+        <a class="summit-venue-photo anim-hidden" data-anim-from="left" href={HOTEL_URL} target="_blank" rel="noopener" aria-label="Book your room at the AC Hotel, Greenville">
+          <img src={HOTEL_IMG} alt="AC Hotel, downtown Greenville, SC" loading="lazy" />
+          <span class="summit-venue-photo-tag">Book your room <span class="arrow">&rarr;</span></span>
+        </a>
+        <div class="anim-hidden" data-anim-from="right">
           <p class="eyebrow">The venue</p>
           <h2>DOWNTOWN GREENVILLE.</h2>
           <p style="margin-top:1.5rem;">We’re hosted at the AC Hotel on Main Street — steps from world-class dining, shopping, and entertainment. Everything is walkable, so the conversations don’t stop when the sessions do.</p>
-          <div class="actions" style="margin-top:2rem;">
-            <a class="btn btn-primary" href={HOTEL_URL}>Book Your Room <span class="arrow">&rarr;</span></a>
-          </div>
-        </div>
-        <div class="summit-venue-card anim-hidden" data-anim-from="right">
           <ul class="summit-venue-list">
             <li><span>Location</span><strong>AC Hotel, Main Street</strong></li>
             <li><span>City</span><strong>Greenville, South Carolina</strong></li>
             <li><span>Getting around</span><strong>Fully walkable downtown</strong></li>
             <li><span>Nearby</span><strong>Dining, shopping, entertainment</strong></li>
           </ul>
+          <div class="actions" style="margin-top:2rem;">
+            <a class="btn btn-primary" href={HOTEL_URL} target="_blank" rel="noopener">Book Your Room <span class="arrow">&rarr;</span></a>
+          </div>
         </div>
       </div>
     </div>
@@ -162,7 +167,7 @@ const reasons = [
         <h2 class="anim-hidden">READY TO JOIN US IN GREENVILLE?</h2>
         <div class="actions anim-hidden" style="--anim-delay: 120ms">
           <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>
-          <a class="btn btn-ghost" href={HOTEL_URL}>Book Hotel</a>
+          <a class="btn btn-ghost" href={HOTEL_URL} target="_blank" rel="noopener">Book Hotel</a>
         </div>
       </div>
     </div>
@@ -221,13 +226,32 @@ const reasons = [
 
   /* venue */
   .summit-venue { align-items: center; }
-  .summit-venue-card {
-    background: var(--surface);
+  .summit-venue-photo {
+    display: block; position: relative;
+    border-radius: 14px; overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: clamp(1.75rem, 3vw, 2.5rem);
+    box-shadow: var(--shadow);
   }
-  .summit-venue-list { list-style: none; margin: 0; padding: 0; }
+  .summit-venue-photo img {
+    width: 100%; height: 100%; object-fit: cover;
+    aspect-ratio: 4 / 3;
+    transition: transform 0.5s ease;
+  }
+  .summit-venue-photo:hover img { transform: scale(1.04); }
+  .summit-venue-photo::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,26,36,0) 45%, rgba(6,21,32,0.72) 100%);
+    pointer-events: none;
+  }
+  .summit-venue-photo-tag {
+    position: absolute; left: 1.25rem; bottom: 1.1rem; z-index: 1;
+    font-family: var(--display); font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; font-size: 0.9375rem; color: #fff;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .summit-venue-photo:hover .summit-venue-photo-tag .arrow { transform: translateX(3px); }
+  .summit-venue-photo-tag .arrow { transition: transform 180ms ease; }
+  .summit-venue-list { list-style: none; margin: 1.75rem 0 0; padding: 0; }
   .summit-venue-list li {
     display: flex; flex-direction: column; gap: 0.25rem;
     padding: 1rem 0; border-bottom: 1px solid var(--line);
