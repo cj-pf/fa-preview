@@ -11,8 +11,9 @@ const settings = await getSiteSettings();
 const REGISTER_URL = '#';
 // Marriott group-booking link for the AC Hotel, downtown Greenville.
 const HOTEL_URL = 'https://www.marriott.com/event-reservations/reservation-link.mi?id=1774380583372&key=GRP&app=resvlink';
-// Venue photo. Placeholder stock image — swap for a real AC Hotel Greenville shot.
-const HOTEL_IMG = 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1600&q=80&auto=format';
+// Venue photo — the AC Hotel Greenville exterior, same shot used on the Marriott
+// reservation page (served from Marriott's rendition CDN, upsized to 1600px).
+const HOTEL_IMG = 'https://cache.marriott.com/content/dam/marriott-renditions/GSPAC/gspac-exterior-5022-hor-wide.jpg?downsize=1600px:*&output-quality=90&interpolation=progressive-bilinear';
 
 const pillars = [
   {
