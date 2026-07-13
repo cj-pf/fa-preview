@@ -1,0 +1,212 @@
+---
+// NetworkMap.astro — the "national network" US map + footprint block.
+// Self-contained: fetches its own data, renders the section, and carries its
+// own tooltip + scroll-reveal scripts so it can drop into any page.
+import { url } from '../utils/url';
+import { sanityClient } from '../lib/sanity';
+import { feature } from 'topojson-client';
+import { geoAlbersUsa, geoPath } from 'd3-geo';
+import usTopologyRaw from '../data/us-states-10m.json';
+import { FIPS_TO_ABBR } from '../data/firmCityCoords';
+import { geocodeFirm } from '../lib/geocode';
+
+interface Props {
+  eyebrow?: string;
+  heading?: string; // use "\n" for the designed line break
+}
+
+const memberFirms = await sanityClient.fetch(`*[_type == "memberFirm" && defined(name)]{
+  name,
+  streetAddress,
+  city,
+  state,
+  zipCode,
+  numberOfOffices
+} | order(name asc)`);
+
+const firmCount = memberFirms.length;
+const stateCount = new Set(
+  memberFirms.map((f: any) => String(f.state || '').toUpperCase().trim()).filter(Boolean)
+).size;
+
+const {
+  eyebrow = 'A national network',
+  heading = `${firmCount} FIRMS. ${stateCount} STATES.\nONE ALLIANCE.`,
+} = Astro.props;
+
+// "Our footprint": member firms grouped by state, most first. Offices = numberOfOffices (min 1 per firm).
+const US_STATES: Record<string, string> = { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NE:'Nebraska', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NY:'New York', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OK:'Oklahoma', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont', VA:'Virginia', WA:'Washington', WV:'West Virginia', WI:'Wisconsin', WY:'Wyoming', DC:'District of Columbia' };
+const stateOffices: Record<string, number> = {};
+for (const f of memberFirms) {
+  if (!f.state) continue;
+  const abbr = String(f.state).toUpperCase().trim();
+  const offices = Number(f.numberOfOffices) > 0 ? Number(f.numberOfOffices) : 1;
+  stateOffices[abbr] = (stateOffices[abbr] || 0) + offices;
+}
+const stateList = Object.entries(stateOffices)
+  .map(([abbr, offices]) => ({ name: US_STATES[abbr] || abbr, offices }))
+  .sort((a, b) => b.offices - a.offices || a.name.localeCompare(b.name))
+  .slice(0, 7);
+
+// --- Map projection (built once at build time) ----------------------------
+const MAP_W = 975;
+const MAP_H = 610;
+const projection = geoAlbersUsa().scale(1300).translate([MAP_W / 2, MAP_H / 2]);
+const pathGen = geoPath(projection as any);
+
+type StateFeature = { id?: string; properties?: { name?: string } };
+const usTopology = usTopologyRaw as any;
+const statesCollection = feature(usTopology, usTopology.objects.states) as any;
+
+const memberStateSet = new Set(memberFirms.map((f: any) => String(f.state || '').toUpperCase().trim()).filter(Boolean));
+
+const statePaths = (statesCollection.features as StateFeature[]).map((f) => {
+  const abbr = FIPS_TO_ABBR[String(f.id ?? '')] || '';
+  return {
+    d: pathGen(f as any) || '',
+    isMember: memberStateSet.has(abbr),
+    name: f.properties?.name || '',
+  };
+}).filter(s => s.d);
+
+// Group firms by proximity (~14px on the projected map) so adjacent cities
+// share one pin with a combined tooltip.
+const PIN_BUCKET = 14;
+type PinGroup = { x: number; y: number; firms: string[]; isHq: boolean };
+const pinGroups = new Map<string, PinGroup>();
+
+for (const firm of memberFirms) {
+  const coords = await geocodeFirm(firm);
+  if (!coords) continue;
+  const projected = projection([coords[1], coords[0]] as [number, number]);
+  if (!projected) continue;
+  const [x, y] = projected;
+  // HQ = Parallel Financial in Greenville, SC
+  const isHq = String(firm.name).toUpperCase().trim() === 'PARALLEL FINANCIAL';
+  const bucketKey = `${Math.round(x / PIN_BUCKET)}|${Math.round(y / PIN_BUCKET)}`;
+  const existing = pinGroups.get(bucketKey);
+  if (existing) {
+    existing.firms.push(firm.name);
+    if (isHq) existing.isHq = true;
+  } else {
+    pinGroups.set(bucketKey, { x, y, firms: [firm.name], isHq });
+  }
+}
+const pins = Array.from(pinGroups.values());
+
+const headingLines = heading.split('\n');
+---
+<section data-network-map>
+  <div class="container">
+    <div class="section-head anim-hidden">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{headingLines.map((line, i) => (<Fragment>{i > 0 && <br/>}{line}</Fragment>))}</h2>
+    </div>
+    <div class="network-block anim-hidden" style="--anim-delay: 100ms">
+      <div class="network-map">
+        <svg class={`us-map us-map-v2`} viewBox={`0 0 ${MAP_W} ${MAP_H}`} xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of Fiduciary Alliance member firms across the United States">
+          <g class="us-states">
+            {statePaths.map(s => (
+              <path class={`us-state${s.isMember ? ' us-state-fa' : ''}`} d={s.d} data-state={s.name} />
+            ))}
+          </g>
+          <g class="pins">
+            {pins.filter(p => !p.isHq).map(p => (
+              <circle
+                class="pin"
+                cx={p.x.toFixed(1)}
+                cy={p.y.toFixed(1)}
+                r="6"
+                tabindex="0"
+                data-firms={p.firms.join(' · ')}
+              />
+            ))}
+          </g>
+          {pins.filter(p => p.isHq).map(p => (
+            <g class="pin-hq" transform={`translate(${p.x.toFixed(1)}, ${p.y.toFixed(1)})`}>
+              <circle class="pin-hq-core" r="11" tabindex="0" data-firms={p.firms.join(' · ')} />
+              <text class="pin-hq-label" y="3.5" text-anchor="middle">HQ</text>
+            </g>
+          ))}
+        </svg>
+        <div class="map-tooltip" role="tooltip" aria-hidden="true"></div>
+      </div>
+
+      <aside class="network-list">
+        <span class="label">Our footprint</span>
+        <ul class="state-list">
+          {stateList.map(s => (
+            <li>
+              <span class="state-name">{s.name}</span>
+              <span class="state-meta"><strong>{s.offices}</strong>{s.offices === 1 ? 'office' : 'offices'}</span>
+            </li>
+          ))}
+        </ul>
+        <a class="btn-link more" href={url('/firms')}>Explore member firms →</a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initNetworkMap() {
+    const root = document.querySelector<HTMLElement>('[data-network-map]');
+    if (!root) return;
+
+    // --- Tooltip ---
+    const tooltip = root.querySelector<HTMLElement>('.map-tooltip');
+    if (tooltip && tooltip.dataset.ready !== '1') {
+      tooltip.dataset.ready = '1';
+      const show = (e: Event) => {
+        const el = e.currentTarget as SVGElement;
+        const firms = el.getAttribute('data-firms');
+        if (!firms) return;
+        tooltip.textContent = firms;
+        const rect = (el as unknown as SVGGraphicsElement).getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width / 2}px`;
+        tooltip.style.top = `${rect.top}px`;
+        tooltip.classList.add('is-visible');
+        tooltip.setAttribute('aria-hidden', 'false');
+      };
+      const hide = () => {
+        tooltip.classList.remove('is-visible');
+        tooltip.setAttribute('aria-hidden', 'true');
+      };
+      root.querySelectorAll<SVGElement>('.us-map [data-firms]').forEach((el) => {
+        el.addEventListener('mouseenter', show);
+        el.addEventListener('mouseleave', hide);
+        el.addEventListener('focus', show);
+        el.addEventListener('blur', hide);
+      });
+    }
+
+    // --- Scroll reveal (self-contained so the block animates on any page) ---
+    if (root.dataset.revealReady !== '1') {
+      root.dataset.revealReady = '1';
+      const items = root.querySelectorAll<HTMLElement>('.anim-hidden');
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.remove('anim-hidden'));
+      } else {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target as HTMLElement;
+            io.unobserve(el);
+            el.classList.add('anim-visible');
+            const cleanup = () => el.classList.remove('anim-hidden', 'anim-visible');
+            el.addEventListener('transitionend', cleanup, { once: true });
+            window.setTimeout(cleanup, 1800);
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        const vh = window.innerHeight;
+        items.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < vh && rect.bottom > 0) el.classList.remove('anim-hidden');
+          else io.observe(el);
+        });
+      }
+    }
+  }
+  initNetworkMap();
+  document.addEventListener('astro:page-load', initNetworkMap);
+</script>

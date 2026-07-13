@@ -1,5 +1,6 @@
 ---
 import Site from '../layouts/Site.astro';
+import NetworkMap from '../components/NetworkMap.astro';
 import { sanityClient } from '../lib/sanity';
 
 const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name asc) {
@@ -15,17 +16,16 @@ const firms = await sanityClient.fetch(`*[_type == "memberFirm"] | order(name as
   website,
   "logoUrl": logo.asset->url
 }`);
-
-const firmCount = firms.length;
-const stateCount = new Set(firms.map((f: { state?: string }) => f.state).filter(Boolean)).size;
-const heading = `${firmCount} FIRMS. ${stateCount} STATES.`;
 ---
 
 <Site title="Member Firms — Fiduciary Alliance">
 
-  <section style="padding-top:clamp(8rem,15vh,12rem);padding-bottom:var(--section);">
+  <div style="padding-top:clamp(6rem,12vh,9rem);"></div>
+  <NetworkMap />
+
+  <section style="padding-top:0;padding-bottom:var(--section);">
     <div class="container">
-      <h1 style="margin-bottom:1.5rem;">{heading}</h1>
+      <h1 class="firm-grid-heading">MEMBER FIRMS</h1>
 
       <div class="firm-grid">
         {firms.map((firm) => (
@@ -49,8 +49,13 @@ const heading = `${firmCount} FIRMS. ${stateCount} STATES.`;
 </Site>
 
 <style>
+.firm-grid-heading {
+  margin: 0;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
 .firm-grid {
-  margin-top: 5rem;
+  margin-top: 2.5rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1rem;
