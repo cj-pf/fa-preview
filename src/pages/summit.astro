@@ -1,0 +1,299 @@
+---
+import Site from '../layouts/Site.astro';
+import { url } from '../utils/url';
+import { getSiteSettings } from '../lib/sanity';
+
+const settings = await getSiteSettings();
+
+// NOTE: Registration form + hotel booking links are placeholders (#) until the
+// real URLs are confirmed. Speakers, agenda, and gallery are intentionally
+// omitted for now — those details aren't solidified.
+const REGISTER_URL = '#';
+const HOTEL_URL = '#';
+
+const pillars = [
+  {
+    title: 'GROW',
+    body: 'Real, applicable strategies you can put to work Monday morning to grow your business.',
+  },
+  {
+    title: 'SCALE',
+    body: 'Discover new systems, tools, and workflows that help you scale your practice without burning out.',
+  },
+  {
+    title: 'CONNECT',
+    body: 'Network with a room full of growth-minded advisors who are building what you’re building.',
+  },
+];
+
+const reasons = [
+  { num: '01', title: 'BUILT FOR ADVISORS', body: 'Sessions designed by advisors, for advisors — no fluff, no vendor pitches disguised as keynotes.' },
+  { num: '02', title: 'ACTIONABLE, NOT THEORETICAL', body: 'Leave with a playbook, not a notebook. Every session ends with something you can implement.' },
+  { num: '03', title: 'THE RIGHT ROOM', body: 'Small enough to actually meet people. Focused enough that everyone speaks the same language.' },
+  { num: '04', title: 'A CITY WORTH THE TRIP', body: 'Downtown Greenville — award-winning dining, walkable streets, and Southern hospitality.' },
+];
+---
+
+<Site title="Advisor Summit — Fiduciary Alliance" description="The FA Advisor Summit — three days of growth strategy, practice scaling, and peer connection for growth-minded financial advisors in Greenville, SC.">
+
+  <section class="hero hero-summit">
+    <div class="container">
+      <div class="summit-hero-inner">
+        <p class="eyebrow">6th Annual · Fiduciary Alliance</p>
+        <h1>ADVISOR<br/>SUMMIT</h1>
+        <p class="summit-date">FALL 2026 &middot; GREENVILLE, SC</p>
+        <p class="lede summit-lede">Three days built for growth-minded financial advisors ready to grow, scale, and connect.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>
+          <a class="btn btn-ghost" href={HOTEL_URL}>Book Hotel</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="summit-meta">
+    <div class="container">
+      <div class="summit-meta-row">
+        <div class="summit-meta-item anim-hidden">
+          <span class="summit-meta-label">When</span>
+          <span class="summit-meta-value">Fall 2026</span>
+        </div>
+        <div class="summit-meta-item anim-hidden" style="--anim-delay: 100ms">
+          <span class="summit-meta-label">Where</span>
+          <span class="summit-meta-value">AC Hotel &middot; Downtown Greenville, SC</span>
+        </div>
+        <div class="summit-meta-item anim-hidden" style="--anim-delay: 200ms">
+          <span class="summit-meta-label">Who</span>
+          <span class="summit-meta-value">Growth-minded advisors</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head anim-hidden" style="max-width:840px;">
+        <p class="eyebrow">Why we gather</p>
+        <h2>THREE DAYS. ONE MISSION —<br/>YOUR GROWTH.</h2>
+        <p>The Advisor Summit exists for one reason: to help you build a better practice. Learn strategies that actually move the needle, discover systems that let you scale, and spend real time with advisors who get it.</p>
+      </div>
+      <div class="grid-3 summit-pillars">
+        {pillars.map((p, i) => (
+          <div class="persona-card anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-elev">
+    <div class="container">
+      <div class="section-head anim-hidden">
+        <p class="eyebrow">Why attend</p>
+        <h2>WORTH CLEARING THE CALENDAR.</h2>
+      </div>
+      <div class="steps summit-reasons">
+        {reasons.map((r, i) => (
+          <div class="step anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
+            <div class="num">{r.num}</div>
+            <h3>{r.title}</h3>
+            <p>{r.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="grid-2 summit-venue">
+        <div class="anim-hidden" data-anim-from="left">
+          <p class="eyebrow">The venue</p>
+          <h2>DOWNTOWN GREENVILLE.</h2>
+          <p style="margin-top:1.5rem;">We’re hosted at the AC Hotel on Main Street — steps from world-class dining, shopping, and entertainment. Everything is walkable, so the conversations don’t stop when the sessions do.</p>
+          <div class="actions" style="margin-top:2rem;">
+            <a class="btn btn-primary" href={HOTEL_URL}>Book Your Room <span class="arrow">&rarr;</span></a>
+          </div>
+        </div>
+        <div class="summit-venue-card anim-hidden" data-anim-from="right">
+          <ul class="summit-venue-list">
+            <li><span>Location</span><strong>AC Hotel, Main Street</strong></li>
+            <li><span>City</span><strong>Greenville, South Carolina</strong></li>
+            <li><span>Getting around</span><strong>Fully walkable downtown</strong></li>
+            <li><span>Nearby</span><strong>Dining, shopping, entertainment</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="surface-deep">
+    <div class="container">
+      <div class="summit-give anim-hidden">
+        <p class="eyebrow">Give back</p>
+        <h2>WE DON’T JUST TALK ABOUT IMPACT.</h2>
+        <p style="margin-top:1.25rem;max-width:52ch;">Each year the Summit sets aside time to give back to the community that hosts us. It’s a chance to step away from the sessions, roll up our sleeves together, and make the trip about more than business.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head anim-hidden">
+        <p class="eyebrow">Sponsors</p>
+        <h2>MADE POSSIBLE BY OUR PARTNERS.</h2>
+      </div>
+      <div class="summit-sponsors">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`}>
+            <span>Sponsor</span>
+          </div>
+        ))}
+      </div>
+      <p class="summit-sponsor-note anim-hidden">Interested in sponsoring the Advisor Summit? <a href={`mailto:${settings.email}`}>Get in touch</a>.</p>
+    </div>
+  </section>
+
+  <section class="cta-strip">
+    <div class="container">
+      <div class="cta-row">
+        <h2 class="anim-hidden">READY TO JOIN US IN GREENVILLE?</h2>
+        <div class="actions anim-hidden" style="--anim-delay: 120ms">
+          <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>
+          <a class="btn btn-ghost" href={HOTEL_URL}>Book Hotel</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Site>
+
+<style>
+  .hero-summit { text-align: center; }
+  .hero-summit::before {
+    background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=2400&q=80&auto=format');
+  }
+  .summit-hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-summit h1 { letter-spacing: 0.02em; }
+  .summit-date {
+    font-family: var(--display);
+    font-size: clamp(1.125rem, 2.2vw, 1.75rem);
+    letter-spacing: 0.22em;
+    font-weight: 600;
+    color: var(--brand-teal-light);
+    margin-top: 1.5rem;
+    text-shadow: 0 1px 16px rgba(0, 0, 0, 0.5);
+  }
+  .summit-lede { max-width: 44ch; margin-top: 1.25rem; }
+  .hero-summit .actions { justify-content: center; }
+
+  /* meta strip */
+  .summit-meta { padding: clamp(2rem, 4vw, 3rem) 0; border-bottom: 1px solid var(--line); }
+  .summit-meta-row {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: clamp(2rem, 8vw, 6rem);
+  }
+  .summit-meta-item { display: flex; flex-direction: column; gap: 0.4rem; text-align: center; }
+  .summit-meta-label {
+    font-family: var(--display); font-size: 0.8125rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--brand-green-bright); font-weight: 600;
+  }
+  .summit-meta-value {
+    font-family: var(--display); font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    color: var(--ink); font-weight: 500;
+  }
+
+  /* pillar cards center their content */
+  .summit-pillars .persona-card { text-align: center; align-items: center; }
+  .summit-pillars .persona-card h3 {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    color: var(--brand-teal-light);
+    margin: 0 0 0.75rem 0;
+  }
+
+  /* venue */
+  .summit-venue { align-items: center; }
+  .summit-venue-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+  }
+  .summit-venue-list { list-style: none; margin: 0; padding: 0; }
+  .summit-venue-list li {
+    display: flex; flex-direction: column; gap: 0.25rem;
+    padding: 1rem 0; border-bottom: 1px solid var(--line);
+  }
+  .summit-venue-list li:last-child { border-bottom: none; }
+  .summit-venue-list span {
+    font-family: var(--display); font-size: 0.8125rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-mute); font-weight: 600;
+  }
+  .summit-venue-list strong { color: var(--ink); font-size: 1.125rem; font-weight: 500; }
+
+  /* give back */
+  .summit-give { max-width: 780px; }
+
+  /* sponsors */
+  .summit-sponsors {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.25rem;
+  }
+  .summit-sponsor-tile {
+    display: flex; align-items: center; justify-content: center;
+    aspect-ratio: 3 / 2;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink-mute);
+    font-family: var(--display); letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 0.875rem; font-weight: 600;
+  }
+  .summit-sponsor-note { margin-top: 2rem; color: var(--ink-mute); }
+  .summit-sponsor-note a { color: var(--brand-teal-bright); border-bottom: 1px solid var(--brand-teal-bright); }
+  .summit-sponsor-note a:hover { color: var(--brand-green-bright); border-color: var(--brand-green-bright); }
+
+  @media (max-width: 900px) {
+    .summit-sponsors { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .summit-sponsors { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script>
+  function setupSummitAnimations() {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.anim-hidden').forEach(el => el.classList.add('anim-visible'));
+      return;
+    }
+    const animObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        animObserver.unobserve(el);
+        el.classList.add('anim-visible');
+        const cleanup = () => el.classList.remove('anim-hidden', 'anim-visible');
+        el.addEventListener('transitionend', cleanup, { once: true });
+        window.setTimeout(cleanup, 1800);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    const vh = window.innerHeight;
+    document.querySelectorAll<HTMLElement>('.anim-hidden').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < vh && rect.bottom > 0;
+      if (inView) el.classList.remove('anim-hidden');
+      else animObserver.observe(el);
+    });
+  }
+  setupSummitAnimations();
+  document.addEventListener('astro:page-load', setupSummitAnimations);
+</script>
