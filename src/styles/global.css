@@ -1,6 +1,11 @@
 /* ============ base ============ */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+/* Never scroll sideways. Scroll-reveal elements translate ±40px horizontally
+   while hidden (see .anim-hidden), which would otherwise poke past the viewport
+   and allow horizontal scrolling. `clip` (not `hidden`) keeps the viewport as
+   the vertical scroll container so fixed positioning / 100vh stay correct. */
+html, body { overflow-x: hidden; overflow-x: clip; }
 body {
   font-family: var(--body);
   background: var(--bg);
