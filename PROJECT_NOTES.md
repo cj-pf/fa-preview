@@ -209,7 +209,8 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 - Never say "PE-free" — say **"No private equity"**. Tagline is **"Your growth, our mission."**
 - Positioning language: **"alliance / federation, NOT a rollup / aggregator."**
 - Firm counts, state counts, and map pins must **auto-generate from Sanity** — the user explicitly does not want to hand-edit these numbers.
-- "What We Provide" tabs should all have the **same number of dropdowns** (currently 7 each). When condensing, **merge existing items — do not invent new capabilities.**
+- "What We Provide" tabs (in `WhyFaShared.astro`): **5 tabs** — Technology, Operations, Investments, Compliance, Growth Coaching. 7 items each except **Investments = 6**. When condensing, **merge existing items — do not invent new capabilities.**
+- **Services tab left column:** a small 40px stroke icon (currentColor → brand green `#4F8458`) sits **above** the tab headline and summary. The old "N tech platforms" proof block was removed. Several experiments (per-tab illustrations, a cloud/tower PNG, a tech-icons PNG) were tried and rejected — final direction is the restrained icon-above-headline treatment. Don't reintroduce large illustrations without explicit direction.
 - Site settings (Calendly link, phone, email, address) should live in **one place** (the `siteSettings` singleton) so a single edit updates everywhere.
 
 **Technical conventions:**
