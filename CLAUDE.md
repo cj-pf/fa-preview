@@ -45,6 +45,8 @@ Never add a field in just one place.
 | `firm` | 24 member firms — name, location, state, website, etc. |
 | `compliance` | SEC PDF documents (ADV, ADV Part 1A, ADV Part 2B, Form CRS) |
 | `teamMember` | name, title, photo (with hotspot), bio, displayOrder |
+| `summitPage` | Singleton — editable content for `/summit`: registerUrl, hotelUrl, heroImage, useCustomVenuePhoto toggle, venueImage, giveBackImage, ctaImage, ctaParallax, sponsors[] |
+| `summitSponsor` | Object type used by `summitPage.sponsors[]` — name, logo, website |
 
 ---
 
@@ -56,7 +58,7 @@ Never add a field in just one place.
 | `/firms` | `firms.astro` | Grid of all 24 firms, "24 FIRMS. 10 STATES." header |
 | `/disclosures` | `disclosures.astro` | Links to all 4 SEC PDFs |
 | `/team` | `team.astro` | Portrait cards with hover effects + bio modals |
-| `/summit` | `summit.astro` | Advisor Summit landing page — hero, GROW/SCALE/CONNECT pillars, why-attend, venue (AC Hotel Greenville), give-back, sponsor placeholders, CTA. Content is hardcoded in the page (not Sanity). Speakers/agenda/gallery intentionally omitted. Hotel links point to the Marriott group-booking URL; venue photo is hotlinked from Marriott's CDN (`gspac-exterior-5022`). Registration link is still a `#` placeholder. |
+| `/summit` | `summit.astro` | Advisor Summit landing page — hero, GROW/SCALE/CONNECT pillars (with icons), why-attend, venue (AC Hotel Greenville), give-back (with photo), sponsors, CTA. Editable fields (register/hotel URLs, hero/venue/give-back/CTA images, sponsors) pull from the singleton `summitPage` Sanity doc, each falling back to a hardcoded default when blank. Speakers/agenda/gallery intentionally omitted. Venue photo defaults to a hotlinked Marriott CDN image (`gspac-exterior-5022`) unless `useCustomVenuePhoto` is toggled on in Studio. Official Advisor Summit logo mark shown in hero. |
 
 ---
 
