@@ -1,19 +1,45 @@
 ---
 import Site from '../layouts/Site.astro';
 import { url } from '../utils/url';
-import { getSiteSettings } from '../lib/sanity';
+import { getSiteSettings, sanityClient, urlFor } from '../lib/sanity';
 
 const settings = await getSiteSettings();
 
-// NOTE: Registration form link is a placeholder (#) until the real URL is
-// confirmed. Speakers, agenda, and gallery are intentionally omitted for now —
+// Everything on this page that's editable lives on the single "Summit Page"
+// document in Sanity Studio (links, photos, sponsors). Each field falls back
+// to the previous hardcoded value when left blank, matching the
+// getSiteSettings() degrade-gracefully pattern.
+const summitPage = await sanityClient.fetch(`*[_type == "summitPage"][0]{
+  registerUrl,
+  hotelUrl,
+  heroImage,
+  venueImage,
+  giveBackImage,
+  ctaImage,
+  ctaParallax,
+  sponsors[]{name, logo, website}
+}`);
+
+// Speakers, agenda, and gallery are intentionally omitted for now —
 // those details aren't solidified.
-const REGISTER_URL = '#';
+const REGISTER_URL = summitPage?.registerUrl || '#';
 // Marriott group-booking link for the AC Hotel, downtown Greenville.
-const HOTEL_URL = 'https://www.marriott.com/event-reservations/reservation-link.mi?id=1774380583372&key=GRP&app=resvlink';
-// Venue photo — the AC Hotel Greenville exterior, same shot used on the Marriott
-// reservation page (served from Marriott's rendition CDN, upsized to 1600px).
-const HOTEL_IMG = 'https://cache.marriott.com/content/dam/marriott-renditions/GSPAC/gspac-exterior-5022-hor-wide.jpg?downsize=1600px:*&output-quality=90&interpolation=progressive-bilinear';
+const HOTEL_URL = summitPage?.hotelUrl || 'https://www.marriott.com/event-reservations/reservation-link.mi?id=1774380583372&key=GRP&app=resvlink';
+const sponsors = summitPage?.sponsors || [];
+
+function imageUrl(image: any, w: number, h: number) {
+  if (!image?.asset) return null;
+  return urlFor(image).width(w).height(h).fit('crop').auto('format').quality(85).url();
+}
+
+const HERO_IMG = imageUrl(summitPage?.heroImage, 2400, 1600);
+// Venue photo — defaults to the AC Hotel Greenville exterior, same shot used
+// on the Marriott reservation page (served from Marriott's rendition CDN).
+const VENUE_IMG = imageUrl(summitPage?.venueImage, 1600, 1200)
+  || 'https://cache.marriott.com/content/dam/marriott-renditions/GSPAC/gspac-exterior-5022-hor-wide.jpg?downsize=1600px:*&output-quality=90&interpolation=progressive-bilinear';
+const GIVE_BACK_IMG = imageUrl(summitPage?.giveBackImage, 1200, 900) || url('/summit.jpg');
+const CTA_IMG = imageUrl(summitPage?.ctaImage, 2400, 1400);
+const CTA_PARALLAX = Boolean(summitPage?.ctaParallax);
 
 const svgWrap = (inner: string) =>
   `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
@@ -46,7 +72,7 @@ const reasons = [
 
 <Site title="Advisor Summit — Fiduciary Alliance" description="The FA Advisor Summit — three days of growth strategy, practice scaling, and peer connection for growth-minded financial advisors in Greenville, SC.">
 
-  <section class="hero hero-summit">
+  <section class="hero hero-summit" style={HERO_IMG ? `--hero-bg-image: url(${HERO_IMG})` : undefined}>
     <div class="container">
       <div class="summit-hero-inner">
         <p class="eyebrow">6th Annual · Fiduciary Alliance</p>
@@ -126,7 +152,7 @@ const reasons = [
       </div>
       <div class="grid-2 summit-venue">
         <a class="summit-venue-photo anim-hidden" data-anim-from="left" href={HOTEL_URL} target="_blank" rel="noopener" aria-label="Book your room at the AC Hotel, Greenville">
-          <img src={HOTEL_IMG} alt="AC Hotel, downtown Greenville, SC" loading="lazy" />
+          <img src={VENUE_IMG} alt="AC Hotel, downtown Greenville, SC" loading="lazy" />
           <span class="summit-venue-photo-tag">Book your room <span class="arrow">&rarr;</span></span>
         </a>
         <div class="anim-hidden" data-anim-from="right">
@@ -153,7 +179,7 @@ const reasons = [
           <p style="margin-top:1.25rem;max-width:52ch;">Each year the Summit sets aside time to give back to the community that hosts us. It’s a chance to step away from the sessions, roll up our sleeves together, and make the trip about more than business.</p>
         </div>
         <div class="summit-give-photo anim-hidden" data-anim-from="right">
-          <img src={url('/summit.jpg')} alt="Advisor Summit attendees giving back to the community" loading="lazy" />
+          <img src={GIVE_BACK_IMG} alt="Advisor Summit attendees giving back to the community" loading="lazy" />
         </div>
       </div>
     </div>
@@ -166,7 +192,21 @@ const reasons = [
         <h2>MADE POSSIBLE BY OUR PARTNERS.</h2>
       </div>
       <div class="summit-sponsors">
-        {Array.from({ length: 6 }).map((_, i) => (
+        {sponsors.length > 0 ? sponsors.map((s, i) => {
+          const logoSrc = imageUrl(s.logo, 400, 267);
+          const tileContent = logoSrc
+            ? <img src={logoSrc} alt={s.name} loading="lazy" />
+            : <span>{s.name}</span>;
+          return s.website ? (
+            <a class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`} href={s.website} target="_blank" rel="noopener">
+              {tileContent}
+            </a>
+          ) : (
+            <div class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`}>
+              {tileContent}
+            </div>
+          );
+        }) : Array.from({ length: 6 }).map((_, i) => (
           <div class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`}>
             <span>Sponsor</span>
           </div>
@@ -176,7 +216,7 @@ const reasons = [
     </div>
   </section>
 
-  <section class="cta-strip">
+  <section class:list={['cta-strip', {'cta-strip-parallax': CTA_PARALLAX}]} style={CTA_IMG ? `--cta-bg-image: url(${CTA_IMG})` : undefined}>
     <div class="container">
       <div class="cta-row">
         <h2 class="anim-hidden">READY TO JOIN US IN GREENVILLE?</h2>
@@ -193,7 +233,17 @@ const reasons = [
 <style>
   .hero-summit { text-align: center; }
   .hero-summit::before {
-    background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=2400&q=80&auto=format');
+    background-image: var(--hero-bg-image, url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=2400&q=80&auto=format'));
+  }
+
+  /* closing CTA background photo, editable in Studio; parallax is a plain
+     background-attachment: fixed, so it degrades to a static background on
+     iOS Safari (which doesn't support fixed backgrounds) instead of breaking. */
+  .cta-strip::before {
+    background-image: var(--cta-bg-image, var(--hero-home));
+  }
+  .cta-strip-parallax::before {
+    background-attachment: fixed;
   }
   .summit-hero-inner {
     max-width: 900px;
@@ -314,6 +364,10 @@ const reasons = [
     color: var(--ink-mute);
     font-family: var(--display); letter-spacing: 0.14em; text-transform: uppercase;
     font-size: 0.875rem; font-weight: 600;
+    padding: 1rem;
+  }
+  .summit-sponsor-tile img {
+    width: 100%; height: 100%; object-fit: contain;
   }
   .summit-sponsor-note { margin-top: 2rem; color: var(--ink-mute); }
   .summit-sponsor-note a { color: var(--brand-teal-bright); border-bottom: 1px solid var(--brand-teal-bright); }
