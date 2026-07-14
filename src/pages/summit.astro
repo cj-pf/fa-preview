@@ -10,21 +10,29 @@ const settings = await getSiteSettings();
 // to the previous hardcoded value when left blank, matching the
 // getSiteSettings() degrade-gracefully pattern.
 const summitPage = await sanityClient.fetch(`*[_type == "summitPage"][0]{
+  showRegisterButton,
   registerUrl,
   hotelUrl,
   heroImage,
+  useCustomVenuePhoto,
   venueImage,
   giveBackImage,
   ctaImage,
   ctaParallax,
+  showSponsorsSection,
   sponsors[]{name, logo, website}
 }`);
 
 // Speakers, agenda, and gallery are intentionally omitted for now —
 // those details aren't solidified.
+// Defaults to shown (true) so an existing document created before this field
+// existed doesn't suddenly lose its Register button.
+const SHOW_REGISTER = summitPage?.showRegisterButton !== false;
 const REGISTER_URL = summitPage?.registerUrl || '#';
 // Marriott group-booking link for the AC Hotel, downtown Greenville.
 const HOTEL_URL = summitPage?.hotelUrl || 'https://www.marriott.com/event-reservations/reservation-link.mi?id=1774380583372&key=GRP&app=resvlink';
+// Defaults to hidden (false) until there are real sponsors to show.
+const SHOW_SPONSORS = Boolean(summitPage?.showSponsorsSection);
 const sponsors = summitPage?.sponsors || [];
 
 function imageUrl(image: any, w: number, h: number) {
@@ -33,9 +41,10 @@ function imageUrl(image: any, w: number, h: number) {
 }
 
 const HERO_IMG = imageUrl(summitPage?.heroImage, 2400, 1600);
-// Venue photo — defaults to the AC Hotel Greenville exterior, same shot used
-// on the Marriott reservation page (served from Marriott's rendition CDN).
-const VENUE_IMG = imageUrl(summitPage?.venueImage, 1600, 1200)
+// Venue photo — the "Use a custom venue photo" toggle in Studio decides
+// whether to show an editor-uploaded photo or the official Marriott listing
+// photo for the AC Hotel Greenville (served from Marriott's rendition CDN).
+const VENUE_IMG = (summitPage?.useCustomVenuePhoto && imageUrl(summitPage?.venueImage, 1600, 1200))
   || 'https://cache.marriott.com/content/dam/marriott-renditions/GSPAC/gspac-exterior-5022-hor-wide.jpg?downsize=1600px:*&output-quality=90&interpolation=progressive-bilinear';
 const GIVE_BACK_IMG = imageUrl(summitPage?.giveBackImage, 1200, 900) || url('/summit.jpg');
 const CTA_IMG = imageUrl(summitPage?.ctaImage, 2400, 1400);
@@ -80,7 +89,7 @@ const reasons = [
         <p class="summit-date">FALL 2026 &middot; GREENVILLE, SC</p>
         <p class="lede summit-lede">Three days built for growth-minded financial advisors ready to grow, scale, and connect.</p>
         <div class="actions">
-          <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>
+          {SHOW_REGISTER && <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>}
           <a class="btn btn-ghost" href={HOTEL_URL} target="_blank" rel="noopener">Book Hotel</a>
         </div>
       </div>
@@ -185,43 +194,45 @@ const reasons = [
     </div>
   </section>
 
-  <section>
-    <div class="container">
-      <div class="section-head anim-hidden">
-        <p class="eyebrow">Sponsors</p>
-        <h2>MADE POSSIBLE BY OUR PARTNERS.</h2>
-      </div>
-      <div class="summit-sponsors">
-        {sponsors.length > 0 ? sponsors.map((s, i) => {
-          const logoSrc = imageUrl(s.logo, 400, 267);
-          const tileContent = logoSrc
-            ? <img src={logoSrc} alt={s.name} loading="lazy" />
-            : <span>{s.name}</span>;
-          return s.website ? (
-            <a class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`} href={s.website} target="_blank" rel="noopener">
-              {tileContent}
-            </a>
-          ) : (
+  {SHOW_SPONSORS && (
+    <section>
+      <div class="container">
+        <div class="section-head anim-hidden">
+          <p class="eyebrow">Sponsors</p>
+          <h2>MADE POSSIBLE BY OUR PARTNERS.</h2>
+        </div>
+        <div class="summit-sponsors">
+          {sponsors.length > 0 ? sponsors.map((s, i) => {
+            const logoSrc = imageUrl(s.logo, 400, 267);
+            const tileContent = logoSrc
+              ? <img src={logoSrc} alt={s.name} loading="lazy" />
+              : <span>{s.name}</span>;
+            return s.website ? (
+              <a class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`} href={s.website} target="_blank" rel="noopener">
+                {tileContent}
+              </a>
+            ) : (
+              <div class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`}>
+                {tileContent}
+              </div>
+            );
+          }) : Array.from({ length: 6 }).map((_, i) => (
             <div class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`}>
-              {tileContent}
+              <span>Sponsor</span>
             </div>
-          );
-        }) : Array.from({ length: 6 }).map((_, i) => (
-          <div class="summit-sponsor-tile anim-hidden" style={`--anim-delay: ${i * 60}ms`}>
-            <span>Sponsor</span>
-          </div>
-        ))}
+          ))}
+        </div>
+        <p class="summit-sponsor-note anim-hidden">Interested in sponsoring the Advisor Summit? <a href={`mailto:${settings.email}`}>Get in touch</a>.</p>
       </div>
-      <p class="summit-sponsor-note anim-hidden">Interested in sponsoring the Advisor Summit? <a href={`mailto:${settings.email}`}>Get in touch</a>.</p>
-    </div>
-  </section>
+    </section>
+  )}
 
   <section class:list={['cta-strip', {'cta-strip-parallax': CTA_PARALLAX}]} style={CTA_IMG ? `--cta-bg-image: url(${CTA_IMG})` : undefined}>
     <div class="container">
       <div class="cta-row">
         <h2 class="anim-hidden">READY TO JOIN US IN GREENVILLE?</h2>
         <div class="actions anim-hidden" style="--anim-delay: 120ms">
-          <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>
+          {SHOW_REGISTER && <a class="btn btn-primary" href={REGISTER_URL}>Register <span class="arrow">&rarr;</span></a>}
           <a class="btn btn-ghost" href={HOTEL_URL} target="_blank" rel="noopener">Book Hotel</a>
         </div>
       </div>
