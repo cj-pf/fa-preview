@@ -82,6 +82,17 @@ const reasons = [
 <Site title="Advisor Summit — Fiduciary Alliance" description="The FA Advisor Summit — three days of growth strategy, practice scaling, and peer connection for growth-minded financial advisors in Greenville, SC.">
 
   <section class="hero hero-summit" style={HERO_IMG ? `--hero-bg-image: url(${HERO_IMG})` : undefined}>
+    <video
+      class="hero-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+    >
+      <source src={url('/summithero.mp4')} type="video/mp4" />
+    </video>
     <div class="container">
       <div class="summit-hero-inner">
         <p class="eyebrow">6th Annual · Fiduciary Alliance</p>
@@ -243,7 +254,14 @@ const reasons = [
 
 <style>
   .hero-summit { text-align: center; }
-  .hero-summit::before {
+  /* Video is the primary hero background; the Sanity/hardcoded photo is a
+     fallback shown only on mobile (.hero-video is hidden there) or if the
+     video fails to load (.hero--video-failed, set by JS below). */
+  .hero-summit::before { background-image: none; }
+  @media (max-width: 800px) {
+    .hero-summit::before { background-image: var(--hero-bg-image, url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=2400&q=80&auto=format')); }
+  }
+  .hero-summit.hero--video-failed::before {
     background-image: var(--hero-bg-image, url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=2400&q=80&auto=format'));
   }
 
@@ -418,6 +436,20 @@ const reasons = [
       else animObserver.observe(el);
     });
   }
+  function setupSummitHeroVideoFallback() {
+    const video = document.querySelector<HTMLVideoElement>('.hero-summit .hero-video');
+    const hero = document.querySelector<HTMLElement>('.hero-summit');
+    if (!video || !hero) return;
+    const showPhoto = () => hero.classList.add('hero--video-failed');
+    video.addEventListener('error', showPhoto);
+    const source = video.querySelector('source');
+    if (source) source.addEventListener('error', showPhoto);
+  }
+
   setupSummitAnimations();
-  document.addEventListener('astro:page-load', setupSummitAnimations);
+  setupSummitHeroVideoFallback();
+  document.addEventListener('astro:page-load', () => {
+    setupSummitAnimations();
+    setupSummitHeroVideoFallback();
+  });
 </script>
