@@ -76,10 +76,10 @@ const reasons = [
 
   <section>
     <div class="container">
-      <div class="section-head anim-hidden" style="max-width:840px;">
+      <div class="section-head anim-hidden" style="max-width:none;">
         <p class="eyebrow">Why we gather</p>
-        <h2>THREE DAYS. ONE MISSION —<br/>YOUR GROWTH.</h2>
-        <p>The Advisor Summit exists for one reason: to help you build a better practice. Learn strategies that actually move the needle, discover systems that let you scale, and spend real time with advisors who get it.</p>
+        <h2 class="summit-gather-title">THREE DAYS. ONE MISSION —<br/>YOUR GROWTH.</h2>
+        <p class="summit-gather-lede">The Advisor Summit exists for one reason: to help you build a better practice. Learn strategies that actually move the needle, discover systems that let you scale, and spend real time with advisors who get it.</p>
       </div>
       <div class="grid-3 summit-pillars">
         {pillars.map((p, i) => (
@@ -229,6 +229,8 @@ const reasons = [
 
   /* venue */
   .summit-venue-head { margin-bottom: 1.5rem; }
+  .summit-gather-title { max-width: 840px; }
+  .summit-gather-lede { max-width: none; }
   .summit-venue-intro { max-width: none; margin-top: 1.5rem; }
   .summit-venue { align-items: center; }
   .summit-venue-actions { display: flex; }
