@@ -56,6 +56,7 @@ Never add a field in just one place.
 | `/firms` | `firms.astro` | Grid of all 24 firms, "24 FIRMS. 10 STATES." header |
 | `/disclosures` | `disclosures.astro` | Links to all 4 SEC PDFs |
 | `/team` | `team.astro` | Portrait cards with hover effects + bio modals |
+| `/summit` | `summit.astro` | Advisor Summit landing page — hero, GROW/SCALE/CONNECT pillars, why-attend, venue (AC Hotel Greenville), give-back, sponsor placeholders, CTA. Content is hardcoded in the page (not Sanity). Speakers/agenda/gallery intentionally omitted. Hotel links point to the Marriott group-booking URL; venue photo is hotlinked from Marriott's CDN (`gspac-exterior-5022`). Registration link is still a `#` placeholder. |
 
 ---
 
