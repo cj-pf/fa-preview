@@ -1,6 +1,6 @@
 # Fiduciary Alliance Website — Project Notes
 
-> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated at commit `d508fb1`.
+> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-07-15 (added the `/summit` Advisor Summit page and the `/assessment` Health Assessment page; footer socials; header phone dropped on desktop).
 
 ---
 
@@ -32,6 +32,8 @@ A website redesign for **Fiduciary Alliance, LLC** — a registered investment a
 | `/disclosures` | `src/pages/disclosures.astro` | **Done** | Links to the 4 SEC PDFs (ADV, ADV Part 1A, ADV Part 2B, Form CRS) from the `compliance` Sanity doc. |
 | `/why-fa/breakaway` | `src/pages/why-fa/breakaway.astro` | **Done** | "For Advisors" page. Hero + 5 pain points + shared `<WhyFaShared />` body. |
 | `/why-fa/ria-owners` | `src/pages/why-fa/ria-owners.astro` | **Done** | "For RIA Owners" page. Hero + 5 pain points + shared `<WhyFaShared />` body. |
+| `/summit` | `src/pages/summit.astro` | **Done** | Advisor Summit landing page — hero (background video `summithero.mp4` + official `summitlogo.png` mark), GROW/SCALE/CONNECT pillar cards w/ icons, why-we-gather, venue (AC Hotel Greenville), give-back section w/ photo, sponsors, CTA. Editable fields pull from the `summitPage` Sanity singleton (each falls back to a hardcoded default when blank): `showRegisterButton` + `registerUrl`, `hotelUrl`, `heroImage`, `useCustomVenuePhoto` + `venueImage` (defaults to a hotlinked Marriott CDN photo), `giveBackImage`, `ctaImage` + `ctaParallax`, `showSponsorsSection` + `sponsors[]`. Speakers/agenda/gallery intentionally omitted. |
+| `/assessment` | `src/pages/assessment.astro` | **Done** | Health Assessment page — full-width embed of the external survey app (`claude-assessment-sigma.vercel.app/embed`) in an `<iframe>`. Page title + iframe URL read from an `assessmentPage` Sanity singleton (fallbacks baked in). See §9 for the header-scroll-away + iframe-height handling. |
 | `/contact` | `src/pages/contact.astro` | **Placeholder** | Phone/email/address (from site settings) + "form coming soon." Qualifier form not built. |
 | `/how-it-works` | `src/pages/how-it-works.astro` | **Placeholder** | "From first call to launch" heading + "coming soon." Linked from homepage hero secondary button. |
 | `/about` | `src/pages/about.astro` | **Placeholder** | "A federation, not a rollup" heading + "coming soon." Not linked in main nav. |
@@ -96,8 +98,8 @@ The **What We Provide tabs section** (on the Why FA pages) is a deliberate **lig
 - Card corners: `12px` (cards like persona/network/AI), `4px` (small tiles/pills).
 
 ### Branding decisions
-- **Header:** fixed, always dark translucent `rgba(10,26,36,0.88)` + backdrop blur.
-- **Nav:** Home · Why FA (dropdown: Breakaway, RIA Owners) · Firms · Team · Insights. Astro `ClientRouter` view transitions, `transition:persist` on Header. Collapses to a hamburger overlay at ≤820px (see §8).
+- **Header:** fixed, always dark translucent `rgba(10,26,36,0.88)` + backdrop blur. **Exception:** on `/assessment` it drops into normal flow (`position: relative`, solid bg) so it scrolls away — see §9. This is driven by a `bodyClass="assessment-page"` prop on the `Site` layout + a `body.assessment-page .site-header` rule in `global.css`.
+- **Nav:** Home · Why FA (dropdown: Breakaway, RIA Owners) · Firms · Team · Insights · Summit · Health Assessment. Astro `ClientRouter` view transitions, `transition:persist` on Header. Collapses to a hamburger overlay at ≤820px (see §8). The **desktop header phone number was removed** — the nav-right now holds only the "See If You're a Fit" CTA + hamburger.
 - **"Why FA" dropdown:** opens on hover; the caret is a separate clickable button (label itself is not a link). Uses pointer cursor.
 - **Primary CTA everywhere:** "See If You're a Fit" → `https://calendly.com/boughner` (opens new tab). Driven by site settings (see §7).
 - **Logo:** static `public/logo.png` via `Logo.astro`.
@@ -148,21 +150,29 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
   .claude/launch.json                 ← dev-server config (astro-dev, port 4321)
   public/
     hero.mp4                          ← homepage hero video (~16MB)
+    summithero.mp4                    ← summit hero background video
+    summitlogo.png                    ← Advisor Summit logo mark (summit hero)
+    summit.jpg                        ← summit give-back photo fallback
     logo.png, favicon.png
     images/ai-tools.jpg               ← AI section image
+    images/technology-tab.png         ← (legacy) tech-tab illustration, no longer used
   src/
     pages/                            ← one .astro per route (see §2)
       why-fa/breakaway.astro, ria-owners.astro
+      summit.astro                    ← Advisor Summit page (summitPage singleton)
+      assessment.astro                ← Health Assessment page (iframe embed)
     components/
       Header.astro                    ← nav + dropdown + CTA (reads site settings)
-      Footer.astro                    ← footer links (reads site settings)
+      Footer.astro                    ← footer links + LinkedIn/YouTube social icons
       Logo.astro
       AISection.astro                 ← homepage AI section (self-contained)
       WhyFaShared.astro               ← shared body for both Why-FA pages: comparison
                                         table, FA Difference, "What We Provide" tabs,
                                         "How a Partnership Works" placeholder, CTA
     layouts/
-      Site.astro                      ← HTML shell: head, fonts, ClientRouter, Header, Footer
+      Site.astro                      ← HTML shell: head, fonts, ClientRouter, Header,
+                                        Footer. Accepts an optional `bodyClass` prop
+                                        (used by /assessment to un-fix the header).
     lib/
       sanity.ts                       ← Sanity client, getSiteSettings(), phoneToTel(),
                                         urlFor() image builder
@@ -181,13 +191,15 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
   schemaTypes/                        ← one .js/.ts per content type
 ```
 
-**Sanity content types:** `memberFirm` (name, streetAddress, city, state, zipCode, phone, numberOfOffices, shortDescription, website, logo), `teamMember` (name, title, bio, photo w/ hotspot, orderRank), `compliance` (4 SEC PDFs), `homePage` (heroHeadline, statAum — stat counts no longer used), plus a planned `siteSettings` singleton.
+**Sanity content types:** `memberFirm` (name, streetAddress, city, state, zipCode, phone, numberOfOffices, shortDescription, website, logo), `teamMember` (name, title, bio, photo w/ hotspot, orderRank), `compliance` (4 SEC PDFs), `homePage` (heroHeadline, statAum — stat counts no longer used), `summitPage` singleton (showRegisterButton, registerUrl, hotelUrl, heroImage, useCustomVenuePhoto, venueImage, giveBackImage, ctaImage, ctaParallax, showSponsorsSection, sponsors[]), `summitSponsor` object (name, logo, website — used in `summitPage.sponsors[]`), `assessmentPage` singleton (pageTitle, iframeUrl), plus a planned `siteSettings` singleton.
 
 ---
 
 ## 6. Open items / known issues
 
 - **`siteSettings` singleton not yet created in Studio.** The frontend already reads it via `getSiteSettings()` with hardcoded fallbacks (Calendly URL, phone `864·385·7999`, email `admin-fa@fiduciaryalliance.org`, address `135 S Main Street, Suite 600 · Greenville, SC 29601`). Paste-ready schema + setup instructions were written to the session scratchpad (`siteSettings.ts`, `STUDIO-SETUP.md`) — recreate if lost. Until published in Studio, the site uses fallbacks (which currently match reality, so nothing looks broken).
+- **`assessmentPage` schema not yet created in Studio.** The `/assessment` page already queries it (`pageTitle`, `iframeUrl`) with baked-in fallbacks (`Health Assessment — Fiduciary Alliance`, `https://claude-assessment-sigma.vercel.app/embed`), so the page works today. Paste-ready schema was provided in chat — add it to `~/studio-fa-web-redesign` (two-file rule) and register it in `schemaTypes/index.js` if the URL/title should become editable.
+- **Assessment iframe height is a fixed fallback (940px)** sized to the survey's first step. The iframe is cross-origin, so the parent can't measure it. `/assessment` already listens for `postMessage({type:'assessment:resize', height})` from the embedded app and will auto-fit every step once that app posts its content height — a 5-line `ResizeObserver` snippet was provided for the survey repo. Until then, later steps may not fit the 940px exactly.
 - **`firmsPage.heading` field is now dead** in Studio (site derives the heading). Safe to remove from the studio schema; a prompt to do so was provided.
 - **`statFirms` / `statStates` fields on the homePage doc are unused** — can be cleaned up in Studio later.
 - **Placeholder pages:** `/contact` (no real form), `/how-it-works` (no real content), `/about` (no real content). Testimonial quote on the homepage is a placeholder ("TBD").
@@ -256,6 +268,14 @@ Hard-won details in the mobile treatment (each fixes a specific bug the user cau
 Hero, stats, "We are / We're not" list, AI section, map + footprint, four-step section, firm cards (single column), team portraits, and the Insights video grid all stack and scale cleanly at 375px and 768px. The hamburger, blurred AI background, and tightened spacing were all confirmed in the browser preview.
 
 ---
+
+## 9. Health Assessment page (`/assessment`)
+
+Embeds the external survey app (`claude-assessment-sigma.vercel.app/embed`) full-width. The design goal the user held firm on: the survey must feel **part of the page, not a box floating in a box**, and you must **never see an inner scrollbar or a clipped top/bottom**. How that's achieved:
+
+- **No dark band:** the shell + iframe background is white to match the survey; the global `section` padding is zeroed on this page.
+- **Header scrolls away:** the fixed translucent header hid the survey's title when you scrolled. On this page only, `bodyClass="assessment-page"` (Site layout prop) + `body.assessment-page .site-header { position: relative; background:#0a1a24; backdrop-filter:none }` drops the header into normal flow so the whole page is one natural scroll — top visible at the top, button visible as you scroll, nothing behind a fixed bar. Every other page keeps the fixed header. Verified this survives client-side (ClientRouter) navigation in and out.
+- **Outer page owns the scroll:** the iframe has `scrolling="no"` and an explicit height (fallback `940px`, sized to step 1). A `postMessage` listener adopts the real content height whenever the embedded app posts `{type:'assessment:resize', height}` (also accepts `{type:'resize',...}` / bare `{height}` / `"height:N"`), origin-checked against the iframe src. See §6 for the outstanding auto-resize follow-up on the survey app.
 
 ## Dev / deploy quick reference
 
