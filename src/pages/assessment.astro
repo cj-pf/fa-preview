@@ -3,7 +3,7 @@ import Site from '../layouts/Site.astro';
 import { sanityClient } from '../lib/sanity';
 
 const DEFAULTS = {
-  pageTitle: 'Health Assessment — Fiduciary Alliance',
+  pageTitle: 'Firm Assessment — Fiduciary Alliance',
   iframeUrl: 'https://claude-assessment-sigma.vercel.app/embed',
 };
 
@@ -16,14 +16,91 @@ const iframeUrl = page?.iframeUrl || DEFAULTS.iframeUrl;
 
 // Fallback height used until the embedded app posts its actual content height.
 // Sized generously so the tallest single step still fits without an inner scroll.
-// The embedded app renders step 1 at ~930px tall; buffer to 1000 so nothing
-// gets clipped. Overridden the moment the app posts a real height via
+// Overridden the moment the app posts a real height via
 // `postMessage({type:'assessment:resize', height})`.
 const FALLBACK_HEIGHT_PX = 940;
+
+const outcomes = [
+  { title: 'What’s working', body: 'Where your firm is performing well today.' },
+  { title: 'What’s slowing you down', body: 'Where friction may be holding growth back.' },
+  { title: 'What’s next', body: 'Where your next stage of growth may require a different approach.' },
+];
 ---
 
-<Site title={pageTitle} bodyClass="assessment-page">
-  <section class="assessment-shell">
+<Site title={pageTitle}>
+
+  <section class="hero hero-assessment">
+    <div class="container grid">
+      <div>
+        <p class="eyebrow">Firm Assessment</p>
+        <h1>GET A CLEAR SNAPSHOT OF YOUR FIRM&rsquo;S GROWTH POTENTIAL.</h1>
+        <p class="lede">This short assessment is designed to show you where your practice is strong today &mdash; and where there may be gaps worth addressing. In just 10 minutes, you&rsquo;ll walk away with a clearer view of what&rsquo;s working, what&rsquo;s not, and where to focus next.</p>
+        <p class="hero-note">It&rsquo;s not about judgment. It&rsquo;s about clarity you can actually use.</p>
+        <div class="actions">
+          <a class="btn btn-primary js-start-assessment" href="#take-assessment">Start Now <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <!--
+          Real preview video goes here once uploaded: drop the file at
+          public/assessment-hero.mp4 and swap this placeholder .video-card
+          for a <video class="video-card" autoplay muted loop playsinline
+          poster="..."><source src={url('/assessment-hero.mp4')} type="video/mp4" /></video>,
+          or wire it up as a click-to-play player if it should have sound/controls.
+        -->
+        <div class="video-card">
+          <span class="play-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="video-card-label">Preview video &mdash; coming soon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="section-head anim-hidden">
+        <p class="eyebrow">Why this assessment matters</p>
+        <h2>MOST ADVISORS DON&rsquo;T NEED MORE INFORMATION. THEY NEED MORE CLARITY.</h2>
+        <p>As your firm grows, what used to work often starts to break down &mdash; operations get strained, client expectations rise, and complexity increases across the business. The challenge isn&rsquo;t effort. It&rsquo;s whether your infrastructure can support the next stage of growth.</p>
+      </div>
+
+      <p class="why-lede anim-hidden">
+        This assessment is designed to help you answer that. You&rsquo;ll go through a series of focused questions about how your firm operates today &mdash; from structure and systems to growth readiness and overall alignment. The goal is simple: identify practical opportunities you can act on.
+      </p>
+
+      <p class="outcomes-label anim-hidden">At the end, you&rsquo;ll receive a personalized results summary highlighting:</p>
+
+      <div class="grid-3 outcome-cards">
+        {outcomes.map((o, i) => (
+          <div class="outcome-card anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
+            <span class="outcome-check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+            </span>
+            <h3>{o.title}</h3>
+            <p>{o.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="why-lede anim-hidden" style="margin-top: 2.5rem;">
+        Even one or two clear takeaways can make a meaningful difference. And if you want to go deeper, you&rsquo;ll have the option to review your results in a one-on-one conversation &mdash; no pressure, no pitch, just a practical discussion to make the insights useful.
+      </p>
+
+      <div class="actions anim-hidden">
+        <a class="btn btn-primary js-start-assessment" href="#take-assessment">Start Now <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="take-assessment" class="assessment-shell">
+    <div class="assessment-shell-head">
+      <div class="container">
+        <p class="eyebrow">Practice Growth Assessment</p>
+        <h2>YOUR ASSESSMENT</h2>
+      </div>
+    </div>
     <iframe
       class="assessment-frame"
       src={iframeUrl}
@@ -34,18 +111,100 @@ const FALLBACK_HEIGHT_PX = 940;
       style={`height: ${FALLBACK_HEIGHT_PX}px;`}
     ></iframe>
   </section>
+
 </Site>
 
 <style>
-  /* Continuous white surface. The header scrolls away with the page (see the
-     `body.assessment-page .site-header` rule in global.css), so the survey is
-     one natural page scroll and its top is never clipped. */
-  .assessment-shell {
+  /* ============ hero ============ */
+  .hero-assessment::before { background-image: none; background-color: var(--bg-elev); }
+  .hero-assessment .lede { margin-top: 1.5rem; }
+  .hero-note {
+    font-family: var(--display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--brand-teal-light);
+    margin-top: 1.25rem;
+    max-width: 36ch;
+  }
+
+  /* ============ video placeholder card ============ */
+  .video-card {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    background:
+      linear-gradient(135deg, rgba(53, 95, 61, 0.35) 0%, rgba(17, 86, 113, 0.55) 100%),
+      var(--bg-elev);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .play-badge {
+    display: flex; align-items: center; justify-content: center;
+    width: 4rem; height: 4rem; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(6px);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    transition: transform 180ms ease, background 180ms ease;
+  }
+  .video-card:hover .play-badge { transform: scale(1.06); background: rgba(255, 255, 255, 0.22); }
+  .video-card-label {
+    font-family: var(--display);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  /* ============ why-matters copy ============ */
+  .why-lede { font-size: 1.0625rem; max-width: 68ch; margin-bottom: 1.5rem; }
+  .outcomes-label {
+    font-family: var(--display);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-teal-light);
+    margin-bottom: 1.5rem;
+  }
+  .outcome-cards { margin-bottom: 0; }
+  .outcome-card {
+    padding: clamp(1.5rem, 2.5vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  .outcome-check {
+    display: flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: rgba(79, 132, 88, 0.18);
+    color: var(--brand-green-bright);
+    margin-bottom: 1rem;
+  }
+  .outcome-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+  .outcome-card p { font-size: 0.9375rem; }
+  .section-sm .actions { display: flex; margin-top: 2.5rem; }
+
+  /* ============ revealed assessment section ============ */
+  #take-assessment {
+    display: none;
     padding: 0;
     width: 100%;
     background: #ffffff;
-    display: block;
   }
+  #take-assessment.is-visible { display: block; }
+  .assessment-shell-head {
+    background: var(--bg);
+    padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem) 0;
+  }
+  .assessment-shell-head h2 { color: var(--white); }
   .assessment-frame {
     display: block;
     width: 100%;
@@ -55,6 +214,22 @@ const FALLBACK_HEIGHT_PX = 940;
 </style>
 
 <script>
+  // Reveal the assessment further down the page instead of navigating away,
+  // so "Start Now" feels like one continuous flow.
+  function initStartAssessment() {
+    const target = document.getElementById('take-assessment');
+    if (!target) return;
+    document.querySelectorAll<HTMLAnchorElement>('.js-start-assessment').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        target.classList.add('is-visible');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+  initStartAssessment();
+  document.addEventListener('astro:page-load', initStartAssessment);
+
   // Accept height updates from the embedded assessment app so the outer page
   // owns the scroll (no inner iframe scrollbar). The app just needs to post:
   //   window.parent.postMessage({type:'assessment:resize', height:N}, '*')
@@ -81,4 +256,27 @@ const FALLBACK_HEIGHT_PX = 940;
   }
   initAssessmentAutoResize();
   document.addEventListener('astro:page-load', initAssessmentAutoResize);
+
+  // Scroll-reveal for this page's own sections (mirrors the pattern used on
+  // the homepage / why-fa pages).
+  function setupAssessmentAnimations() {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.anim-hidden').forEach((el) => el.classList.add('anim-visible'));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('anim-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    document.querySelectorAll('.anim-hidden:not(.anim-visible)').forEach((el) => io.observe(el));
+  }
+  setupAssessmentAnimations();
+  document.addEventListener('astro:page-load', setupAssessmentAnimations);
 </script>
