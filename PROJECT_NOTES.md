@@ -1,6 +1,6 @@
 # Fiduciary Alliance Website — Project Notes
 
-> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-07-16 (real brand fonts — Trade Gothic Next Condensed / Museo Sans — wired in via Adobe Fonts, replacing the Barlow Condensed / Mulish stand-ins).
+> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-07-16 (rebuilt `/assessment` as a branded landing page — hero + click-to-play preview video + "Start Now" reveals the survey — replacing the bare iframe embed; see §9).
 
 ---
 
@@ -33,7 +33,7 @@ A website redesign for **Fiduciary Alliance, LLC** — a registered investment a
 | `/why-fa/breakaway` | `src/pages/why-fa/breakaway.astro` | **Done** | "For Advisors" page. Hero + 5 pain points + shared `<WhyFaShared />` body. |
 | `/why-fa/ria-owners` | `src/pages/why-fa/ria-owners.astro` | **Done** | "For RIA Owners" page. Hero + 5 pain points + shared `<WhyFaShared />` body. |
 | `/summit` | `src/pages/summit.astro` | **Done** | Advisor Summit landing page — hero (background video `summithero.mp4` + official `summitlogo.png` mark), GROW/SCALE/CONNECT pillar cards w/ icons, why-we-gather, venue (AC Hotel Greenville), give-back section w/ photo, sponsors, CTA. Editable fields pull from the `summitPage` Sanity singleton (each falls back to a hardcoded default when blank): `showRegisterButton` + `registerUrl`, `hotelUrl`, `heroImage`, `useCustomVenuePhoto` + `venueImage` (defaults to a hotlinked Marriott CDN photo), `giveBackImage`, `ctaImage` + `ctaParallax`, `showSponsorsSection` + `sponsors[]`. Speakers/agenda/gallery intentionally omitted. |
-| `/assessment` | `src/pages/assessment.astro` | **Done** | Health Assessment page — full-width embed of the external survey app (`claude-assessment-sigma.vercel.app/embed`) in an `<iframe>`. Page title + iframe URL read from an `assessmentPage` Sanity singleton (fallbacks baked in). See §9 for the header-scroll-away + iframe-height handling. |
+| `/assessment` | `src/pages/assessment.astro` | **Done, rebuilt as a landing page** | Firm Assessment landing page (matching the redesigned site) — hero (full-width headline + click-to-play preview video), a restyled "Why This Assessment Matters" section with outcome cards, and a "Start Now" button that reveals + scrolls to the embedded survey (deferred until clicked). Survey app is `claude-assessment-sigma.vercel.app/embed`; page title + iframe URL read from an `assessmentPage` Sanity singleton (fallbacks baked in). See §9 for the full breakdown. |
 | `/contact` | `src/pages/contact.astro` | **Placeholder** | Phone/email/address (from site settings) + "form coming soon." Qualifier form not built. |
 | `/how-it-works` | `src/pages/how-it-works.astro` | **Placeholder** | "From first call to launch" heading + "coming soon." Linked from homepage hero secondary button. |
 | `/about` | `src/pages/about.astro` | **Placeholder** | "A federation, not a rollup" heading + "coming soon." Not linked in main nav. |
@@ -92,7 +92,7 @@ The real brand typefaces (per the "Typefaces / Print & Web" brand book page) are
 - **Originally** (until 2026-07-16) the site used **Barlow Condensed** as a stand-in for Trade Gothic and **Mulish** as a stand-in for Museo Sans, because the real fonts weren't licensed for web yet. A brand-book PDF (`Type face for FA.pdf`) confirmed the actual typefaces are **Trade Gothic** (primary/display — brand book lists "Trade Gothic LT Std Condensed No. 18", "Bold Condensed No. 20", etc.) and **Museo Sans** (tagline/body, weights 100–900). Carey activated both as a web project in Adobe Fonts (Creative Cloud) — Adobe's naming for them is `trade-gothic-next-condensed` and `museo-sans`.
 - **Gotcha hit along the way:** the first Adobe Fonts pass only had **italic** condensed weights activated (no roman/non-italic bold), so large bold numerals (`.stat .num`, `.step .num`) rendered via browser font-synthesis — visibly chunkier/bigger than intended. Fixed by activating the **roman, non-italic Bold** style of Trade Gothic Next Condensed in the Adobe Fonts project (same `gut5szx.css` kit URL — no code change needed to pick it up, just a republish on Adobe's side).
 - Headings render **ALL CAPS in the markup** (not via `text-transform`) — match this when adding headings.
-- The **"Fiduciary Alliance Design System"** project in Design (`claude.ai/design`) was updated to match — `tokens/fonts.css` there now imports the same Adobe Fonts kit and uses the same family names, so wireframes built there (e.g. the upcoming `/assessment` landing page) match the live site's type. Note: that Design project's **color tokens** (`tokens/colors.css`) are still from an older/different brandkit source and do **not** match the live site's palette — left as-is per explicit instruction; only fonts were reconciled.
+- The **"Fiduciary Alliance Design System"** project in Design (`claude.ai/design`) was updated to match — `tokens/fonts.css` there now imports the same Adobe Fonts kit and uses the same family names, so wireframes built there match the live site's type. Note: that Design project's **color tokens** (`tokens/colors.css`) are still from an older/different brandkit source and do **not** match the live site's palette — left as-is per explicit instruction; only fonts were reconciled.
 
 ### Spacing / layout
 - `--max: 1240px` — max content width (`.container`).
@@ -157,6 +157,8 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
     summithero.mp4                    ← summit hero background video
     summitlogo.png                    ← Advisor Summit logo mark (summit hero)
     summit.jpg                        ← summit give-back photo fallback
+    assessment-hero.mp4               ← /assessment preview video (~16MB, click-to-play)
+    assessment-poster.jpg             ← /assessment video poster (title-card frame, ~124KB)
     logo.png, favicon.png
     images/ai-tools.jpg               ← AI section image
     images/technology-tab.png         ← (legacy) tech-tab illustration, no longer used
@@ -238,7 +240,7 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 - macOS smart substitutions are disabled, so straight quotes/dashes in code are safe.
 
 **Design continuity:**
-- New sections must use the existing tokens, fonts (Barlow Condensed display / Mulish body), and accent colors — no one-off custom palettes. The AI section was explicitly reworked to remove custom cyan/mint colors and gradient text and to match the site.
+- New sections must use the existing tokens, fonts (Trade Gothic Next Condensed display / Museo Sans body — see §3), and accent colors — no one-off custom palettes. The AI section was explicitly reworked to remove custom cyan/mint colors and gradient text and to match the site.
 - Hero fallback photo should only appear if the video fails to load (desktop); mobile shows the photo (video hidden). No photo "flash" before the video starts.
 
 ---
@@ -274,13 +276,31 @@ Hero, stats, "We are / We're not" list, AI section, map + footprint, four-step s
 
 ---
 
-## 9. Health Assessment page (`/assessment`)
+## 9. Firm Assessment page (`/assessment`)
 
-Embeds the external survey app (`claude-assessment-sigma.vercel.app/embed`) full-width. The design goal the user held firm on: the survey must feel **part of the page, not a box floating in a box**, and you must **never see an inner scrollbar or a clipped top/bottom**. How that's achieved:
+Rebuilt (2026-07-16) from a bare full-width iframe into a proper **landing page** that matches the redesigned site, then reveals the survey on demand. It reuses the site's own component vocabulary (`.hero`, `.eyebrow`, `.btn-primary`, `.section-head`, outcome cards) rather than one-off styles. The old page was just the embed described at the end of this section; the survey embed itself is unchanged, just gated behind a "Start Now" click.
 
-- **No dark band:** the shell + iframe background is white to match the survey; the global `section` padding is zeroed on this page.
-- **Header scrolls away:** the fixed translucent header hid the survey's title when you scrolled. On this page only, `bodyClass="assessment-page"` (Site layout prop) + `body.assessment-page .site-header { position: relative; background:#0a1a24; backdrop-filter:none }` drops the header into normal flow so the whole page is one natural scroll — top visible at the top, button visible as you scroll, nothing behind a fixed bar. Every other page keeps the fixed header. Verified this survives client-side (ClientRouter) navigation in and out.
-- **Outer page owns the scroll:** the iframe has `scrolling="no"` and an explicit height (fallback `940px`, sized to step 1). A `postMessage` listener adopts the real content height whenever the embedded app posts `{type:'assessment:resize', height}` (also accepts `{type:'resize',...}` / bare `{height}` / `"height:N"`), origin-checked against the iframe src. See §6 for the outstanding auto-resize follow-up on the survey app.
+### Page structure (top → bottom)
+1. **Hero** (`.hero-assessment`) — eyebrow "Firm Assessment", a full-width headline ("GET A CLEAR SNAPSHOT OF YOUR FIRM'S GROWTH POTENTIAL."), a body paragraph, an "It's not about judgment…" note, and a **Start Now** button — with the preview **video** on the right.
+2. **"Why This Assessment Matters"** (`.section-sm`) — restyled from the old page's photo-left/text-right layout into the site's section pattern: eyebrow + h2 + intro, then three **outcome cards** (What's working / What's slowing you down / What's next), then a closing paragraph and a second Start Now button.
+3. **`#take-assessment`** — the embedded survey, hidden until Start Now is clicked (see reveal behavior below).
+
+### Layout / styling specifics (each fixes something the user called out — don't regress)
+- **Flat hero background:** `.hero-assessment` overrides the global hero's gradient — `::before` is a flat `--bg` and `::after` (the gradient overlay) is `display:none`, so the hero and the section below read as one continuous surface. `min-height` is dropped to `0` with modest padding (no background image to justify a tall hero).
+- **Full-width heading:** the hero is a CSS grid (`.hero-assessment-grid`) using `grid-template-areas` so the eyebrow + heading span **both** columns, with copy on the left and the video on the right. The h1 is scaled **down** from the site's full 6rem (`clamp(2.25rem, 4.5vw, 3.75rem)`) because it's a full sentence, not the short phrase other heroes use.
+- **Hero body copy = site body size:** the hero paragraph uses `.lede` markup but is overridden to `1.0625rem` / weight 400 (the site's standard 17px body size), **not** the 20px `.lede` size — as a full paragraph the lede size read too big vs. the home page.
+- **Mobile/tablet (≤900px):** the grid collapses to a single left-anchored column, reordered via `order` to **heading → body → video → copy → start now**. ⚠️ **Specificity trap fixed here:** the desktop `grid-area: <name>` rules (two-class selectors) outrank a `> *` reset, so the mobile media query must reset each element's `grid-area: auto` with **matching-specificity selectors** — otherwise the named areas persist against `grid-template-areas: none` and all hero items collapse into one overlapping cell.
+
+### Preview video (`public/assessment-hero.mp4` + `public/assessment-poster.jpg`)
+- The real 48s "Practice Growth Assessment" promo (1920×1080, H.264, **with audio**). Presented as **click-to-play**: a branded play-badge overlay (`.video-play` button) sits over the poster; clicking hides the overlay, flips the `<video>` to `controls`, and calls `play()` — so it plays **with sound** (user-gesture-initiated) and hands off to native controls.
+- **Poster:** `assessment-poster.jpg` is the video's opening title-card frame, extracted with a small **Swift/AVFoundation** script (no ffmpeg on this machine — `swift` + `AVAssetImageGenerator`, then `sips -Z 1280` to downscale/compress to ~124KB). With a real poster the `<video>` uses **`preload="none"`** — the ~16MB video is not fetched until the user clicks (verified: `networkState` idle / `readyState` 0 on load).
+- **To replace the video later:** drop the new file at `public/assessment-hero.mp4`; regenerate the poster from its first frame (the scratchpad `poster.swift` does this: `swift poster.swift <in.mp4> <out.jpg>`) → `sips -Z 1280 -s formatOptions 80`.
+
+### "Start Now" reveal (deferred iframe)
+- Both Start Now buttons carry `.js-start-assessment`. Clicking: `preventDefault()`, sets the iframe's `src` from its `data-src`, adds `.is-visible` to `#take-assessment` (CSS `display:none` → `block`), and `scrollIntoView({behavior:'smooth'})`.
+- **The survey is genuinely absent until clicked** — the iframe ships with `data-src` (not `src`), so no request to the survey app fires on page load (verified in the network panel). This was an explicit requirement.
+- The embedded survey keeps `scrolling="no"` + a fallback height (`940px`, sized to step 1) and the same `postMessage({type:'assessment:resize', height})` auto-resize listener as before (origin-checked; also accepts `{type:'resize'}` / bare `{height}` / `"height:N"`). See §6 for the outstanding auto-resize follow-up on the survey app.
+- **Note:** the old `bodyClass="assessment-page"` header-scroll-away behavior was **removed** — the page now has real content above the survey, so it uses the normal fixed header like every other page. (The `body.assessment-page .site-header` rule in `global.css` is now unused by this page.)
 
 ## Dev / deploy quick reference
 
