@@ -30,16 +30,10 @@ const outcomes = [
 <Site title={pageTitle}>
 
   <section class="hero hero-assessment">
-    <div class="container grid">
-      <div>
-        <p class="eyebrow">Firm Assessment</p>
-        <h1>GET A CLEAR SNAPSHOT OF YOUR FIRM&rsquo;S GROWTH POTENTIAL.</h1>
-        <p class="lede">This short assessment is designed to show you where your practice is strong today &mdash; and where there may be gaps worth addressing. In just 10 minutes, you&rsquo;ll walk away with a clearer view of what&rsquo;s working, what&rsquo;s not, and where to focus next.</p>
-        <p class="hero-note">It&rsquo;s not about judgment. It&rsquo;s about clarity you can actually use.</p>
-        <div class="actions">
-          <a class="btn btn-primary js-start-assessment" href="#take-assessment">Start Now <span class="arrow">→</span></a>
-        </div>
-      </div>
+    <div class="container hero-assessment-grid">
+      <p class="eyebrow">Firm Assessment</p>
+      <h1>GET A CLEAR SNAPSHOT OF YOUR FIRM&rsquo;S GROWTH POTENTIAL.</h1>
+      <p class="lede">This short assessment is designed to show you where your practice is strong today &mdash; and where there may be gaps worth addressing. In just 10 minutes, you&rsquo;ll walk away with a clearer view of what&rsquo;s working, what&rsquo;s not, and where to focus next.</p>
       <div class="hero-aside">
         <!--
           Real preview video goes here once uploaded: drop the file at
@@ -54,6 +48,10 @@ const outcomes = [
           </span>
           <span class="video-card-label">Preview video &mdash; coming soon</span>
         </div>
+      </div>
+      <p class="hero-note">It&rsquo;s not about judgment. It&rsquo;s about clarity you can actually use.</p>
+      <div class="actions">
+        <a class="btn btn-primary js-start-assessment" href="#take-assessment">Start Now <span class="arrow">→</span></a>
       </div>
     </div>
   </section>
@@ -118,19 +116,75 @@ const outcomes = [
 
 <style>
   /* ============ hero ============ */
-  .hero-assessment::before { background-image: none; background-color: var(--bg-elev); }
+  /* Flat surface — no gradient overlay — matching the section below it so the
+     two read as one continuous background (both --bg). */
+  .hero-assessment::before { background-image: none; background-color: var(--bg); }
+  .hero-assessment::after { display: none; }
+  /* No background image to fill a tall hero, so keep it compact and let the
+     content define the height (top-aligned rather than bottom-aligned). */
+  .hero-assessment {
+    min-height: 0;
+    align-items: start;
+    padding-top: clamp(7rem, 12vh, 10rem);
+    padding-bottom: clamp(3.5rem, 7vw, 6rem);
+  }
+
   /* This headline is a full sentence rather than the short punchy phrase the
      other heroes use, so scale it down (closer to a large h2) instead of the
-     site's full 6rem h1 — otherwise it wraps to six lines and dominates. */
+     site's full 6rem h1. It spans the full width of the section (see grid). */
   .hero-assessment h1 { font-size: clamp(2.25rem, 4.5vw, 3.75rem); }
-  .hero-assessment .lede { margin-top: 1.5rem; }
+
+  /* Desktop layout: eyebrow + heading span the full width, then a two-column
+     row with the copy on the left and the (larger) video on the right. */
+  .hero-assessment-grid {
+    display: grid;
+    width: 100%;
+    column-gap: clamp(2rem, 5vw, 5rem);
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "eyebrow eyebrow"
+      "heading heading"
+      "body    aside"
+      "note    aside"
+      "action  aside";
+    align-items: start;
+  }
+  .hero-assessment-grid .eyebrow { grid-area: eyebrow; }
+  .hero-assessment-grid h1 { grid-area: heading; margin-bottom: 2rem; }
+  .hero-assessment-grid .lede { grid-area: body; margin: 0; max-width: 46ch; }
+  .hero-assessment-grid .hero-aside { grid-area: aside; align-self: center; }
+  .hero-assessment-grid .hero-note { grid-area: note; }
+  .hero-assessment-grid .actions { grid-area: action; }
+
   .hero-note {
     font-family: var(--display);
     font-size: 1.0625rem;
     font-weight: 600;
     color: var(--brand-teal-light);
-    margin-top: 1.25rem;
+    margin-top: 1.75rem;
     max-width: 36ch;
+  }
+
+  /* Mobile / tablet: single column, left-anchored, with the video sitting
+     between the body copy and the remaining copy:
+       heading > body > video > copy > start now  */
+  @media (max-width: 900px) {
+    .hero-assessment-grid {
+      grid-template-columns: 1fr;
+      grid-template-areas: none;
+      row-gap: 1.5rem;
+      text-align: left;
+      justify-items: start;
+    }
+    /* Reset with matching selectors so these override the named-area rules
+       above (equal specificity, later in source). Then reorder into
+       heading > body > video > copy > start now. */
+    .hero-assessment-grid .eyebrow { grid-area: auto; margin: 0; order: 1; }
+    .hero-assessment-grid h1 { grid-area: auto; margin: 0; order: 2; }
+    .hero-assessment-grid .lede { grid-area: auto; margin: 0; max-width: none; order: 3; }
+    .hero-assessment-grid .hero-aside { grid-area: auto; align-self: stretch; width: 100%; order: 4; }
+    .hero-assessment-grid .hero-note { grid-area: auto; margin: 0; max-width: none; order: 5; }
+    .hero-assessment-grid .actions { grid-area: auto; margin: 0.5rem 0 0; order: 6; }
   }
 
   /* ============ video placeholder card ============ */
