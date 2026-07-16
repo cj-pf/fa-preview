@@ -153,7 +153,17 @@ const outcomes = [
   }
   .hero-assessment-grid .eyebrow { grid-area: eyebrow; }
   .hero-assessment-grid h1 { grid-area: heading; margin-bottom: 2rem; }
-  .hero-assessment-grid .lede { grid-area: body; margin: 0; max-width: 46ch; }
+  /* Standard body-copy size (matching the home page's body paragraphs, 17px)
+     rather than the .lede size (20px) — this is a full paragraph, not the short
+     one-line tagline .lede is meant for. */
+  .hero-assessment-grid .lede {
+    grid-area: body;
+    margin: 0;
+    max-width: 46ch;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-weight: 400;
+  }
   .hero-assessment-grid .hero-aside { grid-area: aside; align-self: center; }
   .hero-assessment-grid .hero-note { grid-area: note; }
   .hero-assessment-grid .actions { grid-area: action; }
