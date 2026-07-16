@@ -101,9 +101,11 @@ const outcomes = [
         <h2>YOUR ASSESSMENT</h2>
       </div>
     </div>
+    <!-- src is deferred (data-src) so the assessment doesn't load at all until
+         "Start Now" is clicked. The click handler copies data-src -> src. -->
     <iframe
       class="assessment-frame"
-      src={iframeUrl}
+      data-src={iframeUrl}
       title="Practice Health Assessment"
       loading="lazy"
       scrolling="no"
@@ -215,13 +217,20 @@ const outcomes = [
 
 <script>
   // Reveal the assessment further down the page instead of navigating away,
-  // so "Start Now" feels like one continuous flow.
+  // so "Start Now" feels like one continuous flow. The iframe's src is deferred
+  // (stored in data-src) so the assessment doesn't load until the button is
+  // clicked — it's genuinely absent from the page until then.
+  function loadAssessmentFrame() {
+    const frame = document.querySelector<HTMLIFrameElement>('.assessment-frame');
+    if (frame && !frame.src && frame.dataset.src) frame.src = frame.dataset.src;
+  }
   function initStartAssessment() {
     const target = document.getElementById('take-assessment');
     if (!target) return;
     document.querySelectorAll<HTMLAnchorElement>('.js-start-assessment').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
+        loadAssessmentFrame();
         target.classList.add('is-visible');
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
@@ -237,7 +246,10 @@ const outcomes = [
   function initAssessmentAutoResize() {
     const frame = document.querySelector<HTMLIFrameElement>('.assessment-frame');
     if (!frame) return;
-    const EXPECTED_ORIGIN = new URL(frame.src).origin;
+    // src is deferred until "Start Now"; derive the expected origin from the
+    // stored data-src so we can validate messages regardless of load timing.
+    const frameUrl = frame.src || frame.dataset.src || '';
+    const EXPECTED_ORIGIN = new URL(frameUrl).origin;
     const handler = (e: MessageEvent) => {
       if (e.origin !== EXPECTED_ORIGIN) return;
       const data: any = e.data;
