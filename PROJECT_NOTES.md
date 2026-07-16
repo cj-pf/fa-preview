@@ -1,6 +1,6 @@
 # Fiduciary Alliance Website — Project Notes
 
-> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-07-15 (added the `/summit` Advisor Summit page and the `/assessment` Health Assessment page; footer socials; header phone dropped on desktop).
+> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-07-16 (real brand fonts — Trade Gothic Next Condensed / Museo Sans — wired in via Adobe Fonts, replacing the Barlow Condensed / Mulish stand-ins).
 
 ---
 
@@ -85,10 +85,14 @@ A website redesign for **Fiduciary Alliance, LLC** — a registered investment a
 The **What We Provide tabs section** (on the Why FA pages) is a deliberate **light** section — it locally overrides `--ink`, `--ink-soft`, `--ink-mute`, `--line` to dark-on-light values against a `#F4F6F8` background, so nested components flip automatically.
 
 ### Fonts
-- `--display`: **Barlow Condensed** (stands in for Trade Gothic) — all headings, eyebrows, labels, buttons, nav. Weights 300–700.
-- `--body`: **Mulish** (stands in for Museo Sans) — body paragraphs.
-- Loaded via Google Fonts in `src/layouts/Site.astro`.
+The real brand typefaces (per the "Typefaces / Print & Web" brand book page) are now live:
+- `--display`: **`trade-gothic-next-condensed`** (falls back to Barlow Condensed → Trade Gothic → Impact) — all headings, eyebrows, labels, buttons, nav. Licensed weights: 400 (Regular) and 700 (Bold), both roman (non-italic).
+- `--body`: **`museo-sans`** (falls back to Mulish → system sans) — body paragraphs. Licensed weights: 100, 300, 500, 500 italic, 700, 900.
+- Loaded via **Adobe Fonts** (Creative Cloud, `<link rel="stylesheet" href="https://use.typekit.net/gut5szx.css">` in `src/layouts/Site.astro`), with the original Google Fonts `<link>` (Barlow Condensed / Mulish) left in place as a fallback while the Adobe stylesheet loads or if it ever fails.
+- **Originally** (until 2026-07-16) the site used **Barlow Condensed** as a stand-in for Trade Gothic and **Mulish** as a stand-in for Museo Sans, because the real fonts weren't licensed for web yet. A brand-book PDF (`Type face for FA.pdf`) confirmed the actual typefaces are **Trade Gothic** (primary/display — brand book lists "Trade Gothic LT Std Condensed No. 18", "Bold Condensed No. 20", etc.) and **Museo Sans** (tagline/body, weights 100–900). Carey activated both as a web project in Adobe Fonts (Creative Cloud) — Adobe's naming for them is `trade-gothic-next-condensed` and `museo-sans`.
+- **Gotcha hit along the way:** the first Adobe Fonts pass only had **italic** condensed weights activated (no roman/non-italic bold), so large bold numerals (`.stat .num`, `.step .num`) rendered via browser font-synthesis — visibly chunkier/bigger than intended. Fixed by activating the **roman, non-italic Bold** style of Trade Gothic Next Condensed in the Adobe Fonts project (same `gut5szx.css` kit URL — no code change needed to pick it up, just a republish on Adobe's side).
 - Headings render **ALL CAPS in the markup** (not via `text-transform`) — match this when adding headings.
+- The **"Fiduciary Alliance Design System"** project in Design (`claude.ai/design`) was updated to match — `tokens/fonts.css` there now imports the same Adobe Fonts kit and uses the same family names, so wireframes built there (e.g. the upcoming `/assessment` landing page) match the live site's type. Note: that Design project's **color tokens** (`tokens/colors.css`) are still from an older/different brandkit source and do **not** match the live site's palette — left as-is per explicit instruction; only fonts were reconciled.
 
 ### Spacing / layout
 - `--max: 1240px` — max content width (`.container`).
