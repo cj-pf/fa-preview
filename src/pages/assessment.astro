@@ -40,14 +40,14 @@ const outcomes = [
           <video
             class="video-el"
             src={url('/assessment-hero.mp4')}
-            preload="metadata"
+            poster={url('/assessment-poster.jpg')}
+            preload="none"
             playsinline
           ></video>
           <button class="video-play" type="button" aria-label="Play preview video">
             <span class="play-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+              <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
             </span>
-            <span class="video-card-label">Watch the preview</span>
           </button>
         </div>
       </div>
@@ -206,45 +206,36 @@ const outcomes = [
     object-fit: cover;
     display: block;
   }
-  /* Click-to-play overlay: branded play badge over a tinted scrim. Hidden once
-     playback starts (the [hidden] attribute is set by the click handler), which
-     hands control to the native video controls. */
+  /* Click-to-play overlay: a play badge over the poster (which already carries
+     the branding). A very light scrim lifts the badge off the artwork. Hidden
+     once playback starts (the [hidden] attribute is set by the click handler),
+     handing control to the native video controls. */
   .video-play {
     position: absolute;
     inset: 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
     border: 0;
     cursor: pointer;
     color: var(--white);
-    background:
-      linear-gradient(135deg, rgba(53, 95, 61, 0.45) 0%, rgba(17, 86, 113, 0.60) 100%);
+    background: rgba(6, 21, 32, 0.12);
     transition: background 200ms ease;
   }
   .video-play[hidden] { display: none; }
-  .video-play:hover { background: linear-gradient(135deg, rgba(53, 95, 61, 0.35) 0%, rgba(17, 86, 113, 0.50) 100%); }
+  .video-play:hover { background: rgba(6, 21, 32, 0.20); }
   .play-badge {
     display: flex; align-items: center; justify-content: center;
-    width: 4rem; height: 4rem; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(6px);
+    width: 4.5rem; height: 4.5rem; border-radius: 50%;
+    background: rgba(6, 21, 32, 0.55);
+    backdrop-filter: blur(4px);
     color: var(--white);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     transition: transform 180ms ease, background 180ms ease;
   }
-  .play-badge svg { margin-left: 3px; }
-  .video-play:hover .play-badge { transform: scale(1.06); background: rgba(255, 255, 255, 0.24); }
-  .video-card-label {
-    font-family: var(--display);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.92);
-  }
+  .play-badge svg { margin-left: 4px; }
+  .video-play:hover .play-badge { transform: scale(1.06); background: rgba(6, 21, 32, 0.7); }
 
   /* ============ why-matters copy ============ */
   /* Full-width text on this page: let the heading and paragraphs span the whole
