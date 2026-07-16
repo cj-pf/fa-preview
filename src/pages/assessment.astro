@@ -166,7 +166,11 @@ const outcomes = [
   }
 
   /* ============ why-matters copy ============ */
-  .why-lede { font-size: 1.0625rem; max-width: 68ch; margin-bottom: 1.5rem; }
+  /* Full-width text on this page: let the heading and paragraphs span the whole
+     container instead of the usual constrained measure. */
+  .section-sm .section-head { max-width: none; }
+  .section-sm .section-head p { max-width: none; }
+  .why-lede { font-size: 1.0625rem; max-width: none; margin-bottom: 1.5rem; }
   .outcomes-label {
     font-family: var(--display);
     font-size: 0.8125rem;
