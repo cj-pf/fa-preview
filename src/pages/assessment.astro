@@ -1,6 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import { sanityClient } from '../lib/sanity';
+import { url } from '../utils/url';
 
 const DEFAULTS = {
   pageTitle: 'Firm Assessment — Fiduciary Alliance',
@@ -35,18 +36,19 @@ const outcomes = [
       <h1>GET A CLEAR SNAPSHOT OF YOUR FIRM&rsquo;S GROWTH POTENTIAL.</h1>
       <p class="lede">This short assessment is designed to show you where your practice is strong today &mdash; and where there may be gaps worth addressing. In just 10 minutes, you&rsquo;ll walk away with a clearer view of what&rsquo;s working, what&rsquo;s not, and where to focus next.</p>
       <div class="hero-aside">
-        <!--
-          Real preview video goes here once uploaded: drop the file at
-          public/assessment-hero.mp4 and swap this placeholder .video-card
-          for a <video class="video-card" autoplay muted loop playsinline
-          poster="..."><source src={url('/assessment-hero.mp4')} type="video/mp4" /></video>,
-          or wire it up as a click-to-play player if it should have sound/controls.
-        -->
         <div class="video-card">
-          <span class="play-badge" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
-          </span>
-          <span class="video-card-label">Preview video &mdash; coming soon</span>
+          <video
+            class="video-el"
+            src={url('/assessment-hero.mp4')}
+            preload="metadata"
+            playsinline
+          ></video>
+          <button class="video-play" type="button" aria-label="Play preview video">
+            <span class="play-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            </span>
+            <span class="video-card-label">Watch the preview</span>
+          </button>
         </div>
       </div>
       <p class="hero-note">It&rsquo;s not about judgment. It&rsquo;s about clarity you can actually use.</p>
@@ -187,40 +189,61 @@ const outcomes = [
     .hero-assessment-grid .actions { grid-area: auto; margin: 0.5rem 0 0; order: 6; }
   }
 
-  /* ============ video placeholder card ============ */
+  /* ============ preview video card ============ */
   .video-card {
     position: relative;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 16 / 9;
     width: 100%;
     border-radius: 12px;
+    overflow: hidden;
     border: 1px solid var(--line-strong);
-    background:
-      linear-gradient(135deg, rgba(53, 95, 61, 0.35) 0%, rgba(17, 86, 113, 0.55) 100%),
-      var(--bg-elev);
+    background: var(--bg-elev);
     box-shadow: var(--shadow);
+  }
+  .video-el {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Click-to-play overlay: branded play badge over a tinted scrim. Hidden once
+     playback starts (the [hidden] attribute is set by the click handler), which
+     hands control to the native video controls. */
+  .video-play {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1rem;
+    border: 0;
+    cursor: pointer;
+    color: var(--white);
+    background:
+      linear-gradient(135deg, rgba(53, 95, 61, 0.45) 0%, rgba(17, 86, 113, 0.60) 100%);
+    transition: background 200ms ease;
   }
+  .video-play[hidden] { display: none; }
+  .video-play:hover { background: linear-gradient(135deg, rgba(53, 95, 61, 0.35) 0%, rgba(17, 86, 113, 0.50) 100%); }
   .play-badge {
     display: flex; align-items: center; justify-content: center;
     width: 4rem; height: 4rem; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.16);
     backdrop-filter: blur(6px);
     color: var(--white);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     transition: transform 180ms ease, background 180ms ease;
   }
-  .video-card:hover .play-badge { transform: scale(1.06); background: rgba(255, 255, 255, 0.22); }
+  .play-badge svg { margin-left: 3px; }
+  .video-play:hover .play-badge { transform: scale(1.06); background: rgba(255, 255, 255, 0.24); }
   .video-card-label {
     font-family: var(--display);
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--ink-mute);
+    color: rgba(255, 255, 255, 0.92);
   }
 
   /* ============ why-matters copy ============ */
@@ -283,6 +306,24 @@ const outcomes = [
 </style>
 
 <script>
+  // Preview video: click the branded overlay to start playback (with sound,
+  // since the click is a user gesture) and hand off to native controls.
+  function initPreviewVideo() {
+    document.querySelectorAll<HTMLElement>('.video-card').forEach((card) => {
+      const video = card.querySelector<HTMLVideoElement>('.video-el');
+      const overlay = card.querySelector<HTMLButtonElement>('.video-play');
+      if (!video || !overlay || overlay.dataset.bound) return;
+      overlay.dataset.bound = '1';
+      overlay.addEventListener('click', () => {
+        overlay.hidden = true;
+        video.controls = true;
+        video.play();
+      });
+    });
+  }
+  initPreviewVideo();
+  document.addEventListener('astro:page-load', initPreviewVideo);
+
   // Reveal the assessment further down the page instead of navigating away,
   // so "Start Now" feels like one continuous flow. The iframe's src is deferred
   // (stored in data-src) so the assessment doesn't load until the button is
