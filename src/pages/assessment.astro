@@ -119,6 +119,10 @@ const outcomes = [
 <style>
   /* ============ hero ============ */
   .hero-assessment::before { background-image: none; background-color: var(--bg-elev); }
+  /* This headline is a full sentence rather than the short punchy phrase the
+     other heroes use, so scale it down (closer to a large h2) instead of the
+     site's full 6rem h1 — otherwise it wraps to six lines and dominates. */
+  .hero-assessment h1 { font-size: clamp(2.25rem, 4.5vw, 3.75rem); }
   .hero-assessment .lede { margin-top: 1.5rem; }
   .hero-note {
     font-family: var(--display);
@@ -169,6 +173,11 @@ const outcomes = [
   /* Full-width text on this page: let the heading and paragraphs span the whole
      container instead of the usual constrained measure. */
   .section-sm .section-head { max-width: none; }
+  /* The intro paragraph lives inside .section-head, whose large bottom margin
+     otherwise leaves an awkward gap before the next paragraph. Tighten it so
+     the copy reads as one continuous block. */
+  .section-sm .section-head { margin-bottom: 1.75rem; }
+  .section-sm .section-head h2 { margin-bottom: 1.5rem; }
   .section-sm .section-head p { max-width: none; }
   .why-lede { font-size: 1.0625rem; max-width: none; margin-bottom: 1.5rem; }
   .outcomes-label {
