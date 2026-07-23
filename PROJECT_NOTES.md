@@ -238,6 +238,7 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 - **Never `sudo npm`.**
 - Interactive scripts must re-bind on `astro:page-load` (see §4e).
 - macOS smart substitutions are disabled, so straight quotes/dashes in code are safe.
+- **Eyebrow size gotcha:** the base `.eyebrow` is `0.875rem` (14px), but `.section-head p` in `global.css` bumps *any* paragraph inside a `.section-head` to `1.125rem` (18px) — so eyebrows in a `.section-head` render at 18px while eyebrows in a custom wrapper stay 14px. On `/summit` all five eyebrows are standardized to **18px**: the hero and Give-back / venue sections use custom wrappers, so each gets a scoped `.<wrapper> .eyebrow { font-size: 1.125rem; }` override to match the `.section-head` ones.
 
 **Design continuity:**
 - New sections must use the existing tokens, fonts (Trade Gothic Next Condensed display / Museo Sans body — see §3), and accent colors — no one-off custom palettes. The AI section was explicitly reworked to remove custom cyan/mint colors and gradient text and to match the site.
