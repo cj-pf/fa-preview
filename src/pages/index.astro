@@ -3,14 +3,25 @@ import Site from '../layouts/Site.astro';
 import AISection from '../components/AISection.astro';
 import NetworkMap from '../components/NetworkMap.astro';
 import { url } from '../utils/url';
-import { sanityClient, getSiteSettings } from '../lib/sanity';
+import { sanityClient, getSiteSettings, urlFor } from '../lib/sanity';
 
 const settings = await getSiteSettings();
 
 const home = await sanityClient.fetch(`*[_type == "homePage"][0]{
   heroHeadline,
-  statAum
+  statAum,
+  ctaImage,
+  ctaParallax
 }`);
+
+// Bottom banner photo — editable on the Home Page document in Studio; falls
+// back to the hardcoded --hero-home photo when left blank.
+function imageUrl(image: any, w: number, h: number) {
+  if (!image?.asset) return null;
+  return urlFor(image).width(w).height(h).fit('crop').auto('format').quality(85).url();
+}
+const CTA_IMG = imageUrl(home?.ctaImage, 2400, 1400);
+const CTA_PARALLAX = Boolean(home?.ctaParallax);
 
 // Preserve the designed line break: a comma in the headline becomes a line break.
 const heroHeadlineHtml = (home?.heroHeadline ?? 'YOUR GROWTH, OUR MISSION.').replace(/,\s*/g, ',<br/>');
@@ -179,7 +190,7 @@ const steps = [
     </div>
   </section>
 
-  <section class="cta-strip">
+  <section class:list={['cta-strip', {'cta-strip-parallax': CTA_PARALLAX}]} style={CTA_IMG ? `--cta-bg-image: url(${CTA_IMG})` : undefined}>
     <div class="container">
       <div class="cta-row">
         <h2 class="anim-hidden">CURIOUS WHAT THIS COULD LOOK LIKE FOR YOU?</h2>
@@ -192,6 +203,18 @@ const steps = [
   </section>
 
 </Site>
+
+<style>
+  /* Closing CTA background photo, editable on the Home Page document in Studio;
+     parallax is a plain background-attachment: fixed, so it degrades to a static
+     background on iOS Safari (which doesn't support fixed backgrounds). */
+  .cta-strip::before {
+    background-image: var(--cta-bg-image, var(--hero-home));
+  }
+  .cta-strip-parallax::before {
+    background-attachment: fixed;
+  }
+</style>
 
 <script>
   function setupHomeAnimations() {

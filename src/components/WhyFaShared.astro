@@ -1,6 +1,20 @@
 ---
-import { getSiteSettings } from '../lib/sanity';
+import { getSiteSettings, sanityClient, urlFor } from '../lib/sanity';
 const settings = await getSiteSettings();
+
+// Bottom banner photo — shared across both Why FA pages, editable on the single
+// "Why FA Page" document in Studio; falls back to the hardcoded --hero-home
+// photo when left blank.
+const whyFaPage = await sanityClient.fetch(`*[_type == "whyFaPage"][0]{
+  ctaImage,
+  ctaParallax
+}`);
+function imageUrl(image: any, w: number, h: number) {
+  if (!image?.asset) return null;
+  return urlFor(image).width(w).height(h).fit('crop').auto('format').quality(85).url();
+}
+const CTA_IMG = imageUrl(whyFaPage?.ctaImage, 2400, 1400);
+const CTA_PARALLAX = Boolean(whyFaPage?.ctaParallax);
 
 const comparison = [
   { label: 'Your brand', them: 'Replaced or co-branded', us: 'YOURS, UNCHANGED' },
@@ -237,7 +251,7 @@ const serviceTabs: ServiceTab[] = [
   </div>
 </section>
 
-<section class="cta-strip">
+<section class:list={['cta-strip', {'cta-strip-parallax': CTA_PARALLAX}]} style={CTA_IMG ? `--cta-bg-image: url(${CTA_IMG})` : undefined}>
   <div class="container">
     <div class="cta-row anim-hidden">
       <h2>READY TO SEE IF YOU&rsquo;RE A FIT?</h2>
@@ -247,6 +261,18 @@ const serviceTabs: ServiceTab[] = [
     </div>
   </div>
 </section>
+
+<style>
+  /* Closing CTA background photo, editable on the Why FA Page document in
+     Studio; parallax is a plain background-attachment: fixed, so it degrades to
+     a static background on iOS Safari (which doesn't support fixed backgrounds). */
+  .cta-strip::before {
+    background-image: var(--cta-bg-image, var(--hero-home));
+  }
+  .cta-strip-parallax::before {
+    background-attachment: fixed;
+  }
+</style>
 
 <script>
   function setupServiceTabs() {
