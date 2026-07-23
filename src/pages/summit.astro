@@ -72,10 +72,10 @@ const pillars = [
 ];
 
 const reasons = [
-  { num: '01', title: 'BUILT FOR ADVISORS', body: 'Sessions designed by advisors, for advisors — no fluff, no vendor pitches disguised as keynotes.' },
-  { num: '02', title: 'ACTIONABLE, NOT THEORETICAL', body: 'Leave with a playbook, not a notebook. Every session ends with something you can implement.' },
-  { num: '03', title: 'THE RIGHT ROOM', body: 'Small enough to actually meet people. Focused enough that everyone speaks the same language.' },
-  { num: '04', title: 'A CITY WORTH THE TRIP', body: 'Downtown Greenville — award-winning dining, walkable streets, and Southern hospitality.' },
+  { title: 'BUILT FOR ADVISORS', body: 'Sessions designed by advisors, for advisors — no fluff, no vendor pitches disguised as keynotes.' },
+  { title: 'ACTIONABLE, NOT THEORETICAL', body: 'Leave with a playbook, not a notebook. Every session ends with something you can implement.' },
+  { title: 'THE RIGHT ROOM', body: 'Small enough to actually meet people. Focused enough that everyone speaks the same language.' },
+  { title: 'A CITY WORTH THE TRIP', body: 'Downtown Greenville — award-winning dining, walkable streets, and Southern hospitality.' },
 ];
 ---
 
@@ -154,7 +154,6 @@ const reasons = [
       <div class="steps summit-reasons">
         {reasons.map((r, i) => (
           <div class="step anim-hidden" style={`--anim-delay: ${i * 100}ms`}>
-            <div class="num">{r.num}</div>
             <h3>{r.title}</h3>
             <p>{r.body}</p>
           </div>
@@ -325,6 +324,9 @@ const reasons = [
     color: var(--brand-teal-light);
     margin: 0 0 0.75rem 0;
   }
+
+  /* why-attend cards: numbers removed, so pull the grid in a touch */
+  .summit-reasons { gap: clamp(1.25rem, 2.2vw, 2rem); }
 
   /* venue */
   .summit-venue-head { margin-bottom: 1.5rem; }
