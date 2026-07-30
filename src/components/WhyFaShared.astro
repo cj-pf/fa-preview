@@ -1,20 +1,17 @@
 ---
-import { getSiteSettings, sanityClient, urlFor } from '../lib/sanity';
+import { getSiteSettings, sanityClient } from '../lib/sanity';
 const settings = await getSiteSettings();
 
-// Bottom banner photo — shared across both Why FA pages, editable on the single
-// "Why FA Page" document in Studio; falls back to the hardcoded --hero-home
-// photo when left blank.
 const whyFaPage = await sanityClient.fetch(`*[_type == "whyFaPage"][0]{
-  ctaImage,
-  ctaParallax
+  "testimonials": testimonials[]{ "url": asset->url }
 }`);
-function imageUrl(image: any, w: number, h: number) {
-  if (!image?.asset) return null;
-  return urlFor(image).width(w).height(h).fit('crop').auto('format').quality(85).url();
-}
-const CTA_IMG = imageUrl(whyFaPage?.ctaImage, 2400, 1400);
-const CTA_PARALLAX = Boolean(whyFaPage?.ctaParallax);
+
+// Video testimonials — uploaded on the Why FA Page document in Studio. Each
+// plays on demand (no autoplay) with its own audio; three show at a time on
+// desktop and the rest scroll into view via the arrow.
+const TESTIMONIALS: { url: string }[] = (whyFaPage?.testimonials ?? []).filter(
+  (t: any) => t?.url
+);
 
 const comparison = [
   { label: 'Your brand', them: 'Replaced or co-branded', us: 'YOURS, UNCHANGED' },
@@ -251,7 +248,50 @@ const serviceTabs: ServiceTab[] = [
   </div>
 </section>
 
-<section class:list={['cta-strip', {'cta-strip-parallax': CTA_PARALLAX}]} style={CTA_IMG ? `--cta-bg-image: url(${CTA_IMG})` : undefined}>
+{TESTIMONIALS.length > 0 && (
+  <section class="vt-section">
+    <div class="container">
+      <div class="section-head anim-hidden">
+        <p class="eyebrow">In their words</p>
+        <h2>HEAR IT FROM ADVISORS.</h2>
+      </div>
+      <div class="vt-carousel anim-hidden">
+        <div class="vt-track" role="list">
+          {TESTIMONIALS.map((t, i) => (
+            <article class="vt-card" role="listitem">
+              <div class="vt-media">
+                <video
+                  class="vt-video"
+                  src={`${t.url}#t=0.1`}
+                  preload="metadata"
+                  playsinline
+                  aria-label={`Advisor testimonial ${i + 1}`}
+                ></video>
+                <button type="button" class="vt-play" aria-label={`Play testimonial ${i + 1}`}>
+                  <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" fill="currentColor" />
+                  </svg>
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+        <button type="button" class="vt-arrow vt-arrow-prev" aria-label="Previous testimonials" hidden>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button type="button" class="vt-arrow vt-arrow-next" aria-label="See more testimonials">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+)}
+
+<section class="cta-strip cta-strip-plain">
   <div class="container">
     <div class="cta-row anim-hidden">
       <h2>READY TO SEE IF YOU&rsquo;RE A FIT?</h2>
@@ -263,14 +303,100 @@ const serviceTabs: ServiceTab[] = [
 </section>
 
 <style>
-  /* Closing CTA background photo, editable on the Why FA Page document in
-     Studio; parallax is a plain background-attachment: fixed, so it degrades to
-     a static background on iOS Safari (which doesn't support fixed backgrounds). */
-  .cta-strip::before {
-    background-image: var(--cta-bg-image, var(--hero-home));
+  /* Closing CTA on the Why FA pages has no banner photo — the video
+     testimonials above it carry the visual weight. Drop the global photo layer
+     and let the brand gradient sit on a solid deep base. */
+  .cta-strip-plain { background: var(--bg-deep); }
+  .cta-strip-plain::before { display: none; }
+
+  /* --- Video testimonials carousel --- */
+  .vt-carousel {
+    position: relative;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
   }
-  .cta-strip-parallax::before {
-    background-attachment: fixed;
+  .vt-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 2 * 1.25rem) / 3);
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+  }
+  .vt-track::-webkit-scrollbar { display: none; }
+  .vt-card { scroll-snap-align: start; }
+  .vt-media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .vt-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-deep);
+  }
+  .vt-play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 4.25rem;
+    height: 4.25rem;
+    display: grid;
+    place-items: center;
+    padding: 0 0 0 0.2rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: rgba(10, 26, 36, 0.55);
+    backdrop-filter: blur(6px);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  .vt-play:hover {
+    background: var(--brand-green);
+    border-color: var(--brand-green-bright);
+    transform: scale(1.06);
+  }
+  .vt-media.is-playing .vt-play { display: none; }
+
+  .vt-arrow {
+    position: absolute;
+    top: calc(50% - 1.4rem);
+    transform: translateY(-50%);
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+    z-index: 2;
+  }
+  .vt-arrow:hover { background: var(--surface-2); color: var(--ink); }
+  .vt-arrow-prev { left: -0.5rem; }
+  .vt-arrow-next { right: -0.5rem; }
+  .vt-arrow[hidden] { display: none; }
+  .vt-arrow[disabled] { opacity: 0; pointer-events: none; }
+
+  @media (max-width: 900px) {
+    .vt-track { grid-auto-columns: calc((100% - 1rem) / 2); gap: 1rem; }
+  }
+  @media (max-width: 600px) {
+    .vt-track { grid-auto-columns: 78%; }
+    .vt-arrow-prev { left: 0.25rem; }
+    .vt-arrow-next { right: 0.25rem; }
   }
 </style>
 
@@ -331,10 +457,62 @@ const serviceTabs: ServiceTab[] = [
     });
   }
 
+  function setupTestimonials() {
+    document.querySelectorAll<HTMLElement>('.vt-carousel').forEach(carousel => {
+      if (carousel.dataset.ready === '1') return;
+      carousel.dataset.ready = '1';
+
+      const track = carousel.querySelector<HTMLElement>('.vt-track');
+      const prev = carousel.querySelector<HTMLButtonElement>('.vt-arrow-prev');
+      const next = carousel.querySelector<HTMLButtonElement>('.vt-arrow-next');
+      if (!track) return;
+
+      // Play on demand; pause any other testimonial that's playing so only one
+      // has audio at a time. Show native controls once a video has started.
+      const videos = Array.from(track.querySelectorAll<HTMLVideoElement>('.vt-video'));
+      carousel.querySelectorAll<HTMLButtonElement>('.vt-play').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const media = btn.closest('.vt-media');
+          const video = media?.querySelector<HTMLVideoElement>('.vt-video');
+          if (!video) return;
+          videos.forEach(v => { if (v !== video) { v.pause(); } });
+          media?.classList.add('is-playing');
+          video.controls = true;
+          void video.play();
+        });
+      });
+
+      // Arrows page the track by (almost) its full visible width. They only
+      // matter when the content overflows — otherwise both stay hidden.
+      const updateArrows = () => {
+        const overflow = track.scrollWidth - track.clientWidth > 4;
+        if (!overflow) {
+          if (prev) prev.hidden = true;
+          if (next) next.hidden = true;
+          return;
+        }
+        const atStart = track.scrollLeft <= 4;
+        const atEnd = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+        if (prev) { prev.hidden = false; prev.disabled = atStart; }
+        if (next) { next.hidden = false; next.disabled = atEnd; }
+      };
+      const page = (dir: number) => {
+        track.scrollBy({ left: dir * track.clientWidth * 0.92, behavior: 'smooth' });
+      };
+      prev?.addEventListener('click', () => page(-1));
+      next?.addEventListener('click', () => page(1));
+      track.addEventListener('scroll', updateArrows, { passive: true });
+      window.addEventListener('resize', updateArrows);
+      updateArrows();
+    });
+  }
+
   setupServiceTabs();
   setupWhyFaAnimations();
+  setupTestimonials();
   document.addEventListener('astro:page-load', () => {
     setupServiceTabs();
     setupWhyFaAnimations();
+    setupTestimonials();
   });
 </script>
