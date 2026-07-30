@@ -3,15 +3,16 @@ import { getSiteSettings, sanityClient } from '../lib/sanity';
 const settings = await getSiteSettings();
 
 const whyFaPage = await sanityClient.fetch(`*[_type == "whyFaPage"][0]{
-  "testimonials": testimonials[]{ "url": asset->url }
+  "testimonials": testimonials[]{ "url": asset->url, thumbTime }
 }`);
 
 // Video testimonials — uploaded on the Why FA Page document in Studio. Each
-// plays on demand (no autoplay) with its own audio; three show at a time on
-// desktop and the rest scroll into view via the arrow.
-const TESTIMONIALS: { url: string }[] = (whyFaPage?.testimonials ?? []).filter(
-  (t: any) => t?.url
-);
+// plays on demand (no autoplay) with its own audio; two show at a time on
+// desktop and the rest scroll into view via the arrow. thumbTime (seconds) is
+// the editor-chosen poster frame; playback still starts from the beginning.
+const TESTIMONIALS: { url: string; thumbTime?: number }[] = (
+  whyFaPage?.testimonials ?? []
+).filter((t: any) => t?.url);
 
 const comparison = [
   { label: 'Your brand', them: 'Replaced or co-branded', us: 'YOURS, UNCHANGED' },
@@ -262,7 +263,7 @@ const serviceTabs: ServiceTab[] = [
               <div class="vt-media">
                 <video
                   class="vt-video"
-                  src={`${t.url}#t=0.1`}
+                  src={`${t.url}#t=${t.thumbTime ?? 0.1}`}
                   preload="metadata"
                   playsinline
                   aria-label={`Advisor testimonial ${i + 1}`}
@@ -478,6 +479,9 @@ const serviceTabs: ServiceTab[] = [
           videos.forEach(v => { if (v !== video) { v.pause(); } });
           media?.classList.add('is-playing');
           video.controls = true;
+          // The src carries a #t=<thumbTime> media fragment so the chosen frame
+          // shows as the poster; rewind to the start so playback begins at 0.
+          try { video.currentTime = 0; } catch (_) {}
           void video.play();
         });
       });
