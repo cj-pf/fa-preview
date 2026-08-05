@@ -56,10 +56,17 @@ Never add a field in just one place.
 
 | Route | File | Notes |
 |---|---|---|
-| `/` | `index.astro` | Homepage |
+| `/` | `index.astro` | Homepage — hero video, live stats, persona cards, AI section, US map, four steps, CTA |
 | `/firms` | `firms.astro` | `NetworkMap` + "MEMBER FIRMS" grid of all published firms |
 | `/disclosures` | `disclosures.astro` | Links to all 4 SEC PDFs |
 | `/team` | `team.astro` | Portrait cards with hover effects + bio modals |
+| `/insights` | `insights.astro` | YouTube channel RSS pulled at build time → lite-embed video cards |
+| `/why-fa/breakaway` | `why-fa/breakaway.astro` | "For Advisors" — hero + pain points + shared `<WhyFaShared />` |
+| `/why-fa/ria-owners` | `why-fa/ria-owners.astro` | "For RIA Owners" — hero + pain points + shared `<WhyFaShared />` |
+| `/assessment` | `assessment.astro` | **Growth Assessment** landing page → "Start Now" reveals the deferred survey iframe |
+| `/contact` | `contact.astro` | "LET'S TALK." + Schedule a Call CTA, phone/email/address |
+| `/how-it-works` | `how-it-works.astro` | **Placeholder** — no real content yet |
+| `/about` | `about.astro` | **Placeholder** and currently orphaned (not linked from nav or footer) |
 | `/summit` | `summit.astro` | Advisor Summit landing page — hero, GROW/SCALE/CONNECT pillars (with icons), why-attend, venue (AC Hotel Greenville), give-back (with photo), sponsors, CTA. Editable fields (register/hotel URLs, hero/venue/give-back/CTA images, sponsors) pull from the singleton `summitPage` Sanity doc, each falling back to a hardcoded default when blank. Speakers/agenda/gallery intentionally omitted. Venue photo defaults to a hotlinked Marriott CDN image (`gspac-exterior-5022`) unless `useCustomVenuePhoto` is toggled on in Studio. Official Advisor Summit logo mark shown in hero. |
 
 ---
@@ -67,7 +74,9 @@ Never add a field in just one place.
 ## Design details
 
 - **Header:** Fixed, always dark translucent — `rgba(10, 26, 36, 0.88)` + backdrop blur
-- **Navigation:** Astro `ClientRouter` View Transitions enabled; `transition:persist` on Header for smooth page changes
+- **Navigation:** Astro `ClientRouter` View Transitions enabled; `transition:persist` on Header for smooth page changes. Nav: Home · Why FA (dropdown) · Firms · Team · Insights · Summit · **Growth Assessment**
+- **Fonts:** **Adobe Fonts brand kit ONLY** (`use.typekit.net/gut5szx.css`) — `trade-gothic-next-condensed` (display) + `museo-sans` (body). Never add Google Fonts or another provider. Always use `var(--display)` / `var(--body)`, never a raw family name
+- **Primary CTA:** always **"Schedule a Call"** → `settings.calendlyUrl`. Never "See If You're a Fit" (retired)
 - **Team modals:** Flexbox layout with `min-height: 0` fix for scroll inside modals
 - **Logo:** Static file in `public/`; referenced via `Logo.astro` component
 - **Favicon:** Linked in `Site.astro`
@@ -120,9 +129,15 @@ Pushing to main **automatically deploys to Vercel** — no extra step required. 
 
 ## On the horizon
 
-- Integrate map (from `mockups-v3-branded.html` in `~/Documents/Claude/Projects/Web Design/`) onto the firms page
-- Build Insights/blog Sanity schema and page
+See **PROJECT_NOTES.md §6** for the full, current open-items list. Highlights:
+
+- Real content for "How a Partnership Works" (`WhyFaShared.astro`), `/how-it-works`, and `/about`
+- `/about` is orphaned — link it into nav/footer or retire it
+- Create the `siteSettings` and `assessmentPage` singletons in Studio (frontend already reads both with fallbacks)
+- **Deferred by decision:** no screening on the Calendly booking flow, and the Growth Assessment isn't wired to booking. Reviewed 2026-08-05 and intentionally left as-is
+- Add sitemap + Open Graph/social meta tags before launch; measure PageSpeed on production
 - Deploy Sanity Studio to a public URL
+- Domain not connected — do not point DNS or launch without explicit confirmation
 - Optionally consolidate `~/fa-website` and `~/studio-fa-web-redesign` into one parent folder
 
 ---
@@ -132,5 +147,11 @@ Pushing to main **automatically deploys to Vercel** — no extra step required. 
 - **Never use `sudo npm`** — causes permission issues
 - **Publish vs. Save in Sanity** — always publish, don't just save draft
 - **macOS smart substitutions are disabled** — em-dashes and smart quotes won't mangle code
+- **Firm/state counts are derived from published Sanity docs — never hardcode them.** If a count looks wrong, fix it in Studio, not in code
+- **Adobe Fonts only** — never add a second web font provider
+- **Naming:** it's the **Growth Assessment** (not Health/Firm/Practice Assessment); CTAs say **"Schedule a Call"**; avoid "fit" framing in copy
+- **Auto-push:** after any change, commit AND `git push` in the same turn — no batching, no asking
+- **Sitewide copy sweeps:** grep for both straight and curly apostrophe forms (markup uses `&rsquo;`) before declaring done
 - The user prefers **exact terminal commands** over conceptual explanations
 - The user prefers **Finder** for file management wherever Terminal isn't strictly required
+- **Ask when a change involves judgment calls** (headings vs. buttons, scope) rather than blind find-and-replace

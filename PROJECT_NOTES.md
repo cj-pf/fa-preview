@@ -1,12 +1,12 @@
 # Fiduciary Alliance Website — Project Notes
 
-> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-07-16 (rebuilt `/assessment` as a branded landing page — hero + click-to-play preview video + "Start Now" reveals the survey — replacing the bare iframe embed; see §9).
+> Complete handoff document. If all other context is lost, this file plus the codebase should be enough to continue work. Last updated 2026-08-05 — **naming + CTA overhaul**: "Health Assessment" renamed **Growth Assessment** sitewide; every "See If You're a Fit" CTA replaced with **"Schedule a Call"**; `/contact` promoted from placeholder to a real scheduling page; Google Fonts dropped in favor of the **Adobe Fonts brand kit only**. See §10 for the CTA / conversion-path architecture and §6 for what's still open.
 
 ---
 
 ## 1. Project overview
 
-A website redesign for **Fiduciary Alliance, LLC** — a registered investment adviser (RIA) network based in Greenville, SC. Member firms across ~10 states (counts are now derived live from the CMS, not hardcoded).
+A website redesign for **Fiduciary Alliance, LLC** — a registered investment adviser (RIA) network based in Greenville, SC. Member firms span multiple states; **counts are derived live from published Sanity firms, never hardcoded** (currently 23 firms / 11 states). Whatever is published in Studio is the source of truth — if a count looks wrong, the fix is in Studio, not the code.
 
 **Positioning:** advisor-owned, no private equity, a "federation / alliance — not a rollup or aggregator." Two audiences: independent advisors (breakaway IARs/RRs) and existing RIA owners.
 
@@ -33,22 +33,22 @@ A website redesign for **Fiduciary Alliance, LLC** — a registered investment a
 | `/why-fa/breakaway` | `src/pages/why-fa/breakaway.astro` | **Done** | "For Advisors" page. Hero + 5 pain points + shared `<WhyFaShared />` body. |
 | `/why-fa/ria-owners` | `src/pages/why-fa/ria-owners.astro` | **Done** | "For RIA Owners" page. Hero + 5 pain points + shared `<WhyFaShared />` body. |
 | `/summit` | `src/pages/summit.astro` | **Done** | Advisor Summit landing page — hero (background video `summithero.mp4` + official `summitlogo.png` mark), GROW/SCALE/CONNECT pillar cards w/ icons, "Why attend" (four unnumbered reason cards — "WORTH CLEARING THE CALENDAR"), venue (AC Hotel Greenville), give-back section w/ photo, sponsors, CTA. Editable fields pull from the `summitPage` Sanity singleton (each falls back to a hardcoded default when blank): `showRegisterButton` + `registerUrl`, `hotelUrl`, `heroImage`, `useCustomVenuePhoto` + `venueImage` (defaults to a hotlinked Marriott CDN photo), `giveBackImage`, `ctaImage` + `ctaParallax`, `showSponsorsSection` + `sponsors[]`. Speakers/agenda/gallery intentionally omitted. |
-| `/assessment` | `src/pages/assessment.astro` | **Done, rebuilt as a landing page** | Firm Assessment landing page (matching the redesigned site) — hero (full-width headline + click-to-play preview video), a restyled "Why This Assessment Matters" section with outcome cards, and a "Start Now" button that reveals + scrolls to the embedded survey (deferred until clicked). Survey app is `claude-assessment-sigma.vercel.app/embed`; page title + iframe URL read from an `assessmentPage` Sanity singleton (fallbacks baked in). See §9 for the full breakdown. |
-| `/contact` | `src/pages/contact.astro` | **Placeholder** | Phone/email/address (from site settings) + "form coming soon." Qualifier form not built. |
+| `/assessment` | `src/pages/assessment.astro` | **Done, rebuilt as a landing page** | **Growth Assessment** landing page (renamed from "Health Assessment" 2026-08-05) — hero (full-width headline + click-to-play preview video), a restyled "Why This Assessment Matters" section with outcome cards, and a "Start Now" button that reveals + scrolls to the embedded survey (deferred until clicked). Survey app is `claude-assessment-sigma.vercel.app/embed`; page title + iframe URL read from an `assessmentPage` Sanity singleton (fallbacks baked in). See §9 for the full breakdown. |
+| `/contact` | `src/pages/contact.astro` | **Done (light)** | Promoted from placeholder 2026-08-05. Heading "LET'S TALK.", a lede, and a primary **Schedule a Call** button → Calendly as the main next step, with phone/email/address (from site settings) as secondary "In the meantime" info, plus the RIA-owner `partnership@` routing note. No qualifier form — booking *is* the next step by design. |
 | `/how-it-works` | `src/pages/how-it-works.astro` | **Placeholder** | "From first call to launch" heading + "coming soon." Linked from homepage hero secondary button. |
 | `/about` | `src/pages/about.astro` | **Placeholder** | "A federation, not a rollup" heading + "coming soon." Not linked in main nav. |
 
 **Deleted pages (do not recreate):** `for-iars.astro`, `for-ria-owners.astro`, `why.astro` — these were replaced by the `/why-fa/*` structure.
 
 ### Homepage section order (`index.astro`)
-1. **Hero** — looping background video (`/hero.mp4`), headline "YOUR GROWTH, OUR MISSION.", eyebrow "Advisor-owned · No private equity", lede "A network of independent RIAs designed to grow." Primary CTA → Calendly, secondary → How it works.
+1. **Hero** — looping background video (`/hero.mp4`), headline "YOUR GROWTH, OUR MISSION.", eyebrow "Advisor-owned · No private equity", lede "A network of independent RIAs designed to grow." Primary CTA "Schedule a Call" → Calendly, secondary → How it works.
 2. **Stats** — 3 animated count-up stats: firm count (live), state count (live), AUM ("$1.8B", verbatim text). No top/bottom border lines.
 3. **Context strip** (`.home-context`) — "You deserve more FREEDOM, FLEXIBILITY, AND SCALE with your advisory practice. Keep more of what you earn." Sits close under the stats.
 4. **Choose your path** — two persona cards → `/why-fa/breakaway` and `/why-fa/ria-owners`.
 5. **We are / We're not** — "AN ALLIANCE — NOT A ROLLUP." Uses base `--bg` (NOT `.surface-elev`) to match the AI section.
 6. **AI section** (`<AISection />`) — "WE'RE NOT AFRAID OF AI." + tool pills (Zocks, Claude, Black Diamond, + more). **Responsive treatment differs by breakpoint** — desktop is the two-column layout with the image in a bordered card; ≤820px the photo becomes a full-bleed blurred parallax background behind the copy (see §8).
 7. **National network / map** — real US map (see Automations §4), pins per firm, hover tooltip with firm name(s). Right column = "Our footprint" state list (capped at top 7 states).
-8. **Four steps** (`.surface-elev`) — "FOUR STEPS. NO SURPRISES." TALK / DILIGENCE / PLAN / LAUNCH.
+8. **Four steps** (`.surface-elev`) — "FOUR STEPS. NO SURPRISES." TALK / DILIGENCE / PLAN / LAUNCH. (The TALK step's body was rewritten 2026-08-05 to drop "fit" framing — now "A short, candid conversation about your firm and your goals. Both directions.")
 9. **Quote** — placeholder testimonial ("Member firm principal · Quote placeholder · TBD").
 10. **CTA strip** — "CURIOUS WHAT THIS COULD LOOK LIKE FOR YOU?" → Calendly + Explore firms.
 
@@ -85,10 +85,14 @@ A website redesign for **Fiduciary Alliance, LLC** — a registered investment a
 The **What We Provide tabs section** (on the Why FA pages) is a deliberate **light** section — it locally overrides `--ink`, `--ink-soft`, `--ink-mute`, `--line` to dark-on-light values against a `#F4F6F8` background, so nested components flip automatically.
 
 ### Fonts
-The real brand typefaces (per the "Typefaces / Print & Web" brand book page) are now live:
-- `--display`: **`trade-gothic-next-condensed`** (falls back to Barlow Condensed → Trade Gothic → Impact) — all headings, eyebrows, labels, buttons, nav. Licensed weights: 400 (Regular) and 700 (Bold), both roman (non-italic).
-- `--body`: **`museo-sans`** (falls back to Mulish → system sans) — body paragraphs. Licensed weights: 100, 300, 500, 500 italic, 700, 900.
-- Loaded via **Adobe Fonts** (Creative Cloud, `<link rel="stylesheet" href="https://use.typekit.net/gut5szx.css">` in `src/layouts/Site.astro`), with the original Google Fonts `<link>` (Barlow Condensed / Mulish) left in place as a fallback while the Adobe stylesheet loads or if it ever fails.
+**Adobe Fonts is the ONLY web font provider — these are the brand kit fonts. Do not add Google Fonts (or any other provider) back.** (Explicit instruction, 2026-08-05.)
+
+- `--display`: **`trade-gothic-next-condensed`** — all headings, eyebrows, labels, buttons, nav. Licensed weights: **400 (Regular) and 700 (Bold)**, both roman (non-italic).
+- `--body`: **`museo-sans`** — body paragraphs. Licensed weights: 100, 300, 500, 500 italic, 700, 900.
+- Loaded via **Adobe Fonts** (Creative Cloud): `<link rel="stylesheet" href="https://use.typekit.net/gut5szx.css">` in `src/layouts/Site.astro`, preceded by preconnects to `use.typekit.net` and `p.typekit.net`. The trailing entries in each token stack (`"Trade Gothic", Impact, sans-serif` / `-apple-system, …`) are **system fallbacks only**, used if the Typekit CSS ever fails to load.
+- **Google Fonts was removed 2026-08-05.** Barlow Condensed / Mulish had been loaded as a second provider but sat *second* in both token stacks — behind the Adobe faces — so they never actually rendered while Typekit loaded. They were pure dead weight (extra render-blocking requests for fonts nobody saw).
+- ⚠️ **Weight-coverage caveat:** the kit ships Trade Gothic Next Condensed in **only 400 and 700**, but `global.css` requests 500/600 in a number of places. The browser rounds to the nearest real weight, so nothing breaks — but that's why a heading may render lighter/heavier than the declared weight suggests. The kit *also* includes `trade-gothic-next` and `trade-gothic-next-compressed`, which are currently unused if more range is ever needed.
+- ⚠️ **Always use the tokens, never a raw family name.** `team.astro` had hardcoded `font-family: 'Barlow Condensed'` in `.team-name` and `.bio-name`, bypassing `--display` — so advisor names silently rendered in the *wrong* (non-brand) font until it was caught during the Google Fonts removal. Both now use `var(--display)`. If you add type styles, reference `var(--display)` / `var(--body)`.
 - **Originally** (until 2026-07-16) the site used **Barlow Condensed** as a stand-in for Trade Gothic and **Mulish** as a stand-in for Museo Sans, because the real fonts weren't licensed for web yet. A brand-book PDF (`Type face for FA.pdf`) confirmed the actual typefaces are **Trade Gothic** (primary/display — brand book lists "Trade Gothic LT Std Condensed No. 18", "Bold Condensed No. 20", etc.) and **Museo Sans** (tagline/body, weights 100–900). Carey activated both as a web project in Adobe Fonts (Creative Cloud) — Adobe's naming for them is `trade-gothic-next-condensed` and `museo-sans`.
 - **Gotcha hit along the way:** the first Adobe Fonts pass only had **italic** condensed weights activated (no roman/non-italic bold), so large bold numerals (`.stat .num`, `.step .num`) rendered via browser font-synthesis — visibly chunkier/bigger than intended. Fixed by activating the **roman, non-italic Bold** style of Trade Gothic Next Condensed in the Adobe Fonts project (same `gut5szx.css` kit URL — no code change needed to pick it up, just a republish on Adobe's side).
 - Headings render **ALL CAPS in the markup** (not via `text-transform`) — match this when adding headings.
@@ -103,9 +107,9 @@ The real brand typefaces (per the "Typefaces / Print & Web" brand book page) are
 
 ### Branding decisions
 - **Header:** fixed, always dark translucent `rgba(10,26,36,0.88)` + backdrop blur. **Exception:** on `/assessment` it drops into normal flow (`position: relative`, solid bg) so it scrolls away — see §9. This is driven by a `bodyClass="assessment-page"` prop on the `Site` layout + a `body.assessment-page .site-header` rule in `global.css`.
-- **Nav:** Home · Why FA (dropdown: Breakaway, RIA Owners) · Firms · Team · Insights · Summit · Health Assessment. Astro `ClientRouter` view transitions, `transition:persist` on Header. Collapses to a hamburger overlay at ≤820px (see §8). The **desktop header phone number was removed** — the nav-right now holds only the "See If You're a Fit" CTA + hamburger.
+- **Nav:** Home · Why FA (dropdown: Breakaway, RIA Owners) · Firms · Team · Insights · Summit · **Growth Assessment**. Astro `ClientRouter` view transitions, `transition:persist` on Header. Collapses to a hamburger overlay at ≤820px (see §8). The **desktop header phone number was removed** — the nav-right now holds only the "Schedule a Call" CTA + hamburger.
 - **"Why FA" dropdown:** opens on hover; the caret is a separate clickable button (label itself is not a link). Uses pointer cursor.
-- **Primary CTA everywhere:** "See If You're a Fit" → `https://calendly.com/boughner` (opens new tab). Driven by site settings (see §7).
+- **Primary CTA everywhere:** **"Schedule a Call"** → `settings.calendlyUrl` (`https://calendly.com/boughner`, confirmed correct), opens in a new tab. Driven by site settings (see §7). See §10 for the full CTA inventory.
 - **Logo:** static `public/logo.png` via `Logo.astro`.
 
 ---
@@ -166,7 +170,7 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
     pages/                            ← one .astro per route (see §2)
       why-fa/breakaway.astro, ria-owners.astro
       summit.astro                    ← Advisor Summit page (summitPage singleton)
-      assessment.astro                ← Health Assessment page (iframe embed)
+      assessment.astro                ← Growth Assessment page (deferred iframe embed)
     components/
       Header.astro                    ← nav + dropdown + CTA (reads site settings)
       Footer.astro                    ← footer links + LinkedIn/YouTube social icons
@@ -205,11 +209,16 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 
 - **NEXT UP: "How a Partnership Works" section needs real content.** Currently a placeholder in `WhyFaShared.astro:230-238` (shared by both `/why-fa/breakaway` and `/why-fa/ria-owners`) — eyebrow "How a partnership works", h2 "FROM FIRST CONVERSATION TO LAUNCH.", and a "Detailed timeline coming soon" body line. Needs to become a real step-by-step walkthrough of onboarding, transition support, and the first 90 days (the homepage already has a simpler 4-step TALK/DILIGENCE/PLAN/LAUNCH section at `index.astro` §2 step 8 that could inform tone/structure, but this section should be more detailed per its own copy).
 - **`siteSettings` singleton not yet created in Studio.** The frontend already reads it via `getSiteSettings()` with hardcoded fallbacks (Calendly URL, phone `864·385·7999`, email `admin-fa@fiduciaryalliance.org`, address `135 S Main Street, Suite 600 · Greenville, SC 29601`). Paste-ready schema + setup instructions were written to the session scratchpad (`siteSettings.ts`, `STUDIO-SETUP.md`) — recreate if lost. Until published in Studio, the site uses fallbacks (which currently match reality, so nothing looks broken).
-- **`assessmentPage` schema not yet created in Studio.** The `/assessment` page already queries it (`pageTitle`, `iframeUrl`) with baked-in fallbacks (`Health Assessment — Fiduciary Alliance`, `https://claude-assessment-sigma.vercel.app/embed`), so the page works today. Paste-ready schema was provided in chat — add it to `~/studio-fa-web-redesign` (two-file rule) and register it in `schemaTypes/index.js` if the URL/title should become editable.
+- **`assessmentPage` schema not yet created in Studio.** The `/assessment` page already queries it (`pageTitle`, `iframeUrl`) with baked-in fallbacks (`Growth Assessment — Fiduciary Alliance`, `https://claude-assessment-sigma.vercel.app/embed`), so the page works today. Confirmed 2026-08-05 that the field is blank/absent in Sanity (the page renders the code fallback). ⚠️ If a `pageTitle` is ever set in Studio, use **"Growth Assessment"** wording — a stale value there would silently override the renamed default. Paste-ready schema was provided in chat — add it to `~/studio-fa-web-redesign` (two-file rule) and register it in `schemaTypes/index.js` if the URL/title should become editable.
 - **Assessment iframe height is a fixed fallback (940px)** sized to the survey's first step. The iframe is cross-origin, so the parent can't measure it. `/assessment` already listens for `postMessage({type:'assessment:resize', height})` from the embedded app and will auto-fit every step once that app posts its content height — a 5-line `ResizeObserver` snippet was provided for the survey repo. Until then, later steps may not fit the 940px exactly.
 - **`firmsPage.heading` field is now dead** in Studio (site derives the heading). Safe to remove from the studio schema; a prompt to do so was provided.
 - **`statFirms` / `statStates` fields on the homePage doc are unused** — can be cleaned up in Studio later.
-- **Placeholder pages:** `/contact` (no real form), `/how-it-works` (no real content), `/about` (no real content). Testimonial quote on the homepage is a placeholder ("TBD").
+- **DEFERRED BY DECISION — no prospect screening on the booking flow.** Today every "Schedule a Call" CTA drops straight into an open Calendly with **no qualifying questions**, and the Growth Assessment is **not wired to the booking flow** — a visitor can book without ever taking it, and assessment answers don't gate or route anything. So the funnel currently books *anyone* and does not filter for the ideal prospect profile. **Carey reviewed this on 2026-08-05 and decided the assessment + Calendly links are fine as-is for now** — recorded here as a future idea, not a bug. When it's worth revisiting, the two highest-leverage moves are: (1) add 1–3 screening questions to the Calendly booking form (AUM, RIA owner vs. breakaway, timeline) so unqualified bookings self-select out — this is configured in **Calendly's own UI, not this repo**; and (2) surface a "Schedule a Call" CTA at the **end of the Growth Assessment** so callers arrive pre-qualified and with context. A third option: extend the existing audience split (the `/contact` page already routes RIA-owner partnership inquiries to `partnership@fiduciaryalliance.org`) into the main CTA path.
+- **Placeholder pages:** `/how-it-works` (no real content), `/about` (no real content). Testimonial quote on the homepage is a placeholder ("TBD"). `/contact` is **no longer** a placeholder — see §2.
+- **`/about` is an orphan page.** It builds and returns 200 but **nothing links to it** — it's absent from both the nav and the footer. Either wire it into the nav/footer or retire it; right now it's unreachable except by direct URL.
+- **External link inconsistencies in Sanity data** (content fix, not code): one firm website is plain **`http://parallelfinancial.com/`** while the same firm appears elsewhere as `https://www.parallelfinancial.com/`; and two different YouTube URLs are in use (`youtube.com/@FiduciaryAlliance` vs `youtube.com/@fiduciaryalliance?si=…`). Normalize to `https://` and one canonical YouTube URL in Studio.
+- **Page-speed baseline never measured on production.** Can't get real Core Web Vitals from the dev server — run **PageSpeed Insights against `https://fa-preview.vercel.app`** for actual numbers. Known contributors already addressed: Google Fonts removed (one provider now), assessment iframe deferred until "Start Now", map library dynamically imported. Remaining known weight: `hero.mp4` (~16MB) and `assessment-hero.mp4` (~16MB) served from `public/`.
+- **No sitemap, robots.txt, or Open Graph / social meta tags.** `Site.astro` emits only `<title>` + `<meta name="description">`. Links shared to LinkedIn/social will have no preview card. Worth adding before launch (`@astrojs/sitemap` + og/twitter tags in the layout).
 - **Domain not yet connected.** User has the domain but is NOT ready to go live. Pre-launch visibility approach (noindex vs. password vs. leave-as-is) and final host (Vercel vs. Cloudflare) were being discussed but not decided. Do not point DNS or launch without explicit confirmation.
 - **Custom domain / launch is intentionally deferred** — there is still content work to do.
 - **Media hosting ceiling:** `hero.mp4` is ~16MB in `public/`. Fine for now, but hosting many/large videos in the repo is not ideal long-term — use YouTube (already done for Insights) or a video CDN (Mux / Cloudflare Stream) if more video is added.
@@ -220,13 +229,17 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 
 **Workflow:**
 - **AUTO-PUSH after every committed change.** The user wants: edit → commit → `git push` in the same turn, no batching, no asking. Vercel auto-deploys from `main`. (This is saved in Claude memory as `feedback-auto-push`.)
-- Commit messages end with `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`.
-- **"Don't worry about the preview."** The user runs their own dev servers and reviews visually themselves. Do NOT spin up the preview/dev server to verify unless explicitly asked — just make the change, commit, push.
+- Commit messages end with `Co-Authored-By: Claude <model> <noreply@anthropic.com>` — use whichever model is running the session (has ranged 4.7 → 4.8 → Opus 5 as the sessions moved forward).
+- **"Don't worry about the preview."** The user runs their own dev servers and reviews visually themselves. Do NOT spin up the preview/dev server to verify unless explicitly asked — just make the change, commit, push. *(Exception in practice: for sitewide sweeps like the CTA rename, browser verification caught real bugs — e.g. the hardcoded Barlow font in `team.astro`. Use judgment on wide-reaching changes.)*
+- **Ask before guessing on copy/scope calls.** The user explicitly asked to be questioned on anything ambiguous rather than have a find-and-replace applied blindly. Sitewide copy changes have judgment calls in them (headings vs. buttons, body copy vs. labels) — surface those.
 - User prefers **exact terminal commands** over conceptual explanations, and **Finder** for file management where Terminal isn't required.
 
 **Content / brand:**
 - Never say "PE-free" — say **"No private equity"**. Tagline is **"Your growth, our mission."**
 - Positioning language: **"alliance / federation, NOT a rollup / aggregator."**
+- **The assessment is the "Growth Assessment"** — never "Health Assessment" (renamed 2026-08-05) and never "Firm Assessment" or "Practice Growth Assessment" (older inconsistent variants, all standardized).
+- **Every scheduling CTA reads "Schedule a Call"** (Title Case, matching the site's button convention) — never "See If You're a Fit" (retired 2026-08-05).
+- **"Fit" framing was deliberately scrubbed from body copy too**, not just buttons. The user asked for this explicitly after first agreeing to keep it: don't reintroduce "see if you're a fit" / "see if there's a fit" anywhere. Headings were reworded to scheduling language instead of literal replacement (`LET'S TALK.`, `READY TO TALK?`) because "Schedule a Call" reads badly as a headline.
 - Firm counts, state counts, and map pins must **auto-generate from Sanity** — the user explicitly does not want to hand-edit these numbers.
 - "What We Provide" tabs (in `WhyFaShared.astro`): **5 tabs** — Technology, Operations, Investments, Compliance, Growth Coaching. 7 items each except **Investments = 6**. When condensing, **merge existing items — do not invent new capabilities.**
 - **Services tab left column:** a small 40px stroke icon (currentColor → brand green `#4F8458`) sits **above** the tab headline and summary. The old "N tech platforms" proof block was removed. Several experiments (per-tab illustrations, a cloud/tower PNG, a tech-icons PNG) were tried and rejected — final direction is the restrained icon-above-headline treatment. Don't reintroduce large illustrations without explicit direction.
@@ -238,6 +251,9 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 - **Never `sudo npm`.**
 - Interactive scripts must re-bind on `astro:page-load` (see §4e).
 - macOS smart substitutions are disabled, so straight quotes/dashes in code are safe.
+- **Adobe Fonts only** — never add a second web font provider (see §3 Fonts). Reference `var(--display)` / `var(--body)`, never a raw family name.
+- **Counts are derived, never hardcoded** — firm/state numbers come from published Sanity docs (see §4b). Don't "correct" a count in code; publish/unpublish in Studio.
+- **Sitewide copy sweeps:** verify with a repo-wide `grep -rniE` for the old string *and* its variants (curly vs. straight apostrophes — the markup uses `&rsquo;`) before declaring it done. The CTA rename needed `see if you.?re a fit` to catch both forms.
 - **Eyebrow size gotcha:** the base `.eyebrow` is `0.875rem` (14px), but `.section-head p` in `global.css` bumps *any* paragraph inside a `.section-head` to `1.125rem` (18px) — so eyebrows in a `.section-head` render at 18px while eyebrows in a custom wrapper stay 14px. On `/summit` all five eyebrows are standardized to **18px**: the hero and Give-back / venue sections use custom wrappers, so each gets a scoped `.<wrapper> .eyebrow { font-size: 1.125rem; }` override to match the `.section-head` ones.
 
 **Design continuity:**
@@ -251,7 +267,7 @@ This governs: header dropdown, homepage scroll animations + counters + map toolt
 The site is a single responsive build — no separate mobile pages. Layout is fluid via the `clamp()` tokens; the notes below cover the breakpoint-specific behavior. **Key breakpoint: `820px`.** At/below it the site switches to its "mobile/tablet" treatment (hamburger nav + AI blurred background); above it is "desktop." A second, smaller breakpoint at `640px` tightens spacing and eases blur/scrim for phones. The two preview presets used while building were **mobile = 375px** and **tablet = 768px** (both ≤820 → mobile/tablet treatment); **1280px** = desktop.
 
 ### a) Header → hamburger menu (`Header.astro` + `global.css`)
-- **Desktop (>820px): unchanged** — full nav row + phone + "See If You're a Fit" CTA.
+- **Desktop (>820px): unchanged** — full nav row + "Schedule a Call" CTA.
 - **≤820px:** the inline nav and the header CTA are hidden; a **hamburger button** (`.nav-toggle`) appears. Tapping it opens a **full-screen overlay** (`.mobile-menu`) listing every page — Home, Why FA → Breakaway / RIA Owners (as a labeled sub-group), Firms, Team, Insights — with the current page highlighted in `--brand-green-bright`, plus the CTA button and phone number pinned at the bottom. Hamburger animates to an X; body scroll locks while open.
 - **Critical structural detail:** the `.mobile-menu` is rendered as a **sibling *after* `</header>`, NOT inside it.** The header has `backdrop-filter`, which makes it the containing block for `position:fixed` descendants — a fixed menu nested inside would be trapped to the 84px header height. The open state is therefore keyed off **`body.menu-open`** (toggled in JS), not a class on the header.
 - JS (`initHeader()` in `Header.astro`) is guarded with `header.dataset.ready` because the header uses `transition:persist` (persists across view transitions — bind once). Menu closes on link click, Escape, `astro:before-swap`, and on resize above 820px.
@@ -277,14 +293,17 @@ Hero, stats, "We are / We're not" list, AI section, map + footprint, four-step s
 
 ---
 
-## 9. Firm Assessment page (`/assessment`)
+## 9. Growth Assessment page (`/assessment`)
 
 Rebuilt (2026-07-16) from a bare full-width iframe into a proper **landing page** that matches the redesigned site, then reveals the survey on demand. It reuses the site's own component vocabulary (`.hero`, `.eyebrow`, `.btn-primary`, `.section-head`, outcome cards) rather than one-off styles. The old page was just the embed described at the end of this section; the survey embed itself is unchanged, just gated behind a "Start Now" click.
 
 ### Page structure (top → bottom)
-1. **Hero** (`.hero-assessment`) — eyebrow "Firm Assessment", a full-width headline ("GET A CLEAR SNAPSHOT OF YOUR FIRM'S GROWTH POTENTIAL."), a body paragraph, an "It's not about judgment…" note, and a **Start Now** button — with the preview **video** on the right.
+1. **Hero** (`.hero-assessment`) — eyebrow "Growth Assessment", a full-width headline ("GET A CLEAR SNAPSHOT OF YOUR FIRM'S GROWTH POTENTIAL."), a body paragraph, an "It's not about judgment…" note, and a **Start Now** button — with the preview **video** on the right.
 2. **"Why This Assessment Matters"** (`.section-sm`) — restyled from the old page's photo-left/text-right layout into the site's section pattern: eyebrow + h2 + intro, then three **outcome cards** (What's working / What's slowing you down / What's next), then a closing paragraph and a second Start Now button.
 3. **`#take-assessment`** — the embedded survey, hidden until Start Now is clicked (see reveal behavior below).
+
+### Naming (standardized 2026-08-05)
+The page previously used **three** different names for the same thing: nav/footer said "Health Assessment", the hero eyebrow and browser title said "Firm Assessment", and the lower section + iframe title said "Practice Health/Growth Assessment". All are now **"Growth Assessment"** — nav label, footer link, browser title (`DEFAULTS.pageTitle`), hero eyebrow, `.assessment-shell-head` eyebrow, and the iframe `title` attribute. The **route is still `/assessment`** — the URL did not change, so no redirects were needed and existing links still work.
 
 ### Layout / styling specifics (each fixes something the user called out — don't regress)
 - **Flat hero background:** `.hero-assessment` overrides the global hero's gradient — `::before` is a flat `--bg` and `::after` (the gradient overlay) is `display:none`, so the hero and the section below read as one continuous surface. `min-height` is dropped to `0` with modest padding (no background image to justify a tall hero).
@@ -302,6 +321,46 @@ Rebuilt (2026-07-16) from a bare full-width iframe into a proper **landing page*
 - **The survey is genuinely absent until clicked** — the iframe ships with `data-src` (not `src`), so no request to the survey app fires on page load (verified in the network panel). This was an explicit requirement.
 - The embedded survey keeps `scrolling="no"` + a fallback height (`940px`, sized to step 1) and the same `postMessage({type:'assessment:resize', height})` auto-resize listener as before (origin-checked; also accepts `{type:'resize'}` / bare `{height}` / `"height:N"`). See §6 for the outstanding auto-resize follow-up on the survey app.
 - **Note:** the old `bodyClass="assessment-page"` header-scroll-away behavior was **removed** — the page now has real content above the survey, so it uses the normal fixed header like every other page. (The `body.assessment-page .site-header` rule in `global.css` is now unused by this page.)
+
+---
+
+## 10. CTA architecture & conversion path
+
+### Every CTA on the site
+All primary CTAs read **"Schedule a Call"** and point at `settings.calendlyUrl` (`https://calendly.com/boughner` — confirmed correct 2026-08-05), `target="_blank" rel="noopener"`. Because they all read the same site-settings value, **changing the booking URL is a one-place edit** (the `siteSettings` singleton, or its fallback in `src/lib/sanity.ts` until that doc exists).
+
+| Location | File | Notes |
+|---|---|---|
+| Header nav-right (desktop) | `Header.astro:62` | `.nav-cta` |
+| Mobile menu footer | `Header.astro:94` | full-width in the hamburger overlay |
+| Footer link | `Footer.astro:35` | text link, not a button |
+| Homepage hero | `index.astro:75` | primary; secondary → `/how-it-works` |
+| Homepage closing CTA strip | `index.astro:198` | |
+| Why-FA shared closing CTA | `WhyFaShared.astro:300` | under heading "READY TO TALK?" |
+| Breakaway hero | `why-fa/breakaway.astro:24` | |
+| RIA Owners hero | `why-fa/ria-owners.astro:24` | |
+| Contact page | `contact.astro` | primary next step under "LET'S TALK." |
+
+The `/assessment` page is the one exception — its buttons are **"Start Now"** (`.js-start-assessment`), which reveal the in-page survey rather than linking out. See §9.
+
+### Current conversion path
+```
+Any page  ──"Schedule a Call"──►  Calendly (open booking, no screening)
+/assessment  ──"Start Now"──►  embedded survey  ──►  (dead end — no CTA at completion)
+```
+The two paths **do not connect**. See §6 for the deferred idea to link them and add screening — reviewed and intentionally left as-is on 2026-08-05.
+
+### Analytics
+Confirmed 2026-08-05: **no click tracking is tied to these buttons**, so the "See If You're a Fit" → "Schedule a Call" label change has no analytics impact and needed no tag updates. If GA4/Vercel Analytics/pixels are added later and track by label text, note that this rename is a historical break point.
+
+### Site audit findings (2026-08-05)
+A full pass over routes, links, and responsive behavior:
+- **Routes:** all 12 build and return 200 — `/`, `/about`, `/assessment`, `/contact`, `/disclosures`, `/firms`, `/how-it-works`, `/insights`, `/summit`, `/team`, `/why-fa/breakaway`, `/why-fa/ria-owners`.
+- **Broken links: none.** Every internal link resolves. (Findings that *did* surface — the orphaned `/about`, the `http://` firm link, the duplicate YouTube URLs — are logged in §6.)
+- **Responsive:** verified at 375px (mobile), 768px (tablet), and desktop. Nav, hamburger overlay + its full-width CTA, contact page, and team grid all render correctly. One open question: at 768px the homepage hero photo covers only the left ~75% with a flat dark band on the right — may be intentional, worth a look.
+- **Fonts:** verified only Typekit requests fire; zero `googleapis`/`gstatic`. Both brand faces confirmed active in `document.fonts` (`trade-gothic-next-condensed` 400/700, `museo-sans` 300/500).
+
+---
 
 ## Dev / deploy quick reference
 
