@@ -23,7 +23,23 @@ Firm and state counts are **derived live from published Sanity firms** — never
 
 ~/studio-fa-web-redesign/      ← Sanity Studio (CMS)
   schemaTypes/                 ← One .js file per content type
+
+~/fa-summit-site/              ← Co-branded Advisor Summit partner site (see below)
 ```
+
+### Sibling project: `~/fa-summit-site`
+
+A **standalone one-page Astro site** serving the Advisor Summit landing page on
+its own domain and its own Vercel project, co-branded with **Cornerstone
+Planning Group** as presenting sponsor. It exists so Cornerstone can share one
+link with the advisor group they're courting without routing through this
+website. Seeded from `src/pages/summit.astro`; dev server on port **4323**.
+
+It reads the **same `summitPage` Sanity singleton** this site does, so a Studio
+edit updates both. That makes the two-file rule a **three-file rule** whenever a
+summit field changes: schema in `~/studio-fa-web-redesign`, query + display
+here, and query + display in `~/fa-summit-site/src/lib/summit.ts` and
+`src/pages/index.astro`. See `~/fa-summit-site/CLAUDE.md` for its own context.
 
 ---
 
