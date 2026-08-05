@@ -1,7 +1,9 @@
 # Fiduciary Alliance Website — Project Context
 
 ## What this project is
-A website redesign for **Fiduciary Alliance, LLC**, a registered investment adviser network based in Greenville, SC with 24 member firms across 10 states. Built with **Astro 5.0.0** as the frontend framework and **Sanity CMS** for content management.
+A website redesign for **Fiduciary Alliance, LLC**, a registered investment adviser network based in Greenville, SC. Built with **Astro 5.0.0** as the frontend framework and **Sanity CMS** for content management.
+
+Firm and state counts are **derived live from published Sanity firms** — never hardcode them. Whatever is published in Studio is the source of truth (currently 23 firms / 11 states).
 
 - **Live preview:** https://fa-preview.vercel.app
 - **GitHub repo:** https://github.com/cj-pf/fa-preview
@@ -42,7 +44,7 @@ Never add a field in just one place.
 
 | Schema | Description |
 |---|---|
-| `firm` | 24 member firms — name, location, state, website, etc. |
+| `memberFirm` | Member firms — name, streetAddress, city, state, zipCode, phone, numberOfOffices, shortDescription, website, logo. Counts on the homepage are derived from these. |
 | `compliance` | SEC PDF documents (ADV, ADV Part 1A, ADV Part 2B, Form CRS) |
 | `teamMember` | name, title, photo (with hotspot), bio, displayOrder |
 | `summitPage` | Singleton — editable content for `/summit`: registerUrl, hotelUrl, heroImage, useCustomVenuePhoto toggle, venueImage, giveBackImage, ctaImage, ctaParallax, sponsors[] |
@@ -55,7 +57,7 @@ Never add a field in just one place.
 | Route | File | Notes |
 |---|---|---|
 | `/` | `index.astro` | Homepage |
-| `/firms` | `firms.astro` | Grid of all 24 firms, "24 FIRMS. 10 STATES." header |
+| `/firms` | `firms.astro` | `NetworkMap` + "MEMBER FIRMS" grid of all published firms |
 | `/disclosures` | `disclosures.astro` | Links to all 4 SEC PDFs |
 | `/team` | `team.astro` | Portrait cards with hover effects + bio modals |
 | `/summit` | `summit.astro` | Advisor Summit landing page — hero, GROW/SCALE/CONNECT pillars (with icons), why-attend, venue (AC Hotel Greenville), give-back (with photo), sponsors, CTA. Editable fields (register/hotel URLs, hero/venue/give-back/CTA images, sponsors) pull from the singleton `summitPage` Sanity doc, each falling back to a hardcoded default when blank. Speakers/agenda/gallery intentionally omitted. Venue photo defaults to a hotlinked Marriott CDN image (`gspac-exterior-5022`) unless `useCustomVenuePhoto` is toggled on in Studio. Official Advisor Summit logo mark shown in hero. |
