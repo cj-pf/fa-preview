@@ -35,10 +35,12 @@
   --pad: clamp(1.25rem, 4vw, 3rem);
   --section: clamp(5rem, 10vw, 8rem);
 
-  /* type families — real brand fonts via Adobe Fonts (use.typekit.net/gut5szx.css),
-     Barlow Condensed / Mulish kept as fallbacks while the stylesheet loads */
-  --display: "trade-gothic-next-condensed", "Barlow Condensed", "Trade Gothic", Impact, sans-serif;
-  --body: "museo-sans", "Mulish", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* type families — brand kit fonts via Adobe Fonts only (use.typekit.net/gut5szx.css).
+     Do NOT add Google Fonts or other providers; the brand kit is the single source.
+     Trailing entries are system fallbacks used only if the Typekit CSS fails to load.
+     Available weights — trade-gothic-next-condensed: 400/700; museo-sans: 100/300/500/700/900. */
+  --display: "trade-gothic-next-condensed", "Trade Gothic", Impact, sans-serif;
+  --body: "museo-sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   /* hero images */
   --hero-home: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=80&auto=format');
