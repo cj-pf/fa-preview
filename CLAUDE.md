@@ -65,6 +65,7 @@ Never add a field in just one place.
 | `teamMember` | name, title, photo (with hotspot), bio, displayOrder |
 | `summitPage` | Singleton — editable content for `/summit`: registerUrl, hotelUrl, heroImage, useCustomVenuePhoto toggle, venueImage, giveBackImage, ctaImage, ctaParallax, sponsors[] |
 | `summitSponsor` | Object type used by `summitPage.sponsors[]` — name, logo, website |
+| `assessmentPage` | Singleton — editable content for `/assessment`: pageTitle, iframeUrl, and `card1Image`/`card2Image`/`card3Image` (optional background photos for the three outcome cards). Card **copy is not editable** — it lives in `assessment.astro`. Photos auto-crop to **4:3**; a custom `CardPhotoInput` component gives editors a drag-to-frame preview of the finished card |
 
 ---
 
@@ -79,7 +80,7 @@ Never add a field in just one place.
 | `/insights` | `insights.astro` | YouTube channel RSS pulled at build time → lite-embed video cards |
 | `/why-fa/breakaway` | `why-fa/breakaway.astro` | "For Advisors" — hero + pain points + shared `<WhyFaShared />` |
 | `/why-fa/ria-owners` | `why-fa/ria-owners.astro` | "For RIA Owners" — hero + pain points + shared `<WhyFaShared />` |
-| `/assessment` | `assessment.astro` | **Growth Assessment** landing page → "Start Now" reveals the deferred survey iframe |
+| `/assessment` | `assessment.astro` | **Growth Assessment** landing page → "Start Now" reveals the deferred survey iframe. Outcome cards carry optional 4:3 background photos from `assessmentPage` — the crop ratio is a contract between `CARD_CROP` and `.outcome-card.has-photo`; keep them in sync (PROJECT_NOTES §9) |
 | `/contact` | `contact.astro` | "LET'S TALK." + Schedule a Call CTA, phone/email/address |
 | `/how-it-works` | `how-it-works.astro` | **Placeholder** — no real content yet |
 | `/about` | `about.astro` | **Placeholder** and currently orphaned (not linked from nav or footer) |
@@ -149,10 +150,10 @@ See **PROJECT_NOTES.md §6** for the full, current open-items list. Highlights:
 
 - Real content for "How a Partnership Works" (`WhyFaShared.astro`), `/how-it-works`, and `/about`
 - `/about` is orphaned — link it into nav/footer or retire it
-- Create the `siteSettings` and `assessmentPage` singletons in Studio (frontend already reads both with fallbacks)
+- Create the `siteSettings` singleton in Studio (frontend already reads it with fallbacks). `assessmentPage` — **done 2026-08-06**
 - **Deferred by decision:** no screening on the Calendly booking flow, and the Growth Assessment isn't wired to booking. Reviewed 2026-08-05 and intentionally left as-is
 - Add sitemap + Open Graph/social meta tags before launch; measure PageSpeed on production
-- Deploy Sanity Studio to a public URL
+- ~~Deploy Sanity Studio to a public URL~~ — **done:** https://fiduciaryalliance.sanity.studio/
 - Domain not connected — do not point DNS or launch without explicit confirmation
 - Optionally consolidate `~/fa-website` and `~/studio-fa-web-redesign` into one parent folder
 
@@ -162,6 +163,8 @@ See **PROJECT_NOTES.md §6** for the full, current open-items list. Highlights:
 
 - **Never use `sudo npm`** — causes permission issues
 - **Publish vs. Save in Sanity** — always publish, don't just save draft
+- **Schema changes need a Studio redeploy.** `git push` updates the repo but NOT the hosted Studio — run `npx sanity deploy -y` from `~/studio-fa-web-redesign`. Local Studio needs a dev-server restart when `sanity.config.ts` changes
+- **Removing a schema field leaves its data behind**, which makes Studio show "Unknown field found." Also unset it on the document — see `scripts/unset-orphan-fields.mjs` in the Studio repo
 - **macOS smart substitutions are disabled** — em-dashes and smart quotes won't mangle code
 - **Firm/state counts are derived from published Sanity docs — never hardcode them.** If a count looks wrong, fix it in Studio, not in code
 - **Adobe Fonts only** — never add a second web font provider
