@@ -24,9 +24,21 @@ const FALLBACK_HEIGHT_PX = 940;
 // The card copy is fixed in code. Studio only supplies an optional background
 // photo per card (assessmentPage.card1Image / card2Image / card3Image); a card
 // with no photo keeps the plain solid-color surface it has always had.
+// Photos are auto-cropped to 4:3 around the hotspot set in Studio, matching the
+// card's own 4:3 box exactly — so what the editor frames is what renders, with
+// no second crop from CSS. 1200x900 covers a 3x card at the widest breakpoint.
+const CARD_CROP = {w: 1200, h: 900};
+
 function cardBg(image: any) {
   if (!image?.asset) return null;
-  return urlFor(image).width(900).height(700).fit('crop').auto('format').quality(80).url();
+  return urlFor(image)
+    .width(CARD_CROP.w)
+    .height(CARD_CROP.h)
+    .fit('crop')
+    .crop('focalpoint')
+    .auto('format')
+    .quality(80)
+    .url();
 }
 
 const outcomes = [
@@ -316,10 +328,12 @@ const outcomes = [
       rgba(6, 21, 32, 0.88) 100%
     );
   }
-  /* Give a photo room to read as a photo rather than a tinted swatch. Applied
-     to every card in the row so all three stay the same height. */
-  .outcome-cards:has(.has-photo) .outcome-card { min-height: 260px; }
-  .outcome-card.has-photo { border-color: var(--line-strong); }
+  /* A photo card is a fixed 4:3 box, matching the 4:3 crop requested from
+     Sanity — so background-size: cover has nothing left to trim and the
+     editor's hotspot decides the framing outright. Text-only cards in the same
+     row match the height rather than the ratio (grid stretch). If the copy ever
+     outgrows the box the card just grows taller; nothing clips. */
+  .outcome-card.has-photo { aspect-ratio: 4 / 3; border-color: var(--line-strong); }
   /* On a photo card the copy sits at the bottom, leaving the top of the frame
      to the image. The check badge is dropped — the photo carries the visual
      weight it was providing. Text-only cards keep the badge and top alignment. */
