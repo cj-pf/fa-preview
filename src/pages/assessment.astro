@@ -307,24 +307,30 @@ const outcomes = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    /* Darker toward the bottom, where the body copy sits. */
+    /* Light at the top so the photo reads, ramping to near-opaque at the bottom
+       where the copy sits. */
     background: linear-gradient(
       to bottom,
-      rgba(6, 21, 32, 0.62) 0%,
-      rgba(6, 21, 32, 0.78) 55%,
+      rgba(6, 21, 32, 0.30) 0%,
+      rgba(6, 21, 32, 0.55) 45%,
       rgba(6, 21, 32, 0.88) 100%
     );
   }
   /* Give a photo room to read as a photo rather than a tinted swatch. Applied
      to every card in the row so all three stay the same height. */
-  .outcome-cards:has(.has-photo) .outcome-card { min-height: 230px; }
+  .outcome-cards:has(.has-photo) .outcome-card { min-height: 260px; }
   .outcome-card.has-photo { border-color: var(--line-strong); }
-  /* The teal check badge is semi-transparent; over a photo it needs an opaque
-     backing to stay legible. */
-  .outcome-card.has-photo .outcome-check {
-    background: rgba(6, 21, 32, 0.55);
-    backdrop-filter: blur(4px);
+  /* On a photo card the copy sits at the bottom, leaving the top of the frame
+     to the image. The check badge is dropped — the photo carries the visual
+     weight it was providing. Text-only cards keep the badge and top alignment. */
+  .outcome-card.has-photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
+  .outcome-card.has-photo .outcome-check { display: none; }
+  .outcome-card.has-photo :is(h3, p) { text-shadow: 0 1px 12px rgba(6, 21, 32, 0.55); }
+  .outcome-card.has-photo p:last-child { margin-bottom: 0; }
   .outcome-check {
     display: flex; align-items: center; justify-content: center;
     width: 2rem; height: 2rem; border-radius: 50%;
