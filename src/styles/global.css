@@ -372,13 +372,16 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
   isolation: isolate;
   overflow: hidden;
   border-color: var(--line-strong);
-  /* The box matches the ratio the photo is requested at — see PERSONA_CROP in
-     src/pages/index.astro — so the photo is not cropped a second time by CSS.
-     `min-height: auto` restores the grid item's content-based floor: the fixed
-     360px would let long copy get clipped by the overflow:hidden above, and a
-     hard 0 would clip it too. A card taller than 3:2 tightens the crop
-     slightly, which is the right trade against cut-off text. */
-  min-height: auto;
+  /* Hard-pinned to the ratio the photo is requested at — see PERSONA_CROP in
+     src/pages/index.astro — so CSS never crops the photo a second time and
+     what the editor frames in Studio is exactly what renders.
+     `min-height: 0` defeats the 360px floor above and the grid item's
+     content-based floor, both of which would let the box grow off-ratio.
+     ⚠️ This only holds because the card copy is fixed in the markup and known
+     to fit. If the wording ever grows, the overflow:hidden above will clip it
+     silently — re-measure at the narrowest two-column width (~901px) rather
+     than reaching for min-height. */
+  min-height: 0;
   aspect-ratio: 3 / 2;
   justify-content: flex-end;
   gap: 1rem;
@@ -429,14 +432,32 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
   .persona-card.has-photo:hover::before { transition: none; transform: scale(1.02); }
 }
 
-/* Matches the .grid-2 collapse above — keep the two breakpoints together.
-   One column makes a 3:2 card either too short for the copy or absurdly tall
-   at tablet widths, so the box
-   grows to fit instead. That means CSS crops the (already 3:2, hotspot-framed)
-   photo a second time, trimming top and bottom evenly — a predictable tighten
-   on what the editor framed, not a shift off it. */
+/* Toward the narrow end of the two-column range the card height (width / 1.5)
+   drops faster than the copy does, and around 1000px the two cross. Tightening
+   the padding and gap buys the room back — and widens the text, so it wraps to
+   fewer lines — without touching the ratio. Measured slack at the tightest
+   point (901px, the narrowest two-column card): ~12px. */
+@media (max-width: 1100px) {
+  .persona-card.has-photo { padding: 1.25rem; gap: 0.75rem; }
+}
+
+/* Below 900px .grid-2 collapses to one column — keep these breakpoints in
+   step. A full-width 3:2 card would be enormous at tablet widths and too short
+   for the copy at phone widths, so each range gets its own pinned ratio. Still
+   pinned, just to a different number: CSS crops the (already 3:2,
+   hotspot-framed) photo a second time here, trimming top and bottom evenly —
+   a predictable tighten on what the editor framed, never a shift off it. */
 @media (max-width: 900px) {
-  .persona-card.has-photo { aspect-ratio: auto; min-height: 340px; }
+  .persona-card.has-photo { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 600px) {
+  .persona-card.has-photo { aspect-ratio: 1 / 1; }
+}
+/* Small phones: the copy wraps to enough lines that a square no longer holds
+   it — the longer of the two cards needs ~330px inside a 280px box at 320px
+   wide. Portrait is the last step down. */
+@media (max-width: 430px) {
+  .persona-card.has-photo { aspect-ratio: 2 / 3; }
 }
 
 /* ============ contrast (we are / aren't) ============ */
