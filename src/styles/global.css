@@ -364,6 +364,81 @@ section { padding-top: var(--section); padding-bottom: var(--section); }
 .persona-card:hover .more { color: var(--brand-teal-bright); }
 .persona-card:hover .more .arrow { transform: translateX(4px); }
 
+/* Optional background photo (Home Page > persona1Image / persona2Image in
+   Studio). Only the home page cards opt in; the summit pillars reuse
+   .persona-card and stay plain. */
+.persona-card.has-photo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--line-strong);
+  /* The box matches the ratio the photo is requested at — see PERSONA_CROP in
+     src/pages/index.astro — so the photo is not cropped a second time by CSS.
+     `min-height: auto` restores the grid item's content-based floor: the fixed
+     360px would let long copy get clipped by the overflow:hidden above, and a
+     hard 0 would clip it too. A card taller than 3:2 tightens the crop
+     slightly, which is the right trade against cut-off text. */
+  min-height: auto;
+  aspect-ratio: 3 / 2;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+.persona-card.has-photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--card-photo);
+  background-size: cover;
+  background-position: center;
+  /* Hides the hairline the rounded corners can reveal at some zoom levels. */
+  transform: scale(1.02);
+  transition: transform 400ms ease;
+}
+.persona-card.has-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Weighted to the bottom two-thirds, where the copy sits. These cards carry
+     more text than the assessment ones and it starts higher up, so the scrim
+     has to be stronger there — a bright patch of photo behind the small green
+     tag is the first thing to become unreadable. */
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 21, 32, 0.4) 0%,
+    rgba(6, 21, 32, 0.58) 28%,
+    rgba(6, 21, 32, 0.8) 58%,
+    rgba(6, 21, 32, 0.94) 100%
+  );
+}
+.persona-card.has-photo:hover::before { transform: scale(1.06); }
+/* The tag sits high on the card where the scrim is lightest, and the brand
+   green is dark enough to disappear into a busy photo — lift it toward white
+   just for photo cards. */
+.persona-card.has-photo .tag {
+  margin-bottom: -0.5rem;
+  color: color-mix(in srgb, var(--brand-green-bright) 45%, #fff);
+}
+.persona-card.has-photo :is(h3, p, .tag, .more) { text-shadow: 0 1px 12px rgba(6, 21, 32, 0.55); }
+.persona-card.has-photo p { color: rgba(255, 255, 255, 0.88); }
+.persona-card.has-photo .more { margin-top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .persona-card.has-photo::before,
+  .persona-card.has-photo:hover::before { transition: none; transform: scale(1.02); }
+}
+
+/* Matches the .grid-2 collapse above — keep the two breakpoints together.
+   One column makes a 3:2 card either too short for the copy or absurdly tall
+   at tablet widths, so the box
+   grows to fit instead. That means CSS crops the (already 3:2, hotspot-framed)
+   photo a second time, trimming top and bottom evenly — a predictable tighten
+   on what the editor framed, not a shift off it. */
+@media (max-width: 900px) {
+  .persona-card.has-photo { aspect-ratio: auto; min-height: 340px; }
+}
+
 /* ============ contrast (we are / aren't) ============ */
 .contrast { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--line); }
 .contrast > div { padding: clamp(2rem, 4vw, 3.5rem); border-bottom: 1px solid var(--line); }

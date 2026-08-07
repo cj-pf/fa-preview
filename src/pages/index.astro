@@ -11,7 +11,9 @@ const home = await sanityClient.fetch(`*[_type == "homePage"][0]{
   heroHeadline,
   statAum,
   ctaImage,
-  ctaParallax
+  ctaParallax,
+  persona1Image,
+  persona2Image
 }`);
 
 // Bottom banner photo — editable on the Home Page document in Studio; falls
@@ -22,6 +24,25 @@ function imageUrl(image: any, w: number, h: number) {
 }
 const CTA_IMG = imageUrl(home?.ctaImage, 2400, 1400);
 const CTA_PARALLAX = Boolean(home?.ctaParallax);
+
+// Persona card backgrounds — optional per card, same pattern as the assessment
+// outcome cards. The photo is requested at exactly the ratio the card renders
+// at, cropped on the Studio hotspot, so what the editor frames is what shows
+// (a fluid box + a fixed request ratio would crop twice and move the subject).
+// The ratio here is a contract with `.persona-card.has-photo` in global.css —
+// change one and you must change the other. 1740x1160 covers a 3x card.
+const PERSONA_CROP = {w: 1740, h: 1160};
+
+function personaBg(image: any) {
+  if (!image?.asset) return null;
+  return urlFor(image)
+    .width(PERSONA_CROP.w).height(PERSONA_CROP.h)
+    .fit('crop').crop('focalpoint')
+    .auto('format').quality(80).url();
+}
+
+const PERSONA_1_IMG = personaBg(home?.persona1Image);
+const PERSONA_2_IMG = personaBg(home?.persona2Image);
 
 // Preserve the designed line break: a comma in the headline becomes a line break.
 const heroHeadlineHtml = (home?.heroHeadline ?? 'YOUR GROWTH, OUR MISSION.').replace(/,\s*/g, ',<br/>');
@@ -123,13 +144,21 @@ const steps = [
         <h2>TWO WAYS IN.<br/>ONE ALLIANCE BEHIND YOU.</h2>
       </div>
       <div class="grid-2">
-        <a class="persona-card anim-hidden" style="--anim-delay: 100ms" href={url('/why-fa/breakaway')}>
+        <a
+          class:list={['persona-card', 'anim-hidden', {'has-photo': PERSONA_1_IMG}]}
+          style={`--anim-delay: 100ms;${PERSONA_1_IMG ? ` --card-photo: url(${PERSONA_1_IMG});` : ''}`}
+          href={url('/why-fa/breakaway')}
+        >
           <span class="tag">For IARs &amp; RRs</span>
           <h3>BREAK AWAY.<br/>WITHOUT STARTING OVER.</h3>
           <p>A turnkey platform — compliance, ops, tech, peers — so you can go independent without rebuilding from scratch.</p>
           <span class="more">For advisors <span class="arrow">→</span></span>
         </a>
-        <a class="persona-card anim-hidden" style="--anim-delay: 200ms" href={url('/why-fa/ria-owners')}>
+        <a
+          class:list={['persona-card', 'anim-hidden', {'has-photo': PERSONA_2_IMG}]}
+          style={`--anim-delay: 200ms;${PERSONA_2_IMG ? ` --card-photo: url(${PERSONA_2_IMG});` : ''}`}
+          href={url('/why-fa/ria-owners')}
+        >
           <span class="tag">For RIA owners</span>
           <h3>KEEP YOUR BRAND.<br/>GAIN LEVERAGE.</h3>
           <p>A true partnership for independent RIAs. Not a tuck-in. Not an acquisition. Keep what you built.</p>
